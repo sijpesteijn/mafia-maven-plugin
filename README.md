@@ -1,7 +1,7 @@
 This is a maven plugin for FitNesse.
 =================================== 
 
-maven-mafia-plugin  **MA**aven **FI**tnesse **A**dapter
+mafia-maven-plugin  **MA**aven **FI**tnesse **A**dapter
 
 This plugin let's you control: 
 
@@ -34,7 +34,7 @@ Example:
 
 	<plugin>
 		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-		<artifactId>maven-mafia-plugin</artifactId>
+		<artifactId>mafia-maven-plugin</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<configuration>
 			<statics>
@@ -69,7 +69,7 @@ mandatory:
 
 	<plugin>
 		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-		<artifactId>maven-mafia-plugin</artifactId>
+		<artifactId>mafia-maven-plugin</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<configuration>
 			<port>9090</port>
@@ -103,7 +103,7 @@ mandatory:
 
 	<plugin>
 		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-		<artifactId>maven-mafia-plugin</artifactId>
+		<artifactId>mafia-maven-plugin</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<configuration>
 			<port>9090</port>
@@ -123,7 +123,7 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 
 	<plugin>
 		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-		<artifactId>maven-mafia-plugin</artifactId>
+		<artifactId>mafia-maven-plugin</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<configuration>
 			<port>9091</port>
@@ -158,7 +158,7 @@ Configuration with defaults, except reportTemplate (=optional):
 
 	<plugin>
 		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-		<artifactId>maven-mafia-plugin</artifactId>
+		<artifactId>mafia-maven-plugin</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<configuration>
 			<workDirectory>${project.build.directory}/fitnesse</workDirectory>
