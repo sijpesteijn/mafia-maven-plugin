@@ -16,7 +16,7 @@ public class ReporterPluginConfig implements PluginConfig {
         this.reportTemplate = reportTemplate;
     }
 
-    public static class Builder {
+    public static class Builder implements PluginConfigBuilder {
 
         private File outputDirectory;
         private File fitnesseOutputDirectory;

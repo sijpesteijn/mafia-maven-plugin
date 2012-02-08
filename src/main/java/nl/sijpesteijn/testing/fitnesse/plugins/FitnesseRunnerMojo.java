@@ -107,7 +107,7 @@ public class FitnesseRunnerMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         final PluginConfig runnerPluginConfig = getPluginConfig();
         getLog().info("Runner config: " + runnerPluginConfig.toString());
-        final PluginManager pluginManager = new PluginManagerFactory().getPluginManager(runnerPluginConfig);
+        final PluginManager pluginManager = PluginManagerFactory.getPluginManager(runnerPluginConfig);
         try {
             pluginManager.run();
         } catch (final Exception e) {
@@ -115,8 +115,8 @@ public class FitnesseRunnerMojo extends AbstractMojo {
         }
     }
 
-    private RunnerPluginConfig getPluginConfig() {
-        final Builder pluginConfigBuilder = new RunnerPluginConfig.Builder();
+    private RunnerPluginConfig getPluginConfig() throws MojoExecutionException {
+        final Builder pluginConfigBuilder = PluginManagerFactory.getPluginConfigBuilder(RunnerPluginConfig.class);
         pluginConfigBuilder.setResultsListenerClass(resultsListenerClass);
         pluginConfigBuilder.setWikiRoot(this.wikiRoot);
         pluginConfigBuilder.setFitNesseOutputDirectory(this.fitnesseOutputDirectory);

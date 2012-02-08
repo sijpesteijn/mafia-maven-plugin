@@ -90,7 +90,7 @@ public class FitnesseStarterMojo extends AbstractMojo {
         try {
             final PluginConfig starterPluginConfig = getPluginConfig();
             getLog().info("Starter config: " + starterPluginConfig.toString());
-            final PluginManager pluginManager = new PluginManagerFactory().getPluginManager(starterPluginConfig);
+            final PluginManager pluginManager = PluginManagerFactory.getPluginManager(starterPluginConfig);
 
             pluginManager.run();
         } catch (final Exception e) {
@@ -99,8 +99,8 @@ public class FitnesseStarterMojo extends AbstractMojo {
     }
 
     @SuppressWarnings("unchecked")
-    private StarterPluginConfig getPluginConfig() {
-        final Builder builder = new StarterPluginConfig.Builder();
+    private StarterPluginConfig getPluginConfig() throws MojoExecutionException {
+        final Builder builder = PluginManagerFactory.getPluginConfigBuilder(StarterPluginConfig.class);
         builder.setPort(fitNessePort);
         builder.setWikiRoot(wikiRoot);
         builder.setRetainDays(retainDays);

@@ -37,7 +37,7 @@ public class RunnerPluginConfig implements PluginConfig {
         this.suitePageName = suitePageName;
     }
 
-    public static class Builder {
+    public static class Builder implements PluginConfigBuilder {
 
         private String resultsListenerClass;
         private String wikiRoot;

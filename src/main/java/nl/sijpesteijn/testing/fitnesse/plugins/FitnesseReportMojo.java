@@ -9,6 +9,8 @@ import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfi
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig.Builder;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -74,15 +76,17 @@ public class FitnesseReportMojo extends AbstractMavenReport {
         try {
             final ReporterPluginConfig reporterPluginConfig = getPluginConfig();
             getLog().info("Report config: " + reporterPluginConfig.toString());
-            final PluginManager pluginManager = new PluginManagerFactory().getPluginManager(reporterPluginConfig);
+            final PluginManager pluginManager = PluginManagerFactory.getPluginManager(reporterPluginConfig);
             pluginManager.run();
-        } catch (final Exception e) {
+        } catch (final MojoExecutionException e) {
+            throw new MavenReportException("" + e);
+        } catch (final MojoFailureException e) {
             throw new MavenReportException("" + e);
         }
     }
 
-    private ReporterPluginConfig getPluginConfig() {
-        final Builder builder = new ReporterPluginConfig.Builder();
+    private ReporterPluginConfig getPluginConfig() throws MojoExecutionException {
+        final Builder builder = PluginManagerFactory.getPluginConfigBuilder(ReporterPluginConfig.class);
         builder.setOutputDirectory(this.workDirectory);
         builder.setFitnesseOutputDirectory(this.fitnesseOutputDirectory);
         builder.setReportTemplate(this.reportTemplate);

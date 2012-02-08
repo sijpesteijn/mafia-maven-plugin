@@ -2,6 +2,8 @@ package nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs;
 
 import java.util.List;
 
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.LogUtils;
+
 import org.apache.maven.model.Dependency;
 
 public class ContentPluginConfig implements PluginConfig {
@@ -62,7 +64,7 @@ public class ContentPluginConfig implements PluginConfig {
         return baseDir;
     }
 
-    public static class Builder {
+    public static class Builder implements PluginConfigBuilder {
 
         private String wikiRoot;
         private String nameRootPage;
@@ -109,6 +111,15 @@ public class ContentPluginConfig implements PluginConfig {
             return new ContentPluginConfig(wikiRoot, nameRootPage, statics, resources, dependencies, targets,
                 compileClasspathElements, baseDir);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Base directory: " + this.baseDir + ", Name root page: " + this.nameRootPage + ", Wiki root: "
+                + this.wikiRoot + ", Statics: " + LogUtils.getString(this.statics) + ", Resources: "
+                + LogUtils.getString(this.resources) + ", Targets: " + LogUtils.getString(this.targets)
+                + ", Exclude dependencies: " + LogUtils.getStringFromDependencies(this.excludeDependencies)
+                + ", Compile classpath elements: " + LogUtils.getString(this.compileClasspathElements);
     }
 
 }

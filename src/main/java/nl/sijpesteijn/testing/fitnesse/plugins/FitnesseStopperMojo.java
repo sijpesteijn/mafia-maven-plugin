@@ -52,7 +52,7 @@ public class FitnesseStopperMojo extends AbstractMojo {
         try {
             final PluginConfig stopperPluginConfig = getPluginConfig();
             getLog().info("Stopper config: " + stopperPluginConfig.toString());
-            final PluginManager pluginManager = new PluginManagerFactory().getPluginManager(stopperPluginConfig);
+            final PluginManager pluginManager = PluginManagerFactory.getPluginManager(stopperPluginConfig);
 
             pluginManager.run();
 
@@ -62,8 +62,8 @@ public class FitnesseStopperMojo extends AbstractMojo {
     }
 
     @SuppressWarnings("unchecked")
-    private StopperPluginConfig getPluginConfig() {
-        final Builder builder = new StopperPluginConfig.Builder();
+    private StopperPluginConfig getPluginConfig() throws MojoExecutionException {
+        final Builder builder = PluginManagerFactory.getPluginConfigBuilder(StopperPluginConfig.class);
         builder.setPort(this.port);
         builder.setBaseDir(local.getBasedir());
         builder.setDependencies(project.getDependencies());

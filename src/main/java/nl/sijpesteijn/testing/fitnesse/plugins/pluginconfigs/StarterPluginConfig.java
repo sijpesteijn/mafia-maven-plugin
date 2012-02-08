@@ -16,7 +16,7 @@ public class StarterPluginConfig implements PluginConfig {
     private final List<Dependency> dependencies;
     private final String baseDir;
 
-    public static class Builder {
+    public static class Builder implements PluginConfigBuilder {
 
         private String fitNessePort;
         private String wikiRoot;

@@ -27,35 +27,12 @@ import org.apache.maven.project.MavenProject;
 public class FitnesseContentMojo extends AbstractMojo {
 
     /**
+     * Reference to the project pom configuration
      * 
      * @parameter expression="${project}"
      * @required
      */
     private MavenProject project;
-
-    /**
-     * 
-     * @parameter expression="${content.statics}"
-     */
-    private String[] statics;
-
-    /**
-     * 
-     * @parameter expression="${content.targets}"
-     */
-    private String[] targets;
-
-    /**
-     * 
-     * @parameter expression="${content.resources}"
-     */
-    private String[] resources;
-
-    /**
-     * 
-     * @parameter expression="${content.excludeDependencies}"
-     */
-    private Dependency[] excludeDependencies;
 
     /**
      * Location of the local repository.
@@ -67,7 +44,35 @@ public class FitnesseContentMojo extends AbstractMojo {
     private ArtifactRepository local;
 
     /**
-     * Location of the file.
+     * List of static entries to add to content.txt
+     * 
+     * @parameter expression="${content.statics}"
+     */
+    private String[] statics;
+
+    /**
+     * List of target directories to add to content.txt Each target is resolved as <target>\target\classes
+     * 
+     * @parameter expression="${content.targets}"
+     */
+    private String[] targets;
+
+    /**
+     * List of resource entries to add to content.txt
+     * 
+     * @parameter expression="${content.resources}"
+     */
+    private String[] resources;
+
+    /**
+     * List of dependencies to exclude from the content.txt
+     * 
+     * @parameter expression="${content.excludeDependencies}"
+     */
+    private Dependency[] excludeDependencies;
+
+    /**
+     * Location of the wiki root of FitNesse.
      * 
      * @parameter expression="${content.wikiRoot}" default-value="${basedir}"
      * @required
@@ -75,7 +80,7 @@ public class FitnesseContentMojo extends AbstractMojo {
     private String wikiRoot;
 
     /**
-     * Naam van de wiki root pagina
+     * Name of the wiki root page
      * 
      * @parameter expression="${content.nameRootPage}" default-value="FitNesseRoot"
      * @required
@@ -88,27 +93,32 @@ public class FitnesseContentMojo extends AbstractMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        try {
-            final PluginConfig contentPluginConfig = getPluginConfig();
-            getLog().info("Content config: " + contentPluginConfig.toString());
-            final PluginManager pluginManager = new PluginManagerFactory().getPluginManager(contentPluginConfig);
-            pluginManager.run();
-
-        } catch (final Exception e) {
-            throw new MojoExecutionException("Could not create fitnesse content.", e);
-        }
+        final PluginConfig contentPluginConfig = getPluginConfig();
+        getLog().info("Content config: " + contentPluginConfig.toString());
+        final PluginManager pluginManager = PluginManagerFactory.getPluginManager(contentPluginConfig);
+        pluginManager.run();
     }
 
+    /**
+     * Collect the plugin configuration settings
+     * 
+     * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ContentPluginConfig}
+     * @throws DependencyResolutionRequiredException
+     */
     @SuppressWarnings("unchecked")
-    private ContentPluginConfig getPluginConfig() throws DependencyResolutionRequiredException {
-        final Builder builder = new ContentPluginConfig.Builder();
+    private ContentPluginConfig getPluginConfig() throws MojoExecutionException {
+        final Builder builder = PluginManagerFactory.getPluginConfigBuilder(ContentPluginConfig.class);
         builder.setWikiRoot(wikiRoot);
         builder.setNameRootPage(nameRootPage);
         builder.setStatics(Arrays.asList(statics));
         builder.setResources(Arrays.asList(resources));
         builder.setExcludeDependencies(Arrays.asList(excludeDependencies));
         builder.setTargets(Arrays.asList(targets));
-        builder.setCompileClasspathElements(project.getCompileClasspathElements());
+        try {
+            builder.setCompileClasspathElements(project.getCompileClasspathElements());
+        } catch (final DependencyResolutionRequiredException e) {
+            throw new MojoExecutionException("Could not get compile classpath elements: ", e);
+        }
         builder.setBaseDir(local.getBasedir());
         return builder.build();
     }

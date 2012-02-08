@@ -28,7 +28,7 @@ public class StopperPluginConfig implements PluginConfig {
         return dependencies;
     }
 
-    public static class Builder {
+    public static class Builder implements PluginConfigBuilder {
 
         private String port;
         private String basedir;
