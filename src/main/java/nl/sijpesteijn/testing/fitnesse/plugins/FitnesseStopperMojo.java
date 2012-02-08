@@ -13,7 +13,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Goal which creates the content.txt (classpath) file for Fitnesse.
+ * Goal to stop FitNesse instance.
  * 
  * @goal stop
  * 
@@ -21,53 +21,62 @@ import org.apache.maven.project.MavenProject;
  */
 public class FitnesseStopperMojo extends AbstractMojo {
 
-    /**
-     * 
-     * @parameter expression="${project}"
-     * @required
-     */
-    protected MavenProject project;
+	/**
+	 * The Maven project instance for the executing project.
+	 * <p>
+	 * Note: This is passed by Maven and must not be configured by the user.
+	 * </p>
+	 * 
+	 * @parameter expression="${project}"
+	 * @required
+	 * @readonly
+	 */
+	private MavenProject project;
 
-    /**
-     * Location of the local repository.
-     * 
-     * @parameter expression="${localRepository}"
-     * @readonly
-     * @required
-     */
-    protected ArtifactRepository local;
+	/**
+	 * Location of the local repository.
+	 * <p>
+	 * Note: This is passed by Maven and must not be configured by the user.
+	 * </p>
+	 * 
+	 * @parameter expression="${localRepository}"
+	 * @readonly
+	 * @required
+	 */
+	private ArtifactRepository local;
 
-    /**
-     * @parameter expression="${stop.port}" default-value="9090"
-     */
-    protected String port;
+	/**
+	 * The port number FitNesse is running on.
+	 * 
+	 * @parameter expression="${stop.port}" default-value="9090"
+	 */
+	private String port;
 
-    /**
-     * 
-     * @throws MojoExecutionException
-     * @throws MojoFailureException
-     */
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        try {
-            final PluginConfig stopperPluginConfig = getPluginConfig();
-            getLog().info("Stopper config: " + stopperPluginConfig.toString());
-            final PluginManager pluginManager = PluginManagerFactory.getPluginManager(stopperPluginConfig);
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		final PluginConfig stopperPluginConfig = getPluginConfig();
+		getLog().info("Stopper config: " + stopperPluginConfig.toString());
+		final PluginManager pluginManager = PluginManagerFactory.getPluginManager(stopperPluginConfig);
+		pluginManager.run();
+	}
 
-            pluginManager.run();
-
-        } catch (final Exception e) {
-            throw new MojoExecutionException("Could not stop fitnesse.", e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private StopperPluginConfig getPluginConfig() throws MojoExecutionException {
-        final Builder builder = PluginManagerFactory.getPluginConfigBuilder(StopperPluginConfig.class);
-        builder.setPort(this.port);
-        builder.setBaseDir(local.getBasedir());
-        builder.setDependencies(project.getDependencies());
-        return builder.build();
-    }
+	/**
+	 * Collect the plugin configuration settings
+	 * 
+	 * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StopperPluginConfig}
+	 * @throws MojoExecutionException
+	 */
+	@SuppressWarnings("unchecked")
+	private StopperPluginConfig getPluginConfig() throws MojoExecutionException {
+		final Builder builder = PluginManagerFactory.getPluginConfigBuilder(StopperPluginConfig.class);
+		builder.setPort(this.port);
+		builder.setBaseDir(local.getBasedir());
+		builder.setDependencies(project.getDependencies());
+		return builder.build();
+	}
 
 }

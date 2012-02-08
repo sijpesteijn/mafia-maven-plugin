@@ -12,105 +12,123 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Goal which creates the content.txt (classpath) file for Fitnesse.
+ * Goal to start a FitNesse instance
  * 
  * @goal start
  * 
  * @phase install
  */
 public class FitnesseStarterMojo extends AbstractMojo {
-    /**
-     * 
-     * @parameter expression="${project}"
-     * @required
-     */
-    private MavenProject project;
 
-    /**
-     * Location of the local repository.
-     * 
-     * @parameter expression="${localRepository}"
-     * @readonly
-     * @required
-     */
-    private ArtifactRepository local;
+	/**
+	 * The Maven project instance for the executing project.
+	 * <p>
+	 * Note: This is passed by Maven and must not be configured by the user.
+	 * </p>
+	 * 
+	 * @parameter expression="${project}"
+	 * @required
+	 * @readonly
+	 */
+	private MavenProject project;
 
-    /**
-     * @parameter expression="${start.fitNessePort}" default-value="9090"
-     */
-    private String fitNessePort;
+	/**
+	 * Location of the local repository.
+	 * <p>
+	 * Note: This is passed by Maven and must not be configured by the user.
+	 * </p>
+	 * 
+	 * @parameter expression="${localRepository}"
+	 * @readonly
+	 * @required
+	 */
+	private ArtifactRepository local;
 
-    /**
-     * @parameter expression="${start.startSelenium}" default-value="false"
-     */
-    private boolean startSelenium;
+	/**
+	 * The port number FitNesse is running on.
+	 * 
+	 * @parameter expression="${start.port}" default-value="9090"
+	 */
+	private String port;
 
-    /**
-     * @parameter expression="${start.seleniumPort}" default-value="9190"
-     */
-    private String seleniumPort;
+	/**
+	 * The location for FitNesse to place the log files.
+	 * 
+	 * @parameter expression="${start.log}" default-value="${basedir}/log/"
+	 */
+	private String log;
 
-    /**
-     * @parameter expression="${start.log}" default-value="${basedir}/log/"
-     */
-    private String log;
+	/**
+	 * The number of days FitNesse retains test results.
+	 * 
+	 * @parameter expression="${start.retainDays}" default-value="14"
+	 */
+	private String retainDays;
 
-    /**
-     * @parameter expression="${start.retainDays}" default-value="14"
-     */
-    private String retainDays;
+	/**
+	 * The location of the wiki root directory.
+	 * 
+	 * @parameter expression="${start.wikiRoot}" default-value="${basedir}"
+	 */
+	private String wikiRoot;
 
-    /**
-     * @parameter expression="${start.wikiRoot}" default-value="${basedir}"
-     */
-    private String wikiRoot;
+	/**
+	 * The name of the wiki root page.
+	 * 
+	 * @parameter expression="${start.nameRootPage}"
+	 *            default-value="FitNesseRoot"
+	 */
+	private String nameRootPage;
 
-    /**
-     * @parameter expression="${start.nameRootPage}" default-value="FitNesseRoot"
-     */
-    private String nameRootPage;
+	/**
+	 * List of jvm arguments to pass to FitNesse
+	 * 
+	 * @parameter expression="${start.jvmArguments}"
+	 */
+	private String[] jvmArguments;
 
-    /**
-     * 
-     * @parameter expression="${start.jvmArguments}"
-     */
-    private String[] jvmArguments;
+	/**
+	 * List of dependency to add to the FitNesse start command.
+	 * 
+	 * @parameter expression="${start.jvmDependencies}"
+	 */
+	private Dependency[] jvmDependencies;
 
-    /**
-     * 
-     * @parameter expression="${start.jvmDependencies}"
-     */
-    private Dependency[] jvmDependencies;
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		final PluginConfig starterPluginConfig = getPluginConfig();
+		getLog().info("Starter config: " + starterPluginConfig.toString());
+		final PluginManager pluginManager = PluginManagerFactory.getPluginManager(starterPluginConfig);
+		pluginManager.run();
+	}
 
-    @Override
-    public void execute() throws MojoExecutionException {
-        try {
-            final PluginConfig starterPluginConfig = getPluginConfig();
-            getLog().info("Starter config: " + starterPluginConfig.toString());
-            final PluginManager pluginManager = PluginManagerFactory.getPluginManager(starterPluginConfig);
-
-            pluginManager.run();
-        } catch (final Exception e) {
-            throw new MojoExecutionException("Could not start fitnesse.", e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private StarterPluginConfig getPluginConfig() throws MojoExecutionException {
-        final Builder builder = PluginManagerFactory.getPluginConfigBuilder(StarterPluginConfig.class);
-        builder.setPort(fitNessePort);
-        builder.setWikiRoot(wikiRoot);
-        builder.setRetainDays(retainDays);
-        builder.setNameRootPage(nameRootPage);
-        builder.setLogLocation(log);
-        builder.setJvmArguments(Arrays.asList(jvmArguments));
-        builder.setJvmDependencies(Arrays.asList(jvmDependencies));
-        builder.setDependencies(project.getDependencies());
-        builder.setBaseDir(local.getBasedir());
-        return builder.build();
-    }
+	/**
+	 * Collect the plugin configuration settings
+	 * 
+	 * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StarterPluginConfig}
+	 * @throws MojoExecutionException
+	 */
+	@SuppressWarnings("unchecked")
+	private StarterPluginConfig getPluginConfig() throws MojoExecutionException {
+		final Builder builder = PluginManagerFactory.getPluginConfigBuilder(StarterPluginConfig.class);
+		builder.setPort(port);
+		builder.setWikiRoot(wikiRoot);
+		builder.setRetainDays(retainDays);
+		builder.setNameRootPage(nameRootPage);
+		builder.setLogLocation(log);
+		builder.setJvmArguments(Arrays.asList(jvmArguments));
+		builder.setJvmDependencies(Arrays.asList(jvmDependencies));
+		builder.setDependencies(project.getDependencies());
+		builder.setBaseDir(local.getBasedir());
+		return builder.build();
+	}
 
 }
