@@ -37,7 +37,8 @@ public class StarterPluginManager implements PluginManager {
     public void run() throws MojoExecutionException {
         String jarLocation;
         jarLocation =
-                resolver.getJarLocation(starterPluginConfig.getDependencies(), "org/fitnesse", starterPluginConfig.getBaseDir());
+                resolver.getJarLocation(starterPluginConfig.getDependencies(), "org/fitnesse",
+                    starterPluginConfig.getBaseDir());
         final String jvmArgumentsString = getJVMArguments(starterPluginConfig.getJvmArguments());
         final String dependencyList = getDependencyList();
         final String command =
@@ -46,16 +47,18 @@ public class StarterPluginManager implements PluginManager {
                         + " -cp "
                         + jarLocation
                         + File.pathSeparatorChar
-                        + (dependencyList + " fitnesseMain.FitNesseMain -p " + starterPluginConfig.getFitNessePort() + " -d "
-                                + starterPluginConfig.getWikiRoot() + " -r " + starterPluginConfig.getNameRootPage() + " -l "
-                                + starterPluginConfig.getLogPath() + " -e " + starterPluginConfig.getRetainDays());
+                        + (dependencyList + " fitnesseMain.FitNesseMain -p " + starterPluginConfig.getFitNessePort()
+                                + " -d " + starterPluginConfig.getWikiRoot() + " -r "
+                                + starterPluginConfig.getNameRootPage() + " -l " + starterPluginConfig.getLogPath()
+                                + " -e " + starterPluginConfig.getRetainDays());
 
-        final CommandRunner runner = new CommandRunner();
+        final CommandRunner runner = new CommandRunner(starterPluginConfig.getLog());
         try {
             runner.start(command);
             if (runner.waitForSetupToFinish() && runner.errorBufferContains("patient.")) {
                 new FirstTimeWriter(starterPluginConfig.getNameRootPage());
             }
+            starterPluginConfig.getLog().info(runner.getOutputBuffer());
         } catch (final IOException e) {
             throw new MojoExecutionException("Could not start fitnesse.", e);
         } catch (final InterruptedException e) {

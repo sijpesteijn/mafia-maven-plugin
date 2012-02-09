@@ -3,6 +3,7 @@ package nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs;
 import java.util.List;
 
 import org.apache.maven.model.Dependency;
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * Starter plugin configuration.
@@ -19,6 +20,7 @@ public class StarterPluginConfig implements PluginConfig {
     private final List<Dependency> jvmDependencies;
     private final List<Dependency> dependencies;
     private final String baseDir;
+    private final Log log;
 
     /**
      * The builder for this configuration.
@@ -35,6 +37,7 @@ public class StarterPluginConfig implements PluginConfig {
         private List<Dependency> jvmDependencies;
         private List<Dependency> dependencies;
         private String baseDir;
+        private Log log;
 
         public void setPort(final String fitNessePort) {
             this.fitNessePort = fitNessePort;
@@ -72,16 +75,21 @@ public class StarterPluginConfig implements PluginConfig {
             this.baseDir = baseDir;
         }
 
+        public void setLogger(final Log log) {
+            this.log = log;
+        }
+
         public StarterPluginConfig build() {
             return new StarterPluginConfig(fitNessePort, wikiRoot, retainDays, nameRootPage, logPath, jvmArguments,
-                jvmDependencies, dependencies, baseDir);
+                jvmDependencies, dependencies, baseDir, log);
         }
+
     }
 
     public StarterPluginConfig(final String fitNessePort, final String wikiRoot, final String retainDays,
                                final String nameRootPage, final String logPath, final List<String> jvmArguments,
                                final List<Dependency> jvmDependencies, final List<Dependency> dependencies,
-                               final String baseDir)
+                               final String baseDir, final Log log)
     {
         this.fitNessePort = fitNessePort;
         this.wikiRoot = wikiRoot;
@@ -92,6 +100,7 @@ public class StarterPluginConfig implements PluginConfig {
         this.jvmDependencies = jvmDependencies;
         this.dependencies = dependencies;
         this.baseDir = baseDir;
+        this.log = log;
     }
 
     public String getFitNessePort() {
@@ -128,6 +137,10 @@ public class StarterPluginConfig implements PluginConfig {
 
     public String getBaseDir() {
         return baseDir;
+    }
+
+    public Log getLog() {
+        return log;
     }
 
     /**

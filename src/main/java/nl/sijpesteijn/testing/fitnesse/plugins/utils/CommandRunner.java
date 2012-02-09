@@ -3,6 +3,8 @@ package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.maven.plugin.logging.Log;
+
 /**
  * Start a process and monitor the std out and std error.
  * 
@@ -11,6 +13,15 @@ public class CommandRunner {
     private Process process;
     private final StringBuilder errorBuffer = new StringBuilder();
     private final StringBuilder outputBuffer = new StringBuilder();
+    private final Log log;
+
+    public CommandRunner(final Log log) {
+        this.log = log;
+    }
+
+    public CommandRunner() {
+        this(null);
+    }
 
     /**
      * Run the command.
@@ -34,10 +45,12 @@ public class CommandRunner {
         while (true) {
             if (errorBufferHasContent()) {
                 if (!bufferContains(errorBuffer, "patient.")) {
-                    // log.error(errorBuffer.toString());
+                    if (log != null)
+                        log.error(errorBuffer.toString());
                     return false;
                 } else {
-                    // log.info("Unpacking....");
+                    if (log != null)
+                        log.info("Unpacking....");
                 }
             }
             if (bufferContains(outputBuffer, "days.")) {
