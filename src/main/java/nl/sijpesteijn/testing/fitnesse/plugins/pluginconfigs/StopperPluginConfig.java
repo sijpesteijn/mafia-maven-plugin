@@ -4,6 +4,10 @@ import java.util.List;
 
 import org.apache.maven.model.Dependency;
 
+/**
+ * Stopper plugin configuration.
+ * 
+ */
 public class StopperPluginConfig implements PluginConfig {
 
     private final String port;
@@ -28,6 +32,10 @@ public class StopperPluginConfig implements PluginConfig {
         return dependencies;
     }
 
+    /**
+     * The builder for this configuration.
+     * 
+     */
     public static class Builder implements PluginConfigBuilder {
 
         private String port;
@@ -49,7 +57,13 @@ public class StopperPluginConfig implements PluginConfig {
         public void setDependencies(final List<Dependency> dependencies) {
             this.dependencies = dependencies;
         }
-
     }
 
+    /**
+     * Return the configuration in one big string.
+     */
+    @Override
+    public String toString() {
+        return "FitNesse port: " + this.port + ", base directory: " + this.basedir;
+    }
 }

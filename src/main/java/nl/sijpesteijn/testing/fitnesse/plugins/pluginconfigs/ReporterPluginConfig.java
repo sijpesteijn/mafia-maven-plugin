@@ -2,6 +2,10 @@ package nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs;
 
 import java.io.File;
 
+/**
+ * Reporter plugin configuration.
+ * 
+ */
 public class ReporterPluginConfig implements PluginConfig {
 
     private final File fitnesseOutputDirectory;
@@ -16,6 +20,10 @@ public class ReporterPluginConfig implements PluginConfig {
         this.reportTemplate = reportTemplate;
     }
 
+    /**
+     * The builder for this configuration
+     * 
+     */
     public static class Builder implements PluginConfigBuilder {
 
         private File outputDirectory;
@@ -52,6 +60,9 @@ public class ReporterPluginConfig implements PluginConfig {
         return this.reportTemplate;
     }
 
+    /**
+     * Return plugin configuration in one big string.
+     */
     @Override
     public String toString() {
         return "FitNesse Output Directory: " + this.fitnesseOutputDirectory + ", Output directory: "

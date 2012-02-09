@@ -9,16 +9,27 @@ import nl.sijpesteijn.testing.fitnesse.plugins.utils.DependencyResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
+/**
+ * Plugin manager responsible for stopping FitNesse.
+ * 
+ */
 public class StopperPluginManager implements PluginManager {
 
-    private final DependencyResolver resolver;
     private final StopperPluginConfig stopperPluginConfig;
+    private final DependencyResolver resolver = new DependencyResolver();
 
-    public StopperPluginManager(final StopperPluginConfig stopperPluginConfig, final DependencyResolver resolver) {
+    /**
+     * 
+     * @param stopperPluginConfig
+     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StopperPluginConfig}
+     */
+    public StopperPluginManager(final StopperPluginConfig stopperPluginConfig) {
         this.stopperPluginConfig = stopperPluginConfig;
-        this.resolver = resolver;
     }
 
+    /**
+     * Stop FitNesse
+     */
     @Override
     public void run() throws MojoFailureException, MojoExecutionException {
         final String jarLocation;

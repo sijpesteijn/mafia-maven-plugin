@@ -2,6 +2,10 @@ package nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs;
 
 import java.util.List;
 
+/**
+ * Runner plugin configuration.
+ * 
+ */
 public class RunnerPluginConfig implements PluginConfig {
 
     private final String wikiRoot;
@@ -37,6 +41,10 @@ public class RunnerPluginConfig implements PluginConfig {
         this.suitePageName = suitePageName;
     }
 
+    /**
+     * The builder for this configuration.
+     * 
+     */
     public static class Builder implements PluginConfigBuilder {
 
         private String resultsListenerClass;
@@ -168,6 +176,9 @@ public class RunnerPluginConfig implements PluginConfig {
         return suitePageName;
     }
 
+    /**
+     * Return the plugin configuration in one big string.
+     */
     @Override
     public String toString() {
         return "FitNesse Output Directory: " + this.fitnesseOutputDirectory + ", Port: " + this.port

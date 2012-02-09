@@ -4,6 +4,10 @@ import java.util.List;
 
 import org.apache.maven.model.Dependency;
 
+/**
+ * Starter plugin configuration.
+ * 
+ */
 public class StarterPluginConfig implements PluginConfig {
 
     private final String fitNessePort;
@@ -16,6 +20,10 @@ public class StarterPluginConfig implements PluginConfig {
     private final List<Dependency> dependencies;
     private final String baseDir;
 
+    /**
+     * The builder for this configuration.
+     * 
+     */
     public static class Builder implements PluginConfigBuilder {
 
         private String fitNessePort;
@@ -122,6 +130,9 @@ public class StarterPluginConfig implements PluginConfig {
         return baseDir;
     }
 
+    /**
+     * Return the plugin configuration in one big string.
+     */
     @Override
     public String toString() {
         return "FitNesse port: " + this.fitNessePort + ", Wiki Root: " + this.wikiRoot + ", Retain days: "

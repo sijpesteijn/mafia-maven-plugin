@@ -2,6 +2,10 @@ package nl.sijpesteijn.testing.fitnesse.plugins.executioners;
 
 import fitnesse.responders.run.TestSummary;
 
+/**
+ * Sub class of {@link fitnesse.responders.run.TestSummary} with extra duration property
+ * 
+ */
 public class TestSummaryAndDuration extends TestSummary {
 
     public long duration;

@@ -12,7 +12,11 @@ import fitnesse.responders.run.ResultsListener;
 import fitnesse.responders.run.TestSummary;
 import fitnesseMain.FitNesseMain;
 
-public class FitNesseTestExecutioner implements TestExecutioner {
+/**
+ * This class is responsible for running FitNesse tests
+ * 
+ */
+public class FitNesseTestExecutioner {
     public static final String PAGE_TYPE_SUITE = "suite";
     public static final String PAGE_TYPE_TEST = "test";
     private final String fitNesseRootPath;
@@ -20,6 +24,17 @@ public class FitNesseTestExecutioner implements TestExecutioner {
     private final int fitnessePort;
     private final ResultsListener resultsListener;
 
+    /**
+     * 
+     * @param fitNesseRootPath
+     *        {@link java.lang.String}
+     * @param outputPath
+     *        {@link java.lang.String}
+     * @param fitnessePort
+     *        {@link int}
+     * @param resultsListener
+     *        {@link fitnesse.responders.run.ResultsListener}
+     */
     public FitNesseTestExecutioner(final String fitNesseRootPath, final String outputPath, final int fitnessePort,
                                    final ResultsListener resultsListener)
     {
@@ -29,23 +44,70 @@ public class FitNesseTestExecutioner implements TestExecutioner {
         this.resultsListener = resultsListener;
     }
 
+    /**
+     * 
+     * @param fitNesseRootPath
+     *        {@link java.lang.String}
+     * @param outputPath
+     *        {@link java.lang.String}
+     * @param fitnessePort
+     *        {@link int}
+     */
     public FitNesseTestExecutioner(final String fitNesseRootPath, final String outputPath, final int fitnessePort) {
         this(fitNesseRootPath, outputPath, fitnessePort, new FitNesseTestResultsListener(null));
     }
 
+    /**
+     * Run a single FitNesse test
+     * 
+     * @param testName
+     *        {@link java.lang.String}
+     * @return {@link fitnesse.responders.run.TestSummary}
+     * @throws MojoFailureException
+     */
     public TestSummary runTest(final String testName) throws MojoFailureException {
         return run(testName, PAGE_TYPE_TEST, null);
     }
 
+    /**
+     * Run a suite of FitNesse tests
+     * 
+     * @param suiteName
+     *        {@link java.lang.String}
+     * @return {@link fitnesse.responders.run.TestSummary}
+     * @throws MojoFailureException
+     */
     public TestSummary runTestSuite(final String suiteName) throws MojoFailureException {
         return run(suiteName, PAGE_TYPE_SUITE, null);
     }
 
+    /**
+     * Run FitNesse tests by tag filter
+     * 
+     * @param suiteFilter
+     *        {@link java.lang.String}
+     * @param suitePageName
+     *        {@link java.lang.String}
+     * @return {@link fitnesse.responders.run.TestSummary}
+     * @throws MojoFailureException
+     */
     public TestSummary runByTagFilter(final String suiteFilter, final String suitePageName) throws MojoFailureException
     {
         return run(suitePageName, PAGE_TYPE_SUITE, suiteFilter);
     }
 
+    /**
+     * Method responsible for the actual test run.
+     * 
+     * @param testName
+     *        {@link java.lang.String}
+     * @param pageType
+     *        {@link java.lang.String}
+     * @param suiteFilter
+     *        {@link java.lang.String}
+     * @return {@link fitnesse.responders.run.TestSummary}
+     * @throws MojoFailureException
+     */
     private TestSummary run(final String testName, final String pageType, final String suiteFilter)
             throws MojoFailureException
     {
@@ -57,7 +119,6 @@ public class FitNesseTestExecutioner implements TestExecutioner {
         } catch (final IOException ioException) {
             throw new MojoFailureException(ioException.getMessage());
         }
-        // maak eigen listener.
         testFormatter.setListener(this.resultsListener);
         final Arguments arguments = new Arguments();
         arguments.setDaysTillVersionsExpire("0");
@@ -65,7 +126,7 @@ public class FitNesseTestExecutioner implements TestExecutioner {
         arguments.setOmitUpdates(true);
         arguments.setPort(String.valueOf(fitnessePort));
         arguments.setRootPath(fitNesseRootPath);
-        arguments.setCommand(getCommand(testName, pageType, suiteFilter));
+        arguments.setCommand(getTestUrl(testName, pageType, suiteFilter));
         FitNesseMain.dontExitAfterSingleCommand = true;
         try {
             FitNesseMain.launchFitNesse(arguments);
@@ -75,17 +136,21 @@ public class FitNesseTestExecutioner implements TestExecutioner {
         return testFormatter.getTotalSummary();
     }
 
-    private String getCommand(final String pageName, final String pageType, final String suiteFilter) {
+    /**
+     * Construct the url to pass to FitNesse
+     * 
+     * @param pageName
+     *        {@link java.lang.String}
+     * @param pageType
+     *        {@link java.lang.String}
+     * @param suiteFilter
+     *        {@link java.lang.String}
+     * @return {@link java.lang.String}
+     */
+    private String getTestUrl(final String pageName, final String pageType, final String suiteFilter) {
         if (suiteFilter != null)
             return pageName + "?responder=suite&suiteFilter=" + suiteFilter;
         else
             return pageName + "?" + pageType + "&nohistory=true&format=java";
-    }
-
-    public static void main(final String[] args) throws Exception {
-        final FitNesseTestExecutioner testExecutioner =
-                new FitNesseTestExecutioner("/home/gijs/development/contact/contact-fitnesse/",
-                    "/home/gijs/development/contact/contact-fitnesse/target/", 9091, null);
-        testExecutioner.runTestSuite("FrontPage.ContactBusinessSuite");
     }
 }

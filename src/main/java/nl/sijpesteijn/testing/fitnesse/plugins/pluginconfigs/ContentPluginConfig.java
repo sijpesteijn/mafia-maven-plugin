@@ -6,6 +6,10 @@ import nl.sijpesteijn.testing.fitnesse.plugins.utils.LogUtils;
 
 import org.apache.maven.model.Dependency;
 
+/**
+ * Content plugin configuration.
+ * 
+ */
 public class ContentPluginConfig implements PluginConfig {
 
     private final String wikiRoot;
@@ -17,6 +21,25 @@ public class ContentPluginConfig implements PluginConfig {
     private final List<String> compileClasspathElements;
     private final String baseDir;
 
+    /**
+     * 
+     * @param wikiRoot
+     *        {@link java.lang.String}
+     * @param nameRootPage
+     *        {@link java.lang.String}
+     * @param statics
+     *        {@link java.util.List}
+     * @param resources
+     *        {@link java.util.List}
+     * @param excludeDependencies
+     *        {@link java.util.List}
+     * @param targets
+     *        {@link java.util.List}
+     * @param compileClasspathElements
+     *        {@link java.util.List}
+     * @param baseDir
+     *        {@link java.lang.String}
+     */
     public ContentPluginConfig(final String wikiRoot, final String nameRootPage, final List<String> statics,
                                final List<String> resources, final List<Dependency> excludeDependencies,
                                final List<String> targets, final List<String> compileClasspathElements,
@@ -64,6 +87,10 @@ public class ContentPluginConfig implements PluginConfig {
         return baseDir;
     }
 
+    /**
+     * 
+     * The builder for this plugin configuration
+     */
     public static class Builder implements PluginConfigBuilder {
 
         private String wikiRoot;
@@ -113,6 +140,9 @@ public class ContentPluginConfig implements PluginConfig {
         }
     }
 
+    /**
+     * Return the configuration in one big string.
+     */
     @Override
     public String toString() {
         return "Base directory: " + this.baseDir + ", Name root page: " + this.nameRootPage + ", Wiki root: "

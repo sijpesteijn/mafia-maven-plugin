@@ -14,17 +14,30 @@ import org.apache.maven.plugin.MojoFailureException;
 import fitnesse.responders.run.ResultsListener;
 import fitnesse.responders.run.TestSummary;
 
+/**
+ * Plugin manager responsible for running FitNesse tests.
+ * 
+ */
 public class RunnerPluginManager implements PluginManager {
 
     private final RunnerPluginConfig runnerPluginConfig;
     private final FitNesseTestExecutioner testExecutioner;
     private final TestSummaryAndDuration summary = new TestSummaryAndDuration();
 
+    /**
+     * 
+     * @param runnerPluginConfig
+     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.RunnerPluginConfig}
+     * @throws MojoExecutionException
+     */
     public RunnerPluginManager(final RunnerPluginConfig runnerPluginConfig) throws MojoExecutionException {
         this.runnerPluginConfig = runnerPluginConfig;
         testExecutioner = createTestExecutioner();
     }
 
+    /**
+     * Run the tests.
+     */
     @Override
     public void run() throws MojoFailureException, MojoExecutionException {
         this.runTests(runnerPluginConfig.getTests());
@@ -35,10 +48,16 @@ public class RunnerPluginManager implements PluginManager {
 
     }
 
+    /**
+     * Create the FitNesse test executioner.
+     * 
+     * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.executioners.FitNesseTestExecutioner}
+     * @throws MojoExecutionException
+     */
     private FitNesseTestExecutioner createTestExecutioner() throws MojoExecutionException {
         FitNesseTestExecutioner executioner;
         if (runnerPluginConfig.isResultsListenerClassSet()) {
-            final ResultsListener resultsListener = (ResultsListener) loadResultsListener();
+            final ResultsListener resultsListener = loadResultsListener();
             executioner =
                     new FitNesseTestExecutioner(runnerPluginConfig.getWikiRoot(),
                         runnerPluginConfig.getFitnesseOutputDirectory(), runnerPluginConfig.getPort(), resultsListener);
@@ -50,15 +69,29 @@ public class RunnerPluginManager implements PluginManager {
         return executioner;
     }
 
-    private Object loadResultsListener() throws MojoExecutionException {
+    /**
+     * Load the results listener.
+     * 
+     * @return {@link fitnesse.responders.run.ResultsListener}
+     * @throws MojoExecutionException
+     */
+    private ResultsListener loadResultsListener() throws MojoExecutionException {
         try {
-            return this.getClass().getClassLoader().loadClass(runnerPluginConfig.getResultsListenerClass())
-                .newInstance();
+            return (ResultsListener) this.getClass().getClassLoader()
+                .loadClass(runnerPluginConfig.getResultsListenerClass()).newInstance();
         } catch (final Throwable e) {
             throw new MojoExecutionException("Could not load resultsListener. ", e);
         }
     }
 
+    /**
+     * Run the tests.
+     * 
+     * @param tests
+     *        {@link java.util.List}
+     * @throws MojoFailureException
+     * @throws MojoExecutionException
+     */
     public void runTests(final List<String> tests) throws MojoFailureException, MojoExecutionException {
         if (tests != null) {
             for (final String testName : tests) {
@@ -69,6 +102,14 @@ public class RunnerPluginManager implements PluginManager {
 
     }
 
+    /**
+     * Run the suites
+     * 
+     * @param suites
+     *        {@link java.util.List}
+     * @throws MojoFailureException
+     * @throws MojoExecutionException
+     */
     public void runSuites(final List<String> suites) throws MojoFailureException, MojoExecutionException {
         if (suites != null) {
             for (final String suiteName : suites) {
@@ -78,6 +119,16 @@ public class RunnerPluginManager implements PluginManager {
         }
     }
 
+    /**
+     * Run tests by suite filter.
+     * 
+     * @param suiteFilter
+     *        {@link java.lang.String}
+     * @param suitePageName
+     *        {@link java.lang.String}
+     * @throws MojoFailureException
+     * @throws MojoExecutionException
+     */
     public void runBySuiteFilter(final String suiteFilter, final String suitePageName) throws MojoFailureException,
             MojoExecutionException
     {
@@ -90,10 +141,24 @@ public class RunnerPluginManager implements PluginManager {
         }
     }
 
+    /**
+     * Return the summary report.
+     * 
+     * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.executioners.TestSummaryAndDuration}
+     */
     public TestSummaryAndDuration getSummary() {
         return summary;
     }
 
+    /**
+     * Update the summary report.
+     * 
+     * @param testSummary
+     *        {@link fitnesse.responders.run.TestSummary}
+     * @param testName
+     *        {@link java.lang.String}
+     * @throws MojoExecutionException
+     */
     private void updateTestRunStatus(final TestSummary testSummary, final String testName)
             throws MojoExecutionException
     {

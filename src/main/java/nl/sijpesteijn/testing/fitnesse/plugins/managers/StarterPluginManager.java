@@ -12,22 +12,33 @@ import nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 
+/**
+ * Plugin manager responsible for starting FitNesse.
+ * 
+ */
 public class StarterPluginManager implements PluginManager {
 
-    private final StarterPluginConfig pluginConfig;
-    private final DependencyResolver resolver;
+    private final StarterPluginConfig starterPluginConfig;
+    private final DependencyResolver resolver = new DependencyResolver();
 
-    public StarterPluginManager(final StarterPluginConfig pluginConfig, final DependencyResolver resolver) {
-        this.pluginConfig = pluginConfig;
-        this.resolver = resolver;
+    /**
+     * 
+     * @param starterPluginConfig
+     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StarterPluginConfig}
+     */
+    public StarterPluginManager(final StarterPluginConfig starterPluginConfig) {
+        this.starterPluginConfig = starterPluginConfig;
     }
 
+    /**
+     * Start FitNesse
+     */
     @Override
     public void run() throws MojoExecutionException {
         String jarLocation;
         jarLocation =
-                resolver.getJarLocation(pluginConfig.getDependencies(), "org/fitnesse", pluginConfig.getBaseDir());
-        final String jvmArgumentsString = getJVMArguments(pluginConfig.getJvmArguments());
+                resolver.getJarLocation(starterPluginConfig.getDependencies(), "org/fitnesse", starterPluginConfig.getBaseDir());
+        final String jvmArgumentsString = getJVMArguments(starterPluginConfig.getJvmArguments());
         final String dependencyList = getDependencyList();
         final String command =
                 "java"
@@ -35,15 +46,15 @@ public class StarterPluginManager implements PluginManager {
                         + " -cp "
                         + jarLocation
                         + File.pathSeparatorChar
-                        + (dependencyList + " fitnesseMain.FitNesseMain -p " + pluginConfig.getFitNessePort() + " -d "
-                                + pluginConfig.getWikiRoot() + " -r " + pluginConfig.getNameRootPage() + " -l "
-                                + pluginConfig.getLogPath() + " -e " + pluginConfig.getRetainDays());
+                        + (dependencyList + " fitnesseMain.FitNesseMain -p " + starterPluginConfig.getFitNessePort() + " -d "
+                                + starterPluginConfig.getWikiRoot() + " -r " + starterPluginConfig.getNameRootPage() + " -l "
+                                + starterPluginConfig.getLogPath() + " -e " + starterPluginConfig.getRetainDays());
 
         final CommandRunner runner = new CommandRunner();
         try {
             runner.start(command);
             if (runner.waitForSetupToFinish() && runner.errorBufferContains("patient.")) {
-                new FirstTimeWriter(pluginConfig.getNameRootPage());
+                new FirstTimeWriter(starterPluginConfig.getNameRootPage());
             }
         } catch (final IOException e) {
             throw new MojoExecutionException("Could not start fitnesse.", e);
@@ -52,13 +63,18 @@ public class StarterPluginManager implements PluginManager {
         }
     }
 
+    /**
+     * Return the list with jvm dependencies.
+     * 
+     * @return {@link java.lang.String}
+     */
     private String getDependencyList() {
-        if (pluginConfig.getJvmDependencies() == null) {
+        if (starterPluginConfig.getJvmDependencies() == null) {
             return "";
         }
         String list = "";
-        for (final Dependency dependency : pluginConfig.getJvmDependencies()) {
-            final String dependencyPath = resolver.resolveDependencyPath(dependency, pluginConfig.getBaseDir());
+        for (final Dependency dependency : starterPluginConfig.getJvmDependencies()) {
+            final String dependencyPath = resolver.resolveDependencyPath(dependency, starterPluginConfig.getBaseDir());
             if (!dependencyPath.trim().equals("")) {
                 list += dependencyPath;
             }
@@ -66,6 +82,13 @@ public class StarterPluginManager implements PluginManager {
         return list;
     }
 
+    /**
+     * Return the list of jvm arguments.
+     * 
+     * @param arguments
+     *        {@link java.util.List}
+     * @return {@link java.lang.String}
+     */
     private String getJVMArguments(final List<String> arguments) {
         if (arguments == null) {
             return "";
@@ -76,5 +99,4 @@ public class StarterPluginManager implements PluginManager {
         }
         return list;
     }
-
 }
