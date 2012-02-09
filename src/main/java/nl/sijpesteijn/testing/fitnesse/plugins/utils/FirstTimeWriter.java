@@ -4,16 +4,31 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * When you first start using this plugin, we will create a default setup.
+ * 
+ */
 public class FirstTimeWriter {
 
     private final String nameRootPage;
 
+    /**
+     * 
+     * @param nameRootPage
+     *        {@link java.lang.String}
+     * @throws IOException
+     */
     public FirstTimeWriter(final String nameRootPage) throws IOException {
         this.nameRootPage = nameRootPage;
         updateFrontPageContent();
         createSpecialPages();
     }
 
+    /**
+     * Create a new FrontPage wiki page.
+     * 
+     * @throws IOException
+     */
     private void updateFrontPageContent() throws IOException {
         final File frontPageContent = new File(nameRootPage + "/FrontPage/content.txt");
         final FileWriter frontPageWriter = new FileWriter(frontPageContent);
@@ -21,6 +36,11 @@ public class FirstTimeWriter {
         frontPageWriter.close();
     }
 
+    /**
+     * Add the setup, teardown, suitesetup and suiteteardown wiki pages.
+     * 
+     * @throws IOException
+     */
     private void createSpecialPages() throws IOException {
         createWikiPage("SetUp", SpecialPages.SetUpContentTxt, SpecialPages.PropertiesXml);
         createWikiPage("TearDown", SpecialPages.TearDownContentTxt, SpecialPages.PropertiesXml);
@@ -28,6 +48,17 @@ public class FirstTimeWriter {
         createWikiPage("SuiteTearDown", SpecialPages.SuiteTearDownContentTxt, SpecialPages.PropertiesXml);
     }
 
+    /**
+     * Create the wiki page and folder for FitNesse.
+     * 
+     * @param pageName
+     *        {@link java.lang.String}
+     * @param contentTxt
+     *        {@link java.lang.String}
+     * @param propertiesXml
+     *        {@link java.lang.String}
+     * @throws IOException
+     */
     private void createWikiPage(final String pageName, final String contentTxt, final String propertiesXml)
             throws IOException
     {

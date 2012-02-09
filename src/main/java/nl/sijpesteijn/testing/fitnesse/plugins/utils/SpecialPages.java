@@ -1,5 +1,9 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 
+/**
+ * Utility class used by {@link nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter}
+ * 
+ */
 public class SpecialPages {
 
     public static final String PropertiesXml = "<?xml version=\"1.0\"?>\n" + "<properties>\n" + "<Edit>true</Edit>\n"

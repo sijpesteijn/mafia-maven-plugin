@@ -9,6 +9,9 @@ import fitnesse.responders.run.TestSummary;
 import fitnesse.responders.run.TestSystem;
 import fitnesse.wiki.WikiPage;
 
+/**
+ * TODO do something with this information.
+ */
 public class FitNesseTestResultsListener implements ResultsListener {
 
     private final Log log;

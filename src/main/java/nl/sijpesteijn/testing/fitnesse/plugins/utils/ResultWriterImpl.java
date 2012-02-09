@@ -17,14 +17,26 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * Implementation of the result writer interface. This implementation will save the summary result to summary.xml
+ * 
+ */
 public class ResultWriterImpl implements ResultWriter {
 
     private final String outputDirectory;
 
+    /**
+     * 
+     * @param outputDirectory
+     *        {@link java.lang.String}
+     */
     public ResultWriterImpl(final String outputDirectory) {
         this.outputDirectory = outputDirectory;
     }
 
+    /**
+     * Write the summary information to summary.xml
+     */
     @Override
     public void write(final TestSummaryAndDuration summary) throws MojoExecutionException {
         final String outputFile = "summary.xml";

@@ -2,6 +2,10 @@ package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 
 import java.io.InputStream;
 
+/**
+ * Monitor a stream.
+ * 
+ */
 public class StreamToBufferMonitor implements Runnable {
 
     private final InputStream inputStream;
