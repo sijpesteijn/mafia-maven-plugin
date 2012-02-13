@@ -75,11 +75,6 @@
 			<version>2.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.codehaus.plexus</groupId>
-			<artifactId>plexus-utils</artifactId>
-			<version>1.5.6</version>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.8.2</version>
@@ -90,7 +85,7 @@
 			<artifactId>fitnesse</artifactId>
 			<version>20111025</version>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
 			<version>2.18.0</version>
@@ -99,7 +94,7 @@
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-server</artifactId>
 			<version>2.18.0</version>
-		</dependency>
+		</dependency-->
 
 		<dependency>
 			<groupId>org.apache.maven.plugin-testing</groupId>
@@ -107,6 +102,17 @@
 			<version>1.2</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>3.0</version>
+        </dependency>
+		<!-- dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-container-default</artifactId>
+			<version>1.5.5</version>
+			<scope>test</scope>
+		</dependency -->
 	</dependencies>
 
 </project>
