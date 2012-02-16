@@ -112,7 +112,6 @@ public class FitnesseContentMojo extends AbstractMojo {
      * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ContentPluginConfig}
      * @throws DependencyResolutionRequiredException
      */
-    @SuppressWarnings("unchecked")
     private ContentPluginConfig getPluginConfig() throws MojoExecutionException {
         final Builder builder = PluginManagerFactory.getPluginConfigBuilder(ContentPluginConfig.class);
         builder.setWikiRoot(wikiRoot);

@@ -43,9 +43,9 @@ public class ContentPluginManager implements PluginManager {
         try {
             w = new FileWriter(content);
 
-            addEntries("Statics", contentPluginConfig.getStatics());
-            addEntries("Resources", contentPluginConfig.getResources());
-            addEntries("Targets", contentPluginConfig.getTargets());
+            addEntries("Statics", contentPluginConfig.getStatics(), "");
+            addEntries("Resources", contentPluginConfig.getResources(), "");
+            addEntries("Targets", contentPluginConfig.getTargets(), "/target/classes/");
 
             addCompileClasspathElements();
         } catch (final IOException e) {
@@ -87,13 +87,15 @@ public class ContentPluginManager implements PluginManager {
     private void addCompileClasspathElements() throws IOException {
         final List elements = contentPluginConfig.getCompileClasspathElements();
         w.write("Class Dependencies:" + DEF_RETURN);
-        for (int i = 0; i < elements.size(); i++) {
-            final String element = elements.get(i).toString().replace('\\', '/');
-            if (!isExcludeDependency(element)) {
-                if (element.endsWith("classes")) {
-                    w.write(DEF_PATH + element + "/" + DEF_RETURN);
-                } else {
-                    w.write(DEF_PATH + element + DEF_RETURN);
+        if (elements != null) {
+            for (int i = 0; i < elements.size(); i++) {
+                final String element = elements.get(i).toString().replace('\\', '/');
+                if (!isExcludeDependency(element)) {
+                    if (element.endsWith("classes")) {
+                        w.write(DEF_PATH + element + "/" + DEF_RETURN);
+                    } else {
+                        w.write(DEF_PATH + element + DEF_RETURN);
+                    }
                 }
             }
         }
@@ -130,13 +132,14 @@ public class ContentPluginManager implements PluginManager {
      *        {@link java.lang.String}
      * @param entries
      *        {@link java.util.List}
+     * @param suffix
      * @throws IOException
      */
-    private void addEntries(final String part, final List<String> entries) throws IOException {
+    private void addEntries(final String part, final List<String> entries, final String suffix) throws IOException {
         if (entries != null && !entries.isEmpty()) {
             w.write(part + ":" + DEF_RETURN);
             for (final String entry : entries) {
-                w.write(DEF_PATH + entry + DEF_RETURN);
+                w.write(DEF_PATH + entry + suffix + DEF_RETURN);
             }
         }
     }

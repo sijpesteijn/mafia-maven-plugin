@@ -18,7 +18,7 @@ public class LogUtils {
      * @return
      */
     public static String getString(final List<String> elements) {
-        if (elements.isEmpty()) {
+        if (elements == null || elements.isEmpty()) {
             return "[none]";
         }
         return StringUtils.join(elements, ",");
