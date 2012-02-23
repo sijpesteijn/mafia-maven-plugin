@@ -1,6 +1,7 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
 import java.util.Arrays;
+import java.util.List;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.managers.PluginManager;
 import nl.sijpesteijn.testing.fitnesse.plugins.managers.PluginManagerFactory;
@@ -8,12 +9,10 @@ import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.PluginConfig;
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StarterPluginConfig;
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StarterPluginConfig.Builder;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Goal to start a FitNesse instance
@@ -30,11 +29,11 @@ public class FitnesseStarterMojo extends AbstractMojo {
      * Note: This is passed by Maven and must not be configured by the user.
      * </p>
      * 
-     * @parameter expression="${project}"
+     * @parameter expression="${project.dependencies}"
      * @required
      * @readonly
      */
-    private MavenProject project;
+    private List<Dependency> dependencies;
 
     /**
      * Location of the local repository.
@@ -42,11 +41,11 @@ public class FitnesseStarterMojo extends AbstractMojo {
      * Note: This is passed by Maven and must not be configured by the user.
      * </p>
      * 
-     * @parameter expression="${localRepository}"
+     * @parameter expression="${localRepository.baseDir}"
      * @readonly
      * @required
      */
-    private ArtifactRepository local;
+    private String baseDir;
 
     /**
      * The port number FitNesse is running on.
@@ -115,7 +114,6 @@ public class FitnesseStarterMojo extends AbstractMojo {
      * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StarterPluginConfig}
      * @throws MojoExecutionException
      */
-    @SuppressWarnings("unchecked")
     private StarterPluginConfig getPluginConfig() throws MojoExecutionException {
         final Builder builder = PluginManagerFactory.getPluginConfigBuilder(StarterPluginConfig.class);
         builder.setPort(port);
@@ -125,8 +123,8 @@ public class FitnesseStarterMojo extends AbstractMojo {
         builder.setLogLocation(log);
         builder.setJvmArguments(Arrays.asList(jvmArguments));
         builder.setJvmDependencies(Arrays.asList(jvmDependencies));
-        builder.setDependencies(project.getDependencies());
-        builder.setBaseDir(local.getBasedir());
+        builder.setDependencies(dependencies);
+        builder.setBaseDir(baseDir);
         builder.setLogger(getLog());
         return builder.build();
     }
