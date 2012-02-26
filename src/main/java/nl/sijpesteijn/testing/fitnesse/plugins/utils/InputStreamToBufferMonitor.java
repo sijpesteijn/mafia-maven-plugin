@@ -6,12 +6,12 @@ import java.io.InputStream;
  * Monitor a stream.
  * 
  */
-public class StreamToBufferMonitor implements Runnable {
+public class InputStreamToBufferMonitor implements Runnable {
 
     private final InputStream inputStream;
     private final StringBuilder buffer;
 
-    public StreamToBufferMonitor(final InputStream inputStream, final StringBuilder buffer) {
+    public InputStreamToBufferMonitor(final InputStream inputStream, final StringBuilder buffer) {
         this.inputStream = inputStream;
         this.buffer = buffer;
     }

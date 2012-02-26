@@ -3,6 +3,7 @@ package nl.sijpesteijn.testing.fitnesse.plugins.managers;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ContentPluginConfig;
@@ -44,6 +45,7 @@ public class ContentPluginManager implements PluginManager {
 		try {
 			w = new FileWriter(content);
 
+			addPluginInfo();
 			addLines("Statics", contentPluginConfig.getStatics(), "", "");
 			addLines("Resources", contentPluginConfig.getResources(), DEF_PATH, "");
 			addLines("Targets", contentPluginConfig.getTargets(), DEF_PATH, "/target/classes/");
@@ -61,6 +63,13 @@ public class ContentPluginManager implements PluginManager {
 			}
 		}
 
+	}
+
+	private void addPluginInfo() throws IOException {
+		w.write("# File created by Mafia plugin on " + new Date().toString() + DEF_RETURN);
+		w.write("# Version: 1.0.0" + DEF_RETURN);
+		w.write("# More info: https://github.com/bird666/mafia-maven-plugin" + DEF_RETURN);
+		w.write(DEF_RETURN);
 	}
 
 	/**
@@ -89,14 +98,16 @@ public class ContentPluginManager implements PluginManager {
 	@SuppressWarnings("rawtypes")
 	private void addCompileClasspathElements() throws IOException {
 		final List elements = contentPluginConfig.getCompileClasspathElements();
-		w.write("!note Class Dependencies:" + DEF_RETURN);
-		for (int i = 0; i < elements.size(); i++) {
-			final String element = elements.get(i).toString().replace('\\', '/');
-			if (!isExcludeDependency(element)) {
-				if (element.endsWith("classes")) {
-					w.write(DEF_PATH + element + "/" + DEF_RETURN);
-				} else {
-					w.write(DEF_PATH + element + DEF_RETURN);
+		if (elements != null) {
+			w.write("!note Class Dependencies:" + DEF_RETURN);
+			for (int i = 0; i < elements.size(); i++) {
+				final String element = elements.get(i).toString().replace('\\', '/');
+				if (!isExcludeDependency(element)) {
+					if (element.endsWith("classes")) {
+						w.write(DEF_PATH + element + "/" + DEF_RETURN);
+					} else {
+						w.write(DEF_PATH + element + DEF_RETURN);
+					}
 				}
 			}
 		}
@@ -114,11 +125,13 @@ public class ContentPluginManager implements PluginManager {
 		if (classpathElement.endsWith("classes")) {
 			return false;
 		}
-		for (final Dependency excludeDependency : contentPluginConfig.getExcludeDependencies()) {
-			final String dependencyPath = resolver.resolveDependencyPath(excludeDependency,
-					contentPluginConfig.getBasedir());
-			if (dependencyPath.equals(classpathElement)) {
-				return true;
+		if (contentPluginConfig.getExcludeDependencies() != null) {
+			for (final Dependency excludeDependency : contentPluginConfig.getExcludeDependencies()) {
+				final String dependencyPath = resolver.resolveDependencyPath(excludeDependency,
+						contentPluginConfig.getBasedir());
+				if (dependencyPath.equals(classpathElement)) {
+					return true;
+				}
 			}
 		}
 		return false;

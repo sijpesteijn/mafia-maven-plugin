@@ -15,41 +15,42 @@ import org.apache.maven.plugin.MojoFailureException;
  */
 public class StopperPluginManager implements PluginManager {
 
-    private final StopperPluginConfig stopperPluginConfig;
-    private final DependencyResolver resolver = new DependencyResolver();
+	private final StopperPluginConfig stopperPluginConfig;
+	private final DependencyResolver resolver = new DependencyResolver();
 
-    /**
-     * 
-     * @param stopperPluginConfig
-     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StopperPluginConfig}
-     */
-    public StopperPluginManager(final StopperPluginConfig stopperPluginConfig) {
-        this.stopperPluginConfig = stopperPluginConfig;
-    }
+	/**
+	 * 
+	 * @param stopperPluginConfig
+	 *            {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StopperPluginConfig}
+	 */
+	public StopperPluginManager(final StopperPluginConfig stopperPluginConfig) {
+		this.stopperPluginConfig = stopperPluginConfig;
+	}
 
-    /**
-     * Stop FitNesse
-     */
-    @Override
-    public void run() throws MojoFailureException, MojoExecutionException {
-        final String jarLocation;
-        try {
-            jarLocation =
-                    resolver.getJarLocation(stopperPluginConfig.getDependencies(), "org/fitnesse/",
-                        stopperPluginConfig.getBasedir());
-        } catch (final MojoExecutionException mee) {
-            throw mee;
-        }
-        final String command = "java -cp " + jarLocation + " fitnesse.Shutdown -p " + stopperPluginConfig.getPort();
-        final CommandRunner runner = new CommandRunner();
-        try {
-            runner.start(command);
-        } catch (final IOException e) {
-            throw new MojoFailureException("Could not start FitNesse", e);
-        }
-        if (runner.errorBufferHasContent()) {
-            throw new MojoFailureException("Could not start FitNesse: " + runner.getErrorBufferMessage());
-        }
-    }
+	/**
+	 * Stop FitNesse
+	 */
+	@Override
+	public void run() throws MojoFailureException, MojoExecutionException {
+		final String jarLocation;
+		try {
+			jarLocation = resolver.getJarLocation(stopperPluginConfig.getDependencies(), "org/fitnesse/",
+					stopperPluginConfig.getBasedir());
+		} catch (final MojoExecutionException mee) {
+			throw mee;
+		}
+		final String command = "java -cp " + jarLocation + " fitnesse.Shutdown -p " + stopperPluginConfig.getPort();
+		final CommandRunner runner = new CommandRunner(stopperPluginConfig.getLog());
+		try {
+			runner.start(command, true, null);
+		} catch (final IOException e) {
+			throw new MojoFailureException("Could not stop FitNesse", e);
+		} catch (final InterruptedException e) {
+			throw new MojoFailureException("Could not stop FitNesse", e);
+		}
+		if (runner.errorBufferHasContent()) {
+			throw new MojoFailureException("Could not stop FitNesse: " + runner.getErrorBufferMessage());
+		}
+	}
 
 }

@@ -11,67 +11,67 @@ import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseContentMojo;
 
 import org.apache.maven.model.Dependency;
 
-public class FitnesseContentMojoTest extends AbstractFitNesseTestCase<FitnesseContentMojo> {
-    private static final String FITNESSE_ROOT = "FitNesseRoot";
-    private static final String TARGET = "/target/";
-    private FitnesseContentMojo mojo;
+public class FitnesseContentMojoTest extends AbstractFitNesseTestCase {
+	private static final String FITNESSE_ROOT = "FitNesseRoot";
+	private static final String TARGET = "/target/";
+	private FitnesseContentMojo mojo;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp("content");
-        mojo = configureFitNesseMojo(new FitnesseContentMojo());
-        this.setVariableValueToObject(mojo, "compileClasspathElements", createCompileClasspathElements());
-        this.setVariableValueToObject(mojo, "baseDir", REPO);
-        this.setVariableValueToObject(mojo, "wikiRoot", getTestDirectory() + TARGET);
-        this.setVariableValueToObject(mojo, "nameRootPage", FITNESSE_ROOT);
-    }
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		mojo = configureFitNesseMojo(new FitnesseContentMojo(), "content");
+		this.setVariableValueToObject(mojo, "compileClasspathElements", createCompileClasspathElements());
+		this.setVariableValueToObject(mojo, "baseDir", REPO);
+		this.setVariableValueToObject(mojo, "wikiRoot", getTestDirectory() + TARGET);
+		this.setVariableValueToObject(mojo, "nameRootPage", FITNESSE_ROOT);
+	}
 
-    private List<String> createCompileClasspathElements() {
-        final List<String> compileSourceRoots = new ArrayList<String>();
-        compileSourceRoots.add(REPO + JUNIT_JAR);
-        compileSourceRoots.add(REPO + LOG4J_JAR);
-        compileSourceRoots.add(getTestDirectory() + TARGET_CLASSES);
-        return compileSourceRoots;
-    }
+	private List<String> createCompileClasspathElements() {
+		final List<String> compileSourceRoots = new ArrayList<String>();
+		compileSourceRoots.add(REPO + JUNIT_JAR);
+		compileSourceRoots.add(REPO + LOG4J_JAR);
+		compileSourceRoots.add(getTestDirectory() + TARGET_CLASSES);
+		return compileSourceRoots;
+	}
 
-    @SuppressWarnings("rawtypes")
-    public void testCheckArguments() throws Exception {
-        final Map map = getVariablesAndValuesFromObject(mojo);
-        final String[] statics = (String[]) map.get("statics");
-        final String[] resources = (String[]) map.get("resources");
-        final String[] targets = (String[]) map.get("targets");
-        final Dependency[] excludeDependencies = (Dependency[]) map.get("excludeDependencies");
-        assertTrue(statics.length == 1);
-        assertTrue(statics[0].equals("!define TEST_SYSTEM {slim}"));
-        assertTrue(resources.length == 1);
-        assertTrue(resources[0].equals("./src/main/resources"));
-        assertTrue(targets.length == 1);
-        assertTrue(targets[0].equals("./domain"));
-        assertTrue(excludeDependencies.length == 1);
-        assertTrue(excludeDependencies[0].toString().equals(
-            "Dependency {groupId=log4j, artifactId=log4j, version=1.2.15, type=jar}"));
-    }
+	@SuppressWarnings("rawtypes")
+	public void testCheckArguments() throws Exception {
+		final Map map = getVariablesAndValuesFromObject(mojo);
+		final String[] statics = (String[]) map.get("statics");
+		final String[] resources = (String[]) map.get("resources");
+		final String[] targets = (String[]) map.get("targets");
+		final Dependency[] excludeDependencies = (Dependency[]) map.get("excludeDependencies");
+		assertTrue(statics.length == 1);
+		assertTrue(statics[0].equals("!define TEST_SYSTEM {slim}"));
+		assertTrue(resources.length == 1);
+		assertTrue(resources[0].equals("./src/main/resources"));
+		assertTrue(targets.length == 1);
+		assertTrue(targets[0].equals("./domain"));
+		assertTrue(excludeDependencies.length == 1);
+		assertTrue(excludeDependencies[0].toString().equals(
+				"Dependency {groupId=log4j, artifactId=log4j, version=1.2.15, type=jar}"));
+	}
 
-    public void testContentFile() throws Exception {
-        mojo.execute();
-        final String content = getContentFile();
-        assertTrue(content.contains("!define TEST_SYSTEM {slim}"));
-        assertTrue(content.contains("!path ./src/main/resources"));
-        assertTrue(content.contains("!path ./domain/target/classes/"));
-        assertTrue(content.contains("!path " + REPO + JUNIT_JAR));
-        assertFalse(content.contains("!path " + REPO + LOG4J_JAR));
-    }
+	public void testContentFile() throws Exception {
+		mojo.execute();
+		final String content = getContentFile();
+		assertTrue(content.contains("!define TEST_SYSTEM {slim}"));
+		assertTrue(content.contains("!path ./src/main/resources"));
+		assertTrue(content.contains("!path ./domain/target/classes/"));
+		assertTrue(content.contains("!path " + REPO + JUNIT_JAR));
+		assertFalse(content.contains("!path " + REPO + LOG4J_JAR));
+	}
 
-    private String getContentFile() throws Exception {
-        final StringBuilder contents = new StringBuilder();
-        final File file = new File(getTestDirectory() + TARGET + FITNESSE_ROOT + "/content.txt");
-        final BufferedReader input = new BufferedReader(new FileReader(file));
-        String line = null;
-        while ((line = input.readLine()) != null) {
-            contents.append(line);
-        }
-        input.close();
-        return contents.toString();
+	private String getContentFile() throws Exception {
+		final StringBuilder contents = new StringBuilder();
+		final File file = new File(getTestDirectory() + TARGET + FITNESSE_ROOT + "/content.txt");
+		final BufferedReader input = new BufferedReader(new FileReader(file));
+		String line = null;
+		while ((line = input.readLine()) != null) {
+			contents.append(line);
+		}
+		input.close();
+		return contents.toString();
 
-    }
+	}
 }

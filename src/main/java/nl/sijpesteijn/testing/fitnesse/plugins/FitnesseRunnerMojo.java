@@ -1,6 +1,7 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.managers.PluginManager;
 import nl.sijpesteijn.testing.fitnesse.plugins.managers.PluginManagerFactory;
@@ -146,11 +147,21 @@ public class FitnesseRunnerMojo extends AbstractMojo {
 		pluginConfigBuilder.setStopTestsOnFailure(stopTestsOnFailure);
 		pluginConfigBuilder.setStopTestsOnIgnore(stopTestsOnIgnore);
 		pluginConfigBuilder.setStopTestsOnWrong(stopTestsOnWrong);
-		pluginConfigBuilder.setTests(Arrays.asList(tests));
-		pluginConfigBuilder.setSuites(Arrays.asList(suites));
+		pluginConfigBuilder.setTests(createList(tests));
+		pluginConfigBuilder.setSuites(createList(suites));
 		pluginConfigBuilder.setSuiteFilter(suiteFilter);
 		pluginConfigBuilder.setSuitePageName(suitePageName);
 		return pluginConfigBuilder.build();
+	}
+
+	private List<String> createList(final String[] array) {
+		final List<String> list = new ArrayList<String>();
+		if (array != null) {
+			for (final String element : array) {
+				list.add(element);
+			}
+		}
+		return list;
 	}
 
 }
