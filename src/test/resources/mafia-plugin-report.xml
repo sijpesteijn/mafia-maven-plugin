@@ -20,8 +20,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <workDirectory>${basedir}/target/fitnesse</workDirectory>
-                    <fitnesseOutputDirectory>${basedir}/target/site/fitnesse</fitnesseOutputDirectory>
+                    <testResultsDirectory>${basedir}/target/fitnesse</testResultsDirectory>
                     <reportTemplate>${basedir}/src/main/resources/report.html</reportTemplate>
                 </configuration>
             </plugin>

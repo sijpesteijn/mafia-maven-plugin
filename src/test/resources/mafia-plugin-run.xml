@@ -22,7 +22,8 @@
                 <configuration>
                     <port>9091</port>
                     <fitnesseOutputDirectory>${basedir}/target/fitnesse/</fitnesseOutputDirectory>
-                    <wikiRoot>${basedir}/target</wikiRoot>
+                    <wikiRoot>${basedir}/target/</wikiRoot>
+                    <nameRootPage>FitNesseRoot</nameRootPage>
                     <stopTestsOnFailure>true</stopTestsOnFailure>
                     <tests>
                         <test>FrontPage.BuyMilk</test>

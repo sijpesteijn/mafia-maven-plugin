@@ -13,6 +13,7 @@ import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseStarterMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseStopperMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.SpecialPages;
 
+import org.apache.maven.doxia.siterenderer.DefaultSiteRenderer;
 import org.apache.maven.model.Dependency;
 import org.junit.Test;
 
@@ -35,14 +36,14 @@ public class IntegrationTest extends AbstractFitNesseTestCase {
 		// Stop if any fitnesse instance is running
 		stopFitNesse();
 		starterMojo.execute();
+		stopperMojo.execute();
 		contentMojo.execute();
-		createDummyTestsAndSuites();
+		createDummyTest();
 		runnerMojo.execute();
 		reportMojo.execute();
-		// stopperMojo.execute();
 	}
 
-	private void createDummyTestsAndSuites() throws IOException {
+	private void createDummyTest() throws IOException {
 		final StringBuilder dummytest = new StringBuilder();
 		dummytest.append("|should I buy milk|\n")
 				.append("|cash in wallet|credit card|pints of milk remaining|go to store?|\n")
@@ -78,6 +79,10 @@ public class IntegrationTest extends AbstractFitNesseTestCase {
 
 	private void setupFitNesseReportMojo() throws Exception {
 		reportMojo = configureFitNesseMojo(new FitnesseReportMojo(), "report");
+		setVariableValueToObject(reportMojo, "outputDirectory", getTestDirectory() + TARGET + File.separatorChar
+				+ "site");
+		// create a mock!!!
+		setVariableValueToObject(reportMojo, "siteRenderer", new DefaultSiteRenderer());
 	}
 
 	private void setupFitNesseRunnerMojo() throws Exception {
@@ -88,8 +93,6 @@ public class IntegrationTest extends AbstractFitNesseTestCase {
 		starterMojo = configureFitNesseMojo(new FitnesseStarterMojo(), "starter");
 		setVariableValueToObject(starterMojo, "dependencies", createDependencies());
 		setVariableValueToObject(starterMojo, "baseDir", REPO);
-		// setVariableValueToObject(starterMojo, "log", getTestDirectory() +
-		// "/log/");
 		setVariableValueToObject(starterMojo, "jvmArguments", new String[0]);
 		setVariableValueToObject(starterMojo, "jvmDependencies", new Dependency[0]);
 

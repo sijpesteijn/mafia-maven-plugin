@@ -38,6 +38,14 @@ public class FitnesseRunnerMojo extends AbstractMojo {
 	private String wikiRoot;
 
 	/**
+	 * The name of the wiki root page.
+	 * 
+	 * @parameter expression="${start.nameRootPage}"
+	 *            default-value="FitNesseRoot"
+	 */
+	private String nameRootPage;
+
+	/**
 	 * The directory where the Fitnesse reports have been generated.
 	 * 
 	 * @parameter expression="${run-tests.fitnesseReportDirectory}"
@@ -141,6 +149,7 @@ public class FitnesseRunnerMojo extends AbstractMojo {
 		final Builder pluginConfigBuilder = PluginManagerFactory.getPluginConfigBuilder(RunnerPluginConfig.class);
 		pluginConfigBuilder.setResultsListenerClass(resultsListenerClass);
 		pluginConfigBuilder.setWikiRoot(this.wikiRoot);
+		pluginConfigBuilder.setNameRootPage(this.nameRootPage);
 		pluginConfigBuilder.setFitNesseOutputDirectory(this.fitnesseOutputDirectory);
 		pluginConfigBuilder.setPort(this.port);
 		pluginConfigBuilder.setStopTestsOnException(stopTestsOnException);

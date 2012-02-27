@@ -1,71 +1,69 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs;
 
-import java.io.File;
-
 /**
  * Reporter plugin configuration.
  * 
  */
 public class ReporterPluginConfig implements PluginConfig {
 
-    private final File fitnesseOutputDirectory;
-    private final File outputDirectory;
-    private final String reportTemplate;
+	private final String fitnesseReportDirectory;
+	private final String testResultsDirectory;
+	private final String reportTemplate;
 
-    public ReporterPluginConfig(final File fitnesseOutputDirectory, final File outputDirectory,
-                                final String reportTemplate)
-    {
-        this.fitnesseOutputDirectory = fitnesseOutputDirectory;
-        this.outputDirectory = outputDirectory;
-        this.reportTemplate = reportTemplate;
-    }
+	public ReporterPluginConfig(final String fitnesseOutputDirectory, final String testResultsDirectory,
+			final String reportTemplate) {
+		this.fitnesseReportDirectory = fitnesseOutputDirectory;
+		this.testResultsDirectory = testResultsDirectory;
+		this.reportTemplate = reportTemplate;
+	}
 
-    /**
-     * The builder for this configuration
-     * 
-     */
-    public static class Builder implements PluginConfigBuilder {
+	/**
+	 * The builder for this configuration
+	 * 
+	 */
+	public static class Builder implements PluginConfigBuilder {
 
-        private File outputDirectory;
-        private File fitnesseOutputDirectory;
-        private String reportTemplate;
+		private String testResultsDirectory;
+		private String fitnesseReportDirectory;
+		private String reportTemplate;
 
-        public void setOutputDirectory(final File outputDirectory) {
-            this.outputDirectory = outputDirectory;
-        }
+		public void setTestResultsDirectory(final String testResultsDirectory) {
+			this.testResultsDirectory = testResultsDirectory;
+		}
 
-        public void setFitnesseOutputDirectory(final File fitnesseOutputDirectory) {
-            this.fitnesseOutputDirectory = fitnesseOutputDirectory;
-        }
+		public void setFitnesseReportDirectory(final String fitnesseReportDirectory) {
+			this.fitnesseReportDirectory = fitnesseReportDirectory;
+		}
 
-        public void setReportTemplate(final String reportTemplate) {
-            this.reportTemplate = reportTemplate;
-        }
+		public void setReportTemplate(final String reportTemplate) {
+			this.reportTemplate = reportTemplate;
+		}
 
-        public ReporterPluginConfig build() {
-            return new ReporterPluginConfig(this.fitnesseOutputDirectory, this.outputDirectory, this.reportTemplate);
-        }
+		public ReporterPluginConfig build() {
+			return new ReporterPluginConfig(this.fitnesseReportDirectory, this.testResultsDirectory,
+					this.reportTemplate);
+		}
 
-    }
+	}
 
-    public File getFitnesseOutputDirectory() {
-        return this.fitnesseOutputDirectory;
-    }
+	public String getFitnesseReportDirectory() {
+		return this.fitnesseReportDirectory;
+	}
 
-    public File getOutputDirectory() {
-        return outputDirectory;
-    }
+	public String getTestResultsDirectory() {
+		return testResultsDirectory;
+	}
 
-    public String getReportTemplate() {
-        return this.reportTemplate;
-    }
+	public String getReportTemplate() {
+		return this.reportTemplate;
+	}
 
-    /**
-     * Return plugin configuration in one big string.
-     */
-    @Override
-    public String toString() {
-        return "FitNesse Output Directory: " + this.fitnesseOutputDirectory + ", Output directory: "
-                + this.outputDirectory + ", Report template: " + this.reportTemplate;
-    }
+	/**
+	 * Return plugin configuration in one big string.
+	 */
+	@Override
+	public String toString() {
+		return "Testresults directory: " + this.testResultsDirectory + ",FitNesse report directory: "
+				+ this.fitnesseReportDirectory + ", Report template: " + this.reportTemplate;
+	}
 }

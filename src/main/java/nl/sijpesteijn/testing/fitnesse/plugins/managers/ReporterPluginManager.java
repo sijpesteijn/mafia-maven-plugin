@@ -52,8 +52,8 @@ public class ReporterPluginManager implements PluginManager {
 	public void run() throws MojoFailureException, MojoExecutionException {
 		try {
 			createIndexFile();
-			addFitNesseReports(reporterPluginConfig.getOutputDirectory(),
-					reporterPluginConfig.getFitnesseOutputDirectory());
+			addFitNesseReports(new File(reporterPluginConfig.getTestResultsDirectory()),
+					new File(reporterPluginConfig.getFitnesseReportDirectory()));
 		} catch (final IOException e) {
 			throw new MojoFailureException("Error copying fitnesse reports.", e);
 		}
@@ -66,9 +66,9 @@ public class ReporterPluginManager implements PluginManager {
 	 * @throws MojoFailureException
 	 */
 	private void createIndexFile() throws IOException, MojoFailureException {
-		final File index = new File(reporterPluginConfig.getOutputDirectory().getAbsolutePath() + "/index.html");
-		final List<File> reports = dirListByAscendingName(getReportsFormDirectory(reporterPluginConfig
-				.getOutputDirectory()));
+		final File testResultsDirectory = new File(reporterPluginConfig.getTestResultsDirectory());
+		final File index = new File(testResultsDirectory.getAbsolutePath() + "/index.html");
+		final List<File> reports = dirListByAscendingName(getReportsFormDirectory(testResultsDirectory));
 		final TestSummaryAndDuration testSummary = getTestSummaryAndDuration();
 		final FileWriter writer = new FileWriter(index);
 
@@ -91,7 +91,7 @@ public class ReporterPluginManager implements PluginManager {
 	private TestSummaryAndDuration getTestSummaryAndDuration() throws MojoFailureException {
 		final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder;
-		final String fileLocation = reporterPluginConfig.getOutputDirectory() + "/summary.xml";
+		final String fileLocation = reporterPluginConfig.getTestResultsDirectory() + "/summary.xml";
 		final TestSummaryAndDuration summary;
 		try {
 			docBuilder = docBuilderFactory.newDocumentBuilder();
