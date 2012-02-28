@@ -93,9 +93,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.maven.doxia</groupId>
-			<artifactId>doxia-site-renderer</artifactId>
-			<version>1.2</version>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

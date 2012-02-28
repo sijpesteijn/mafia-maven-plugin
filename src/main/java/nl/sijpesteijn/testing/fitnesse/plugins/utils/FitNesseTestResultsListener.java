@@ -1,13 +1,15 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 
+import java.io.IOException;
+
 import org.apache.maven.plugin.logging.Log;
 
 import util.TimeMeasurement;
 import fitnesse.responders.run.CompositeExecutionLog;
 import fitnesse.responders.run.ResultsListener;
+import fitnesse.responders.run.TestPage;
 import fitnesse.responders.run.TestSummary;
 import fitnesse.responders.run.TestSystem;
-import fitnesse.wiki.WikiPage;
 
 /**
  * TODO do something with this information.
@@ -18,11 +20,6 @@ public class FitNesseTestResultsListener implements ResultsListener {
 
     public FitNesseTestResultsListener(final Log log) {
         this.log = log;
-    }
-
-    @Override
-    public void allTestingComplete(final TimeMeasurement arg0) throws Exception {
-        // log.info("allTestingComplete");
     }
 
     @Override
@@ -37,32 +34,40 @@ public class FitNesseTestResultsListener implements ResultsListener {
     }
 
     @Override
-    public void newTestStarted(final WikiPage arg0, final TimeMeasurement arg1) throws Exception {
-        // log.info("newTestStarted");
+    public void newTestStarted(final TestPage test, final TimeMeasurement timeMeasurement) throws IOException {
+        // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void setExecutionLogAndTrackingId(final String arg0, final CompositeExecutionLog arg1) throws Exception {
-        // log.info("setExecutionLogAndTrackingId");
+    public void testComplete(final TestPage test, final TestSummary testSummary, final TimeMeasurement timeMeasurement)
+            throws IOException
+    {
+        // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void testComplete(final WikiPage arg0, final TestSummary arg1, final TimeMeasurement arg2) throws Exception {
-        // log.info("testComplete");
+    public void allTestingComplete(final TimeMeasurement totalTimeMeasurement) throws IOException {
+        // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void testOutputChunk(final String arg0) throws Exception {
-        // log.info("testOutputChunk");
+    public void setExecutionLogAndTrackingId(final String stopResponderId, final CompositeExecutionLog log) {
+        // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void testSystemStarted(final TestSystem arg0, final String arg1, final String arg2) throws Exception {
-        // log.info("testSystemStarted");
+    public void testSystemStarted(final TestSystem testSystem, final String testSystemName, final String testRunner) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void testOutputChunk(final String output) throws IOException {
+        // TODO Auto-generated method stub
 
     }
 
