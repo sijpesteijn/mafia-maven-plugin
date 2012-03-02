@@ -11,6 +11,11 @@ import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseContentMojo;
 
 import org.apache.maven.model.Dependency;
 
+/**
+ * 
+ * This test covers configuration test and output verifications
+ * 
+ */
 public class FitnesseContentMojoTest extends AbstractFitNesseTestCase {
 	private static final String FITNESSE_ROOT = "FitNesseRoot";
 	private static final String TARGET = "/target/";
@@ -20,10 +25,10 @@ public class FitnesseContentMojoTest extends AbstractFitNesseTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		mojo = configureFitNesseMojo(new FitnesseContentMojo(), "content");
-		this.setVariableValueToObject(mojo, "compileClasspathElements", createCompileClasspathElements());
-		this.setVariableValueToObject(mojo, "baseDir", REPO);
-		this.setVariableValueToObject(mojo, "wikiRoot", getTestDirectory() + TARGET);
-		this.setVariableValueToObject(mojo, "nameRootPage", FITNESSE_ROOT);
+		setVariableValueToObject(mojo, "compileClasspathElements", createCompileClasspathElements());
+		setVariableValueToObject(mojo, "baseDir", REPO);
+		setVariableValueToObject(mojo, "wikiRoot", getTestDirectory() + TARGET);
+		setVariableValueToObject(mojo, "nameRootPage", FITNESSE_ROOT);
 	}
 
 	private List<String> createCompileClasspathElements() {
@@ -41,10 +46,11 @@ public class FitnesseContentMojoTest extends AbstractFitNesseTestCase {
 		final String[] resources = (String[]) map.get("resources");
 		final String[] targets = (String[]) map.get("targets");
 		final Dependency[] excludeDependencies = (Dependency[]) map.get("excludeDependencies");
-		assertTrue(statics.length == 1);
+		assertTrue(statics.length == 2);
 		assertTrue(statics[0].equals("!define TEST_SYSTEM {slim}"));
+		assertTrue(statics[1].equals("!define fixturePackage {fitnesse.slim.test}"));
 		assertTrue(resources.length == 1);
-		assertTrue(resources[0].equals("./src/main/resources"));
+		assertTrue(resources[0].equals(getTestDirectory() + "src/main/resources"));
 		assertTrue(targets.length == 1);
 		assertTrue(targets[0].equals("./domain"));
 		assertTrue(excludeDependencies.length == 1);
@@ -56,7 +62,7 @@ public class FitnesseContentMojoTest extends AbstractFitNesseTestCase {
 		mojo.execute();
 		final String content = getContentFile();
 		assertTrue(content.contains("!define TEST_SYSTEM {slim}"));
-		assertTrue(content.contains("!path ./src/main/resources"));
+		assertTrue(content.contains("!path " + getTestDirectory() + "src/main/resources"));
 		assertTrue(content.contains("!path ./domain/target/classes/"));
 		assertTrue(content.contains("!path " + REPO + JUNIT_JAR));
 		assertFalse(content.contains("!path " + REPO + LOG4J_JAR));

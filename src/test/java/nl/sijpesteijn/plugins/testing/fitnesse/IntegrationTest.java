@@ -6,7 +6,9 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -28,117 +30,135 @@ import org.junit.Test;
 
 public class IntegrationTest extends AbstractFitNesseTestCase {
 
-    private FitnesseContentMojo contentMojo;
-    private FitnesseStarterMojo starterMojo;
-    private FitnesseRunnerMojo runnerMojo;
-    private FitnesseReportMojo reportMojo;
-    private FitnesseStopperMojo stopperMojo;
-    private Renderer rendererMock;
+	private FitnesseContentMojo contentMojo;
+	private FitnesseStarterMojo starterMojo;
+	private FitnesseRunnerMojo runnerMojo;
+	private FitnesseReportMojo reportMojo;
+	private FitnesseStopperMojo stopperMojo;
+	private Renderer rendererMock;
 
-    @Test
-    public void testSetupPluginIntegration() throws Exception {
-        setupFitNesseStarterMojo();
-        setupFitNesseContentMojo();
-        setupFitNesseRunnerMojo();
-        setupFitNesseReportMojo();
-        setupFitNesseStopperMojo();
+	@Test
+	public void testSetupPluginIntegration() throws Exception {
+		setupFitNesseStarterMojo();
+		setupFitNesseContentMojo();
+		setupFitNesseRunnerMojo();
+		setupFitNesseReportMojo();
+		setupFitNesseStopperMojo();
 
-        rendererMock.generateDocument(isA(OutputStreamWriter.class), isA(SiteRendererSink.class),
-            isA(SiteRenderingContext.class));
-        expectLastCall();
-        replay(rendererMock);
-        // Stop if any fitnesse instance is running
-        stopFitNesse();
-        starterMojo.execute();
-        stopperMojo.execute();
-        contentMojo.execute();
-        createDummyTest();
-        runnerMojo.execute();
-        reportMojo.execute();
-        verify(rendererMock);
-    }
+		// Stop if any fitnesse instance is running
+		stopFitNesse();
+		starterMojo.execute();
+		stopperMojo.execute();
+		contentMojo.execute();
+		createDummyTest();
+		runnerMojo.execute();
 
-    private void createDummyTest() throws IOException {
-        final StringBuilder dummytest = new StringBuilder();
-        dummytest.append("|should I buy milk|\n")
-            .append("|cash in wallet|credit card|pints of milk remaining|go to store?|\n")
-            .append("|      0       |    no     |      0                |    no      |\n")
-            .append("|      10      |    no     |      0                |    yes     |\n");
-        final String nameRootPage = getTestDirectory() + TARGET + File.separatorChar + FITNESSE_ROOT;
-        final File setupDir = new File(nameRootPage + "/FrontPage/BuyMilk/");
-        setupDir.mkdirs();
-        final File contentTxtFile = new File(nameRootPage + "/FrontPage/BuyMilk/" + "content.txt");
-        final FileWriter contentFileWriter = new FileWriter(contentTxtFile);
-        contentFileWriter.write(dummytest.toString());
-        contentFileWriter.close();
-        final File propertiesXmlFile = new File(nameRootPage + "/FrontPage/BuyMilk/" + "properties.xml");
-        final FileWriter propertiesFileWriter = new FileWriter(propertiesXmlFile);
-        propertiesFileWriter.write(SpecialPages.PropertiesXml.replace("</properties>", "<Test/></properties>"));
-        propertiesFileWriter.close();
+		rendererMock.generateDocument(isA(OutputStreamWriter.class), isA(SiteRendererSink.class),
+				isA(SiteRenderingContext.class));
+		expectLastCall();
+		replay(rendererMock);
+		reportMojo.execute();
+		verify(rendererMock);
 
-    }
+		final String report = getReport();
+		assertTrue(report.contains("success: 2"));
+		assertTrue(report.contains("failure: 0"));
+		assertTrue(report.contains("exceptions: 0"));
+		assertTrue(report.contains("ignores: 0"));
+	}
 
-    private void stopFitNesse() {
-        try {
-            stopperMojo.execute();
-        } catch (final Exception e) {
+	private String getReport() throws IOException {
+		final StringBuilder contents = new StringBuilder();
+		final File file = new File(getTestDirectory() + TARGET + "/site/index.html");
+		final BufferedReader input = new BufferedReader(new FileReader(file));
+		String line = null;
+		while ((line = input.readLine()) != null) {
+			contents.append(line);
+		}
+		input.close();
+		return contents.toString();
+	}
 
-        }
-    }
+	private void createDummyTest() throws IOException {
+		final StringBuilder dummytest = new StringBuilder();
+		dummytest.append("|should I buy milk|\n")
+				.append("|cash in wallet|credit card|pints of milk remaining|go to store?|\n")
+				.append("|      0       |    no     |      0                |    no      |\n")
+				.append("|      10      |    no     |      0                |    yes     |\n");
+		final String nameRootPage = getTestDirectory() + TARGET + File.separatorChar + FITNESSE_ROOT;
+		final File setupDir = new File(nameRootPage + "/FrontPage/BuyMilk/");
+		setupDir.mkdirs();
+		final File contentTxtFile = new File(nameRootPage + "/FrontPage/BuyMilk/" + "content.txt");
+		final FileWriter contentFileWriter = new FileWriter(contentTxtFile);
+		contentFileWriter.write(dummytest.toString());
+		contentFileWriter.close();
+		final File propertiesXmlFile = new File(nameRootPage + "/FrontPage/BuyMilk/" + "properties.xml");
+		final FileWriter propertiesFileWriter = new FileWriter(propertiesXmlFile);
+		propertiesFileWriter.write(SpecialPages.PropertiesXml.replace("</properties>", "<Test/></properties>"));
+		propertiesFileWriter.close();
 
-    private void setupFitNesseStopperMojo() throws Exception {
-        stopperMojo = configureFitNesseMojo(new FitnesseStopperMojo(), "stop");
-        setVariableValueToObject(stopperMojo, "dependencies", createDependencies());
-        setVariableValueToObject(stopperMojo, "baseDir", REPO);
-    }
+	}
 
-    private void setupFitNesseReportMojo() throws Exception {
-        reportMojo = configureFitNesseMojo(new FitnesseReportMojo(), "report");
-        setVariableValueToObject(reportMojo, "outputDirectory", getTestDirectory() + TARGET + File.separatorChar
-                + "site");
-        rendererMock = createMock(Renderer.class);
-        // create a mock!!!
-        setVariableValueToObject(reportMojo, "siteRenderer", rendererMock);
-    }
+	private void stopFitNesse() {
+		try {
+			stopperMojo.execute();
+		} catch (final Exception e) {
 
-    private void setupFitNesseRunnerMojo() throws Exception {
-        runnerMojo = configureFitNesseMojo(new FitnesseRunnerMojo(), "run");
-    }
+		}
+	}
 
-    private void setupFitNesseStarterMojo() throws Exception {
-        starterMojo = configureFitNesseMojo(new FitnesseStarterMojo(), "starter");
-        setVariableValueToObject(starterMojo, "dependencies", createDependencies());
-        setVariableValueToObject(starterMojo, "baseDir", REPO);
-        setVariableValueToObject(starterMojo, "jvmArguments", new String[0]);
-        setVariableValueToObject(starterMojo, "jvmDependencies", new Dependency[0]);
+	private void setupFitNesseStopperMojo() throws Exception {
+		stopperMojo = configureFitNesseMojo(new FitnesseStopperMojo(), "stop");
+		setVariableValueToObject(stopperMojo, "dependencies", createDependencies());
+		setVariableValueToObject(stopperMojo, "baseDir", REPO);
+	}
 
-    }
+	private void setupFitNesseReportMojo() throws Exception {
+		reportMojo = configureFitNesseMojo(new FitnesseReportMojo(), "report");
+		setVariableValueToObject(reportMojo, "outputDirectory", getTestDirectory() + TARGET + File.separatorChar
+				+ "site");
+		rendererMock = createMock(Renderer.class);
+		setVariableValueToObject(reportMojo, "siteRenderer", rendererMock);
+	}
 
-    private void setupFitNesseContentMojo() throws Exception, IllegalAccessException {
-        contentMojo = configureFitNesseMojo(new FitnesseContentMojo(), "content");
-        final List<String> compileClasspathElements = createCompileClasspathElements();
-        setVariableValueToObject(contentMojo, "compileClasspathElements", compileClasspathElements);
-        setVariableValueToObject(contentMojo, "baseDir", REPO);
-        setVariableValueToObject(contentMojo, "wikiRoot", getTestDirectory() + TARGET);
-        setVariableValueToObject(contentMojo, "nameRootPage", FITNESSE_ROOT);
-    }
+	private void setupFitNesseRunnerMojo() throws Exception {
+		runnerMojo = configureFitNesseMojo(new FitnesseRunnerMojo(), "run");
+	}
 
-    private List<String> createCompileClasspathElements() {
-        final List<String> compileSourceRoots = new ArrayList<String>();
-        compileSourceRoots.add(REPO + JUNIT_JAR);
-        compileSourceRoots.add(REPO + LOG4J_JAR);
-        compileSourceRoots.add(REPO + FITNESSE_JAR);
-        compileSourceRoots.add(getTestDirectory() + TARGET_CLASSES);
-        return compileSourceRoots;
-    }
+	private void setupFitNesseStarterMojo() throws Exception {
+		starterMojo = configureFitNesseMojo(new FitnesseStarterMojo(), "starter");
+		setVariableValueToObject(starterMojo, "dependencies", createDependencies());
+		setVariableValueToObject(starterMojo, "baseDir", REPO);
+		setVariableValueToObject(starterMojo, "jvmArguments", new String[0]);
+		setVariableValueToObject(starterMojo, "jvmDependencies", new Dependency[0]);
 
-    private List<Dependency> createDependencies() {
-        final List<Dependency> dependencies = new ArrayList<Dependency>();
-        final Dependency fitnesse = new Dependency();
-        fitnesse.setArtifactId("fitnesse");
-        fitnesse.setGroupId("org.fitnesse");
-        fitnesse.setVersion("20111025");
-        dependencies.add(fitnesse);
-        return dependencies;
-    }
+	}
+
+	private void setupFitNesseContentMojo() throws Exception, IllegalAccessException {
+		contentMojo = configureFitNesseMojo(new FitnesseContentMojo(), "content");
+		final List<String> compileClasspathElements = createCompileClasspathElements();
+		setVariableValueToObject(contentMojo, "compileClasspathElements", compileClasspathElements);
+		setVariableValueToObject(contentMojo, "baseDir", REPO);
+		setVariableValueToObject(contentMojo, "wikiRoot", getTestDirectory() + TARGET);
+		setVariableValueToObject(contentMojo, "nameRootPage", FITNESSE_ROOT);
+	}
+
+	private List<String> createCompileClasspathElements() {
+		final List<String> compileSourceRoots = new ArrayList<String>();
+		compileSourceRoots.add(REPO + JUNIT_JAR);
+		compileSourceRoots.add(REPO + LOG4J_JAR);
+		compileSourceRoots.add(REPO + FITNESSE_JAR);
+		compileSourceRoots.add(getTestDirectory() + TARGET_CLASSES);
+		return compileSourceRoots;
+	}
+
+	private List<Dependency> createDependencies() {
+		final List<Dependency> dependencies = new ArrayList<Dependency>();
+		final Dependency fitnesse = new Dependency();
+		fitnesse.setArtifactId("fitnesse");
+		fitnesse.setGroupId("org.fitnesse");
+		fitnesse.setVersion("20111025");
+		dependencies.add(fitnesse);
+		return dependencies;
+	}
 }

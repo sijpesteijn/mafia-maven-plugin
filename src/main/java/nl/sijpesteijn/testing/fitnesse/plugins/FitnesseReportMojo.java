@@ -103,7 +103,7 @@ public class FitnesseReportMojo extends AbstractMavenReport {
 	 * @return Get the mavenproject. Passed by Maven
 	 */
 	@Override
-	protected MavenProject getProject() {
+	public MavenProject getProject() {
 		return this.project;
 	}
 

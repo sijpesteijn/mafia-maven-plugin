@@ -7,9 +7,13 @@ import java.util.Map;
 import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseStarterMojo;
 
 import org.apache.maven.model.Dependency;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 
+/**
+ * 
+ * Test only covers configuration test. Execution test is done in
+ * {@link nl.sijpesteijn.plugins.testing.fitnesse.IntegrationTest}
+ * 
+ */
 public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
 	private FitnesseStarterMojo mojo;
 
@@ -24,8 +28,8 @@ public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
 	}
 
 	private List<Dependency> createDependencies() {
-		List<Dependency> dependencies = new ArrayList<Dependency>();
-		Dependency fitnesse = new Dependency();
+		final List<Dependency> dependencies = new ArrayList<Dependency>();
+		final Dependency fitnesse = new Dependency();
 		fitnesse.setArtifactId("fitnesse");
 		fitnesse.setGroupId("org.fitnesse");
 		fitnesse.setVersion("20111025");
@@ -33,6 +37,7 @@ public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
 		return dependencies;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void testConfiguration() throws Exception {
 		final Map map = getVariablesAndValuesFromObject(mojo);
 		final String port = (String) map.get("port");
@@ -45,13 +50,4 @@ public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
 		assertTrue(nameRootPage.equals("FitNesseRoot"));
 	}
 
-	public void testExecute() throws Exception {
-		try {
-			mojo.execute();
-		} catch (MojoExecutionException mee) {
-			fail(mee.getMessage());
-		} catch (MojoFailureException mfe) {
-			fail(mfe.getMessage());
-		}
-	}
 }

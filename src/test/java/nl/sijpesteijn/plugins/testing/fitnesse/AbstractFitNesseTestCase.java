@@ -12,7 +12,7 @@ public abstract class AbstractFitNesseTestCase extends AbstractMojoTestCase {
 	protected static final String FITNESSE_JAR = "org/fitnesse/fitnesse/20111025/fitnesse-20111025.jar";
 	protected static final String TARGET_CLASSES = "target/classes";
 	protected static final String FITNESSE_ROOT = "FitNesseRoot";
-	protected static final String TARGET = "/target/";
+	protected static final String TARGET = "target";
 
 	private String testDirectory;
 	protected String REPO;
@@ -23,11 +23,11 @@ public abstract class AbstractFitNesseTestCase extends AbstractMojoTestCase {
 		return (F) configureMojo(fitNesseMojo, extractPluginConfiguration("mafia-maven-plugin", pom));
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		testDirectory = new File("").getAbsolutePath() + File.separatorChar;
 		REPO = testDirectory + "src" + File.separatorChar + "test" + File.separatorChar + "resources"
 				+ File.separatorChar + "repo" + File.separatorChar;
-
 		super.setUp();
 	}
 

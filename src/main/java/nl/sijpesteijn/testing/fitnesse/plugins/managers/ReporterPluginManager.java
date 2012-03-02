@@ -140,24 +140,23 @@ public class ReporterPluginManager implements PluginManager {
 	 *            {@link java.util.List}
 	 * @return {@link java.lang.String}
 	 */
-	private String resolvePlaceHolders(final String line, final TestSummaryAndDuration testSummary,
-			final List<File> reports) {
+	private String resolvePlaceHolders(String line, final TestSummaryAndDuration testSummary, final List<File> reports) {
 		if (line.contains("${success}")) {
-			line.replace("${success}", "" + testSummary.getRight());
+			line = line.replace("${success}", "" + testSummary.getRight());
 		}
 		if (line.contains("${failure}")) {
-			line.replace("${failure}", "" + testSummary.getWrong());
+			line = line.replace("${failure}", "" + testSummary.getWrong());
 		}
 		if (line.contains("${exception}")) {
-			line.replace("${exception}", "" + testSummary.getExceptions());
+			line = line.replace("${exception}", "" + testSummary.getExceptions());
 		}
 		if (line.contains("${ignore}")) {
-			line.replace("${ignore}", "" + testSummary.getIgnores());
+			line = line.replace("${ignore}", "" + testSummary.getIgnores());
 		}
 		if (line.contains("${time}")) {
-			line.replace("${time}", "" + testSummary.getDuration());
+			line = line.replace("${time}", "" + testSummary.getDuration());
 		}
-		if (line.contains("${time}")) {
+		if (line.contains("${reports}")) {
 			String reportLine = "<ul>";
 			for (final File report : reports) {
 				if (isNotIndexFile(report))
@@ -165,7 +164,7 @@ public class ReporterPluginManager implements PluginManager {
 							+ "</a></li>\n";
 			}
 			reportLine += "</ul>";
-			line.replace("${reports}", reportLine);
+			line = line.replace("${reports}", reportLine);
 		}
 
 		return line;

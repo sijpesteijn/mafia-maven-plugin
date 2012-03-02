@@ -13,14 +13,17 @@ import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ContentPluginConfig
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ContentPluginConfig.Builder;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class ContentPluginManagerTest extends AbstractPluginManagerTest {
 
 	private static final String TARGET = "target/";
 	private static final String FITNESSE_ROOT = "FitNesseRoot";
 	private Builder builder;
 
+	@Override
 	@Before
 	public void setup() {
 		super.setup();
@@ -39,11 +42,11 @@ public class ContentPluginManagerTest extends AbstractPluginManagerTest {
 
 	@Test
 	public void createContent() throws Exception {
-		List<String> statics = new ArrayList<String>();
+		final List<String> statics = new ArrayList<String>();
 		statics.add("!define SOME_VAR {value}");
 		statics.add("!define TEST_SYSTEM {slim}");
 		builder.setStatics(statics);
-		List<String> compileClasspathElements = new ArrayList<String>();
+		final List<String> compileClasspathElements = new ArrayList<String>();
 		compileClasspathElements.add(REPO + JUNIT_JAR);
 		compileClasspathElements.add(REPO + LOG4J_JAR);
 		compileClasspathElements.add(REPO + FITNESSE_JAR);

@@ -8,6 +8,12 @@ import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseStopperMojo;
 
 import org.apache.maven.model.Dependency;
 
+/**
+ * 
+ * Test only covers configuration test. Execution test is done in
+ * {@link nl.sijpesteijn.plugins.testing.fitnesse.IntegrationTest}
+ * 
+ */
 public class FitNesseStopperMojoTest extends AbstractFitNesseTestCase {
 	private FitnesseStopperMojo mojo;
 
@@ -20,8 +26,8 @@ public class FitNesseStopperMojoTest extends AbstractFitNesseTestCase {
 	}
 
 	private List<Dependency> createDependencies() {
-		List<Dependency> dependencies = new ArrayList<Dependency>();
-		Dependency fitnesse = new Dependency();
+		final List<Dependency> dependencies = new ArrayList<Dependency>();
+		final Dependency fitnesse = new Dependency();
 		fitnesse.setArtifactId("fitnesse");
 		fitnesse.setGroupId("org.fitnesse");
 		fitnesse.setVersion("20111025");
@@ -29,6 +35,7 @@ public class FitNesseStopperMojoTest extends AbstractFitNesseTestCase {
 		return dependencies;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void testConfiguration() throws Exception {
 		final Map map = getVariablesAndValuesFromObject(mojo);
 		final String port = (String) map.get("port");
