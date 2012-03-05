@@ -18,7 +18,7 @@ command: mvn mafia:content
 
 This maven goal will create the content.txt file, root page, for FitNesse, filling it with 
 classpath entries (!path <location>) and definitions (!define <definition>).
-Besides the compile and runtime dependencies, it will write the configuration, if provided to the same file (content.txt).
+Besides the compile and runtime dependencies, it will write the configuration, if provided, to the same file (content.txt).
 
 Configuration:
  
