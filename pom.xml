@@ -3,7 +3,7 @@
 	<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 	<artifactId>mafia-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>mafia-maven-plugin Maven Mojo</name>
 	<description>A maven plugin for FitNesse</description>
 
