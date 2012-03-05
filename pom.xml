@@ -8,7 +8,7 @@
 	<name>mafia-maven-plugin Maven Mojo</name>
 	<description>A maven plugin for FitNesse</description>
 
-	<url>https://github.com/bird666/mafia-maven-plugin</url>
+	<url>https://github.com/sijpesteijn/mafia-maven-plugin</url>
 
 	<licenses>
 		<license>
@@ -30,9 +30,9 @@
 	</developers>
 
 	<scm>
-		<developerConnection>scm:git@github.com:bird666/mafia-maven-plugin.git</developerConnection>
-		<connection>scm:git:git@github.com:bird666/mafia-maven-plugin.git</connection>
-		<url>git@github.com:bird666/mafia-maven-plugin.git</url>
+		<developerConnection>scm:git:git@github.com:sijpesteijn/mafia-maven-plugin.git</developerConnection>
+		<connection>scm:git:git@github.com:sijpesteijn/mafia-maven-plugin.git</connection>
+		<url>https://github.com/sijpesteijn/mafia-maven-plugin</url>
 	</scm>
 
 	<properties>
