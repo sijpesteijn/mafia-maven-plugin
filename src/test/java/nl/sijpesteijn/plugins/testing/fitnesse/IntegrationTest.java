@@ -96,7 +96,6 @@ public class IntegrationTest extends AbstractFitNesseTestCase {
 		final FileWriter propertiesFileWriter = new FileWriter(propertiesXmlFile);
 		propertiesFileWriter.write(SpecialPages.PropertiesXml.replace("</properties>", "<Test/></properties>"));
 		propertiesFileWriter.close();
-
 	}
 
 	private void stopFitNesse() {

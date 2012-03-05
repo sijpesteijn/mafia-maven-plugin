@@ -8,6 +8,7 @@
     <name>mafia-maven-plugin Maven Mojo</name>
     <description>A maven plugin for FitNesse</description>
     
+    
 	<build>
 		<plugins>
             <plugin>

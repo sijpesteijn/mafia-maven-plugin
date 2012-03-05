@@ -78,6 +78,5 @@ public class FitnesseContentMojoTest extends AbstractFitNesseTestCase {
 		}
 		input.close();
 		return contents.toString();
-
 	}
 }

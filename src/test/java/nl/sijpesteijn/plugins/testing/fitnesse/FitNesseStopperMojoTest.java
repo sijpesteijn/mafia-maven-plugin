@@ -41,5 +41,4 @@ public class FitNesseStopperMojoTest extends AbstractFitNesseTestCase {
 		final String port = (String) map.get("port");
 		assertTrue(port.equals("9090"));
 	}
-
 }

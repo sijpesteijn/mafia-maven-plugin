@@ -18,8 +18,7 @@ command: mvn mafia:content
 
 This maven goal will create the content.txt file, root page, for FitNesse, filling it with 
 classpath entries (!path <location>) and definitions (!define <definition>).
-Besides the compile and runtime dependencies, it will write the configuration
-you can provide to the same file.
+Besides the compile and runtime dependencies, it will write the configuration, if provided to the same file (content.txt).
 
 Configuration:
  
@@ -149,7 +148,7 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 **4 - COLLECT REPORTING.**
 
 goal: collect-report  
-phase: post-site  
+phase: site  
 command: mvn mafia:collect-report  
 
 This maven goal will generate a report of the last run tests. 
