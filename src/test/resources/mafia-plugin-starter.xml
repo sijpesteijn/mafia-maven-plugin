@@ -8,13 +8,6 @@
     <name>mafia-maven-plugin Maven Mojo</name>
     <description>A maven plugin for FitNesse</description>
     
-    <dependencies>
-        <dependency>
-            <groupId>org.fitnesse</groupId>
-            <artifactId>fitnesse</artifactId>
-            <version>20111025</version>
-        </dependency>
-    </dependencies>
     
 	<build>
 		<plugins>

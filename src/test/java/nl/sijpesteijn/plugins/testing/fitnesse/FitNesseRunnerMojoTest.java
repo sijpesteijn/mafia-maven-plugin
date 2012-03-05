@@ -9,7 +9,6 @@ import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseRunnerMojo;
  * 
  * Test only covers configuration test. Execution test is done in
  * {@link nl.sijpesteijn.plugins.testing.fitnesse.IntegrationTest}
- * 
  */
 public class FitNesseRunnerMojoTest extends AbstractFitNesseTestCase {
 	private FitnesseRunnerMojo mojo;

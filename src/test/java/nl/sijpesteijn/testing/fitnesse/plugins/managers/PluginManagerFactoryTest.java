@@ -25,6 +25,5 @@ public class PluginManagerFactoryTest {
 	}
 
 	class StubPluginConfig implements PluginConfig {
-
 	}
 }

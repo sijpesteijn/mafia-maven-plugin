@@ -12,7 +12,6 @@ import org.apache.maven.model.Dependency;
  * 
  * Test only covers configuration test. Execution test is done in
  * {@link nl.sijpesteijn.plugins.testing.fitnesse.IntegrationTest}
- * 
  */
 public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
 	private FitnesseStarterMojo mojo;
@@ -49,5 +48,4 @@ public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
 		assertTrue(wikiRoot.equals(getTestDirectory() + "target/"));
 		assertTrue(nameRootPage.equals("FitNesseRoot"));
 	}
-
 }

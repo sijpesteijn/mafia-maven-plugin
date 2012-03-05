@@ -17,5 +17,4 @@ public class AbstractPluginManagerTest {
 		REPO = testDirectory + "src" + File.separatorChar + "test" + File.separatorChar + "resources"
 				+ File.separatorChar + "repo" + File.separatorChar;
 	}
-
 }

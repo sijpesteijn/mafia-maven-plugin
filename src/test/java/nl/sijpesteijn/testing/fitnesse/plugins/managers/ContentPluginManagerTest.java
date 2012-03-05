@@ -66,7 +66,6 @@ public class ContentPluginManagerTest extends AbstractPluginManagerTest {
 		}
 		input.close();
 		return contents.toString();
-
 	}
 
 }
