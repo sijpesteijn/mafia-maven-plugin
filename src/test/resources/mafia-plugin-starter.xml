@@ -23,7 +23,7 @@
                 <configuration>
                     <port>9090</port>
                     <retainDays>14</retainDays>
-                    <wikiRoot>${basedir}/target/</wikiRoot>
+                    <wikiRoot>${basedir}/target</wikiRoot>
                     <nameRootPage>FitNesseRoot</nameRootPage>
                 </configuration>
             </plugin>
