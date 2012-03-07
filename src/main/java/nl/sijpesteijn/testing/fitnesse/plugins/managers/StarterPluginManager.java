@@ -56,6 +56,7 @@ public class StarterPluginManager implements PluginManager {
                                 + starterPluginConfig.getNameRootPage() + getLogArgument() + " -e " + starterPluginConfig
                             .getRetainDays());
 
+        starterPluginConfig.getLog().info(command);
         final CommandRunner runner = new CommandRunner(starterPluginConfig.getLog());
         try {
             runner.start(command, true, " days." + System.getProperty("line.separator"));
