@@ -42,7 +42,7 @@ public class FitnesseContentMojo extends AbstractMojo {
      * Note: This is passed by Maven and must not be configured by the user.
      * </p>
      * 
-     * @parameter expression="${localRepository.baseDir}"
+     * @parameter expression="${settings.localRepository}"
      * @readonly
      * @required
      */
@@ -108,7 +108,7 @@ public class FitnesseContentMojo extends AbstractMojo {
      * Collect the plugin configuration settings
      * 
      * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ContentPluginConfig}
-     * @throws DependencyResolutionRequiredException
+     * @throws MojoExecutionException
      */
     private ContentPluginConfig getPluginConfig() throws MojoExecutionException {
         final Builder builder = PluginManagerFactory.getPluginConfigBuilder(ContentPluginConfig.class);
