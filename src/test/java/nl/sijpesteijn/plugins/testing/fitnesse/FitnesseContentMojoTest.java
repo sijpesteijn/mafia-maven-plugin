@@ -33,8 +33,8 @@ public class FitnesseContentMojoTest extends AbstractFitNesseTestCase {
 
     private List<String> createCompileClasspathElements() {
         final List<String> compileSourceRoots = new ArrayList<String>();
-        compileSourceRoots.add(REPO + JUNIT_JAR);
-        compileSourceRoots.add(REPO + LOG4J_JAR);
+        compileSourceRoots.add(REPO + "/" + JUNIT_JAR);
+        compileSourceRoots.add(REPO + "/" + LOG4J_JAR);
         compileSourceRoots.add(getTestDirectory() + TARGET_CLASSES);
         return compileSourceRoots;
     }
@@ -64,8 +64,8 @@ public class FitnesseContentMojoTest extends AbstractFitNesseTestCase {
         assertTrue(content.contains("!define TEST_SYSTEM {slim}"));
         assertTrue(content.contains("!path " + getTestDirectory() + "/src/main/resources"));
         assertTrue(content.contains("!path ./domain/target/classes/"));
-        assertTrue(content.contains("!path " + REPO + JUNIT_JAR));
-        assertFalse(content.contains("!path " + REPO + LOG4J_JAR));
+        assertTrue(content.contains("!path " + REPO + "/" + JUNIT_JAR));
+        assertFalse(content.contains("!path " + REPO + "/" + LOG4J_JAR));
     }
 
     private String getContentFile() throws Exception {

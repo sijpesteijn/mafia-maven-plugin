@@ -26,7 +26,7 @@ public abstract class AbstractFitNesseTestCase extends AbstractMojoTestCase {
     @Override
     protected void setUp() throws Exception {
         testDirectory = new File("").getAbsolutePath();
-        REPO = testDirectory.replace("\\", "/") + "/src/test/resources/repo/";
+        REPO = testDirectory.replace("\\", "/") + "/src/test/resources/repo";
         super.setUp();
     }
 
