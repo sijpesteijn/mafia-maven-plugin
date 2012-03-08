@@ -47,7 +47,7 @@ public class RunnerPluginManager implements PluginManager {
         runBySuiteFilter(runnerPluginConfig.getSuiteFilter(), runnerPluginConfig.getSuitePageName());
         final ResultWriter resultWriter = new ResultWriterImpl(runnerPluginConfig.getFitnesseOutputDirectory());
         final TestSummaryAndDuration summary = getSummary();
-        summary.setDuration(start - new Date().getTime());
+        summary.setDuration(new Date().getTime() - start);
         resultWriter.write(summary);
     }
 
