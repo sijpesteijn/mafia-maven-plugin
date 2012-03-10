@@ -1,5 +1,6 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class FitnesseContentMojo extends AbstractMojo {
      * @readonly
      * @required
      */
-    private String baseDir;
+    private File baseDir;
 
     /**
      * List of static entries to add to content.txt
@@ -119,7 +120,7 @@ public class FitnesseContentMojo extends AbstractMojo {
         builder.setExcludeDependencies(Arrays.asList(excludeDependencies));
         builder.setTargets(Arrays.asList(targets));
         builder.setCompileClasspathElements(compileClasspathElements);
-        builder.setBaseDir(baseDir);
+        builder.setBaseDir(baseDir.getAbsolutePath());
         return builder.build();
     }
 

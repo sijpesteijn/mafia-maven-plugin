@@ -1,5 +1,6 @@
 package nl.sijpesteijn.plugins.testing.fitnesse;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
         super.setUp();
         mojo = configureFitNesseMojo(new FitnesseStarterMojo(), "starter");
         setVariableValueToObject(mojo, "dependencies", createDependencies());
-        setVariableValueToObject(mojo, "baseDir", REPO);
+        setVariableValueToObject(mojo, "baseDir", new File(REPO));
         setVariableValueToObject(mojo, "jvmArguments", new String[0]);
         setVariableValueToObject(mojo, "jvmDependencies", new Dependency[0]);
     }

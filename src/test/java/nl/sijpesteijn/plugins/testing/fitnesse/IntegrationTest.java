@@ -127,7 +127,7 @@ public class IntegrationTest extends AbstractFitNesseTestCase {
     private void setupFitNesseStarterMojo() throws Exception {
         starterMojo = configureFitNesseMojo(new FitnesseStarterMojo(), "starter");
         setVariableValueToObject(starterMojo, "dependencies", createDependencies());
-        setVariableValueToObject(starterMojo, "baseDir", REPO);
+        setVariableValueToObject(starterMojo, "baseDir", new File(REPO));
         setVariableValueToObject(starterMojo, "jvmArguments", new String[0]);
         setVariableValueToObject(starterMojo, "jvmDependencies", new Dependency[0]);
 
@@ -137,7 +137,7 @@ public class IntegrationTest extends AbstractFitNesseTestCase {
         contentMojo = configureFitNesseMojo(new FitnesseContentMojo(), "content");
         final List<String> compileClasspathElements = createCompileClasspathElements();
         setVariableValueToObject(contentMojo, "compileClasspathElements", compileClasspathElements);
-        setVariableValueToObject(contentMojo, "baseDir", REPO);
+        setVariableValueToObject(contentMojo, "baseDir", new File(REPO));
         setVariableValueToObject(contentMojo, "wikiRoot", getTestDirectory() + TARGET);
         setVariableValueToObject(contentMojo, "nameRootPage", FITNESSE_ROOT);
     }

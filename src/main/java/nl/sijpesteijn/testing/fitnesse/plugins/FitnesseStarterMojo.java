@@ -1,5 +1,6 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class FitnesseStarterMojo extends AbstractMojo {
      * @readonly
      * @required
      */
-    private String baseDir;
+    private File baseDir;
 
     /**
      * The port number FitNesse is running on.
@@ -124,7 +125,7 @@ public class FitnesseStarterMojo extends AbstractMojo {
         builder.setJvmArguments(Arrays.asList(jvmArguments));
         builder.setJvmDependencies(Arrays.asList(jvmDependencies));
         builder.setDependencies(dependencies);
-        builder.setBaseDir(baseDir);
+        builder.setBaseDir(baseDir.getAbsolutePath());
         builder.setLogger(getLog());
         return builder.build();
     }

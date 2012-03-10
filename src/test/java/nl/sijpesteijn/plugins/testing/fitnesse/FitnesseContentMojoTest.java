@@ -26,7 +26,7 @@ public class FitnesseContentMojoTest extends AbstractFitNesseTestCase {
         super.setUp();
         mojo = configureFitNesseMojo(new FitnesseContentMojo(), "content");
         setVariableValueToObject(mojo, "compileClasspathElements", createCompileClasspathElements());
-        setVariableValueToObject(mojo, "baseDir", REPO);
+        setVariableValueToObject(mojo, "baseDir", new File(REPO));
         setVariableValueToObject(mojo, "wikiRoot", getTestDirectory() + TARGET);
         setVariableValueToObject(mojo, "nameRootPage", FITNESSE_ROOT);
     }
