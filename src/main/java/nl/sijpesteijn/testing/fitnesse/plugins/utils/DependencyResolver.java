@@ -15,17 +15,16 @@ public class DependencyResolver {
      * Find the part in the list of dependencies and return the location.
      * 
      * @param dependencies
-     *        {@link java.util.List}
+     *            {@link java.util.List}
      * @param part
-     *        {@link java.lang.String}
+     *            {@link java.lang.String}
      * @param baseDir
-     *        {@link java.lang.String}
+     *            {@link java.lang.String}
      * @return {@link java.lang.String}
      * @throws MojoExecutionException
      */
     public String getJarLocation(final List<Dependency> dependencies, final String part, final String baseDir)
-            throws MojoExecutionException
-    {
+            throws MojoExecutionException {
         for (int i = 0; i < dependencies.size(); i++) {
             final Dependency dependency = dependencies.get(i);
             final String resolveDependencyPath = resolveDependencyPath(dependency, baseDir);

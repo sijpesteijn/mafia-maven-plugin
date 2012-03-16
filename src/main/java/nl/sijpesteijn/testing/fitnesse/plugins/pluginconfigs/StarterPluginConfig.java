@@ -81,16 +81,15 @@ public class StarterPluginConfig implements PluginConfig {
 
         public StarterPluginConfig build() {
             return new StarterPluginConfig(fitNessePort, wikiRoot, retainDays, nameRootPage, logPath, jvmArguments,
-                jvmDependencies, dependencies, baseDir, log);
+                    jvmDependencies, dependencies, baseDir, log);
         }
 
     }
 
     public StarterPluginConfig(final String fitNessePort, final String wikiRoot, final String retainDays,
-                               final String nameRootPage, final String logPath, final List<String> jvmArguments,
-                               final List<Dependency> jvmDependencies, final List<Dependency> dependencies,
-                               final String baseDir, final Log log)
-    {
+            final String nameRootPage, final String logPath, final List<String> jvmArguments,
+            final List<Dependency> jvmDependencies, final List<Dependency> dependencies, final String baseDir,
+            final Log log) {
         this.fitNessePort = fitNessePort;
         this.wikiRoot = wikiRoot;
         this.retainDays = retainDays;

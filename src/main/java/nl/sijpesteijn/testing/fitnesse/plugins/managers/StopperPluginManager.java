@@ -21,7 +21,7 @@ public class StopperPluginManager implements PluginManager {
     /**
      * 
      * @param stopperPluginConfig
-     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StopperPluginConfig}
+     *            {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StopperPluginConfig}
      */
     public StopperPluginManager(final StopperPluginConfig stopperPluginConfig) {
         this.stopperPluginConfig = stopperPluginConfig;
@@ -34,9 +34,8 @@ public class StopperPluginManager implements PluginManager {
     public void run() throws MojoFailureException, MojoExecutionException {
         final String jarLocation;
         try {
-            jarLocation =
-                    resolver.getJarLocation(stopperPluginConfig.getDependencies(), "org/fitnesse/",
-                        stopperPluginConfig.getBasedir());
+            jarLocation = resolver.getJarLocation(stopperPluginConfig.getDependencies(), "org/fitnesse/",
+                    stopperPluginConfig.getBasedir());
         } catch (final MojoExecutionException mee) {
             throw mee;
         }

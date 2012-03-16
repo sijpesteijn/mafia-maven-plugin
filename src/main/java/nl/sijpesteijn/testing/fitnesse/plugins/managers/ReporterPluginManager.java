@@ -1,32 +1,19 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.managers;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import nl.sijpesteijn.testing.fitnesse.plugins.executioners.TestSummaryAndDuration;
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.FileUtils;
+
+import fitnesse.responders.testHistory.PageHistory;
+import fitnesse.responders.testHistory.TestHistory;
 
 /**
  * Plugin manager responsible for collecting report results.
@@ -39,7 +26,7 @@ public class ReporterPluginManager implements PluginManager {
     /**
      * 
      * @param reporterPluginConfig
-     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig}
+     *            {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig}
      */
     public ReporterPluginManager(final ReporterPluginConfig reporterPluginConfig) {
         this.reporterPluginConfig = reporterPluginConfig;
@@ -47,245 +34,71 @@ public class ReporterPluginManager implements PluginManager {
 
     /**
      * Collect the reports
+     * 
+     * @throws MavenReportException
      */
     @Override
     public void run() throws MojoFailureException, MojoExecutionException {
         try {
-            if (hasReports()) {
-                createIndexFile();
-                addFitNesseReports(new File(reporterPluginConfig.getTestResultsDirectory()), new File(
-                    reporterPluginConfig.getFitnesseReportDirectory()));
+            final List<String> pageNames = getPageNamesFromTestResultDirectory();
+            final List<MafiaTestResult> mafiaTestResults = getMafiaTestResults(pageNames);
+
+            final MafiaReportGenerator generator = new MafiaReportGenerator(reporterPluginConfig.getSink(),
+                    reporterPluginConfig.getResourceBundle(), reporterPluginConfig, mafiaTestResults);
+            generator.generate();
+        } catch (final MavenReportException e) {
+            new MojoExecutionException("Could not generate mafia report: ", e);
+        } catch (final IOException e) {
+            new MojoExecutionException("Could not generate mafia report: ", e);
+        }
+    }
+
+    private List<String> getPageNamesFromTestResultDirectory() throws MojoFailureException {
+        try {
+            final File testResultDirectory = new File(reporterPluginConfig.getTestResultsDirectory() + "/xml/");
+            final List<String> validDirectoryNames = new ArrayList<String>();
+            @SuppressWarnings("unchecked")
+            final List<String> directoryNames = FileUtils.getDirectoryNames(testResultDirectory, null, null, false);
+            for (final String directoryName : directoryNames) {
+                if (isValidDirectory(directoryName)) {
+                    validDirectoryNames.add(directoryName);
+                }
             }
+            return validDirectoryNames;
         } catch (final IOException e) {
             throw new MojoFailureException("Error copying fitnesse reports.", e);
         }
     }
 
-    private boolean hasReports() {
-        final File summary = new File(reporterPluginConfig.getTestResultsDirectory() + "/summary.xml");
-        if (!summary.exists())
+    private boolean isValidDirectory(final String directoryName) {
+        if (directoryName == null || directoryName.trim().equals("")) {
             return false;
+        }
         return true;
     }
 
-    /**
-     * Create the report index.html file.
-     * 
-     * @throws IOException
-     * @throws MojoFailureException
-     */
-    private void createIndexFile() throws IOException, MojoFailureException {
-        final File testResultsDirectory = new File(reporterPluginConfig.getTestResultsDirectory());
-        testResultsDirectory.mkdirs();
-        final File index = new File(testResultsDirectory.getAbsolutePath() + "/index.html");
-        final List<File> reports = dirListByAscendingName(getReportsFormDirectory(testResultsDirectory));
-        final TestSummaryAndDuration testSummary = getTestSummaryAndDuration();
-        final FileWriter writer = new FileWriter(index);
-
-        final BufferedReader reader = getReportTemplate();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            line = resolvePlaceHolders(line, testSummary, reports);
-            writer.write(line);
+    public List<MafiaTestResult> getMafiaTestResults(final List<String> pageNames) throws IOException {
+        final List<MafiaTestResult> testResultRecords = new ArrayList<MafiaTestResult>();
+        final TestHistory history = new TestHistory();
+        final File historyDirectory = new File(reporterPluginConfig.getTestResultsDirectory() + File.separatorChar
+                + "xml");
+        for (final String pageName : pageNames) {
+            history.readPageHistoryDirectory(historyDirectory, pageName);
+            final PageHistory pageHistory = history.getPageHistory(pageName);
+            final File htmlResultFile = new File(reporterPluginConfig.getTestResultsDirectory() + File.separatorChar
+                    + "html" + File.separatorChar + pageName + ".html");
+            final String htmlResult = FileUtils.fileRead(htmlResultFile);
+            final String bodyHtmlResult = getBodyHtmlResult(htmlResult, pageName);
+            testResultRecords.add(new MafiaTestResult(pageName, pageHistory.get(pageHistory.getLatestDate()),
+                    bodyHtmlResult));
         }
-        reader.close();
-        writer.close();
+        return testResultRecords;
     }
 
-    /**
-     * Find the summary.xml generated by the runner plugin.
-     * 
-     * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.executioners.TestSummaryAndDuration}
-     * @throws MojoFailureException
-     */
-    private TestSummaryAndDuration getTestSummaryAndDuration() throws MojoFailureException {
-        final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder;
-        final String fileLocation = reporterPluginConfig.getTestResultsDirectory() + "/summary.xml";
-        final TestSummaryAndDuration summary;
-        try {
-            docBuilder = docBuilderFactory.newDocumentBuilder();
-            final Document doc = docBuilder.parse(new File(fileLocation));
-            final String success = getNodeValue(doc, "success");
-            final String failure = getNodeValue(doc, "failure");
-            final String exception = getNodeValue(doc, "exception");
-            final String ignore = getNodeValue(doc, "ignore");
-            final String time = getNodeValue(doc, "time");
-            summary =
-                    new TestSummaryAndDuration(Integer.parseInt(success), Integer.parseInt(failure),
-                        Integer.parseInt(ignore), Integer.parseInt(exception), Long.parseLong(time));
-        } catch (final Throwable e) {
-            throw new MojoFailureException("Could not find " + fileLocation + " file: " + e.getMessage());
-        }
-        return summary;
-    }
-
-    /**
-     * Get the report template. If not found, use the default provided with this plugin.
-     * 
-     * @return {@link java.io.BufferedReader}
-     * @throws MojoFailureException
-     * @throws FileNotFoundException
-     */
-    private BufferedReader getReportTemplate() throws MojoFailureException, FileNotFoundException {
-        if (reporterPluginConfig.getReportTemplate() == null || reporterPluginConfig.getReportTemplate().equals("")) {
-            final InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("report.html");
-            if (inputStream == null) {
-                throw new MojoFailureException("Could not find default report.html");
-            }
-            final InputStreamReader reader = new InputStreamReader(inputStream);
-
-            return new BufferedReader(reader);
-        }
-        return new BufferedReader(new FileReader(reporterPluginConfig.getReportTemplate()));
-    }
-
-    /**
-     * Replace the placeholders with the actual summary values.
-     * 
-     * @param line
-     *        {@link java.lang.String}
-     * @param testSummary
-     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.executioners.TestSummaryAndDuration}
-     * @param reports
-     *        {@link java.util.List}
-     * @return {@link java.lang.String}
-     */
-    private String resolvePlaceHolders(String line, final TestSummaryAndDuration testSummary, final List<File> reports)
-    {
-        if (line.contains("${success}")) {
-            line = line.replace("${success}", "" + testSummary.getRight());
-        }
-        if (line.contains("${failure}")) {
-            line = line.replace("${failure}", "" + testSummary.getWrong());
-        }
-        if (line.contains("${exception}")) {
-            line = line.replace("${exception}", "" + testSummary.getExceptions());
-        }
-        if (line.contains("${ignore}")) {
-            line = line.replace("${ignore}", "" + testSummary.getIgnores());
-        }
-        if (line.contains("${time}")) {
-            line = line.replace("${time}", "" + testSummary.getDuration());
-        }
-        if (line.contains("${reports}")) {
-            String reportLine = "<ul>";
-            for (final File report : reports) {
-                if (isNotIndexFile(report))
-                    reportLine +=
-                            "\t\t\t<li><a href=\"" + report.getAbsolutePath() + "\">" + report.getName()
-                                    + "</a></li>\n";
-            }
-            reportLine += "</ul>";
-            line = line.replace("${reports}", reportLine);
-        }
-
-        return line;
-    }
-
-    /**
-     * Add an entry in the index.html file for each individual report.
-     * 
-     * @param reportDirectory
-     * @param destination
-     * @throws IOException
-     */
-    private void addFitNesseReports(final File reportDirectory, final File destination) throws IOException {
-        if (reportDirectory.isDirectory()) {
-            if (!destination.exists()) {
-                destination.mkdir();
-            }
-
-            final String[] children = reportDirectory.list();
-            if (children != null) {
-                for (int i = 0; i < children.length; i++) {
-                    addFitNesseReports(new File(reportDirectory, children[i]), new File(destination, children[i]));
-                }
-            }
-        } else {
-
-            final InputStream in = new FileInputStream(reportDirectory);
-            final OutputStream out = new FileOutputStream(destination);
-
-            // Copy the bits from instream to outstream
-            final byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-        }
-    }
-
-    /**
-     * Return the node value from the document.
-     * 
-     * @param doc
-     *        {@link org.w3c.dom.Document}
-     * @param node
-     *        {@link java.lang.String}
-     * @return {@link java.lang.String}
-     */
-    private String getNodeValue(final Document doc, final String node) {
-        final NodeList nodeList = doc.getElementsByTagName(node);
-        final Element nodeElement = (Element) nodeList.item(0);
-
-        final NodeList textFNList = nodeElement.getChildNodes();
-        return (textFNList.item(0)).getNodeValue().trim();
-    }
-
-    /**
-     * Check if the file is not the index.html file.
-     * 
-     * @param report
-     *        {@link java.io.File}
-     * @return {@link boolean}
-     */
-    private boolean isNotIndexFile(final File report) {
-        return !report.getName().endsWith("index.html") && !report.getName().equals("");
-    }
-
-    /**
-     * Get all the .html files from the directory.
-     * 
-     * @param dir
-     *        {@link java.io.File}
-     * @return {@link java.io.File[]}
-     */
-    private File[] getReportsFormDirectory(final File dir) {
-        final List<File> filtered = new ArrayList<File>();
-        final File[] files = dir.listFiles();
-        if (files != null) {
-            for (final File file : files) {
-                if (file.getName().endsWith("html")) {
-                    filtered.add(file);
-                }
-            }
-        }
-        final File[] filteredFiles = new File[filtered.size()];
-        return filtered.toArray(filteredFiles);
-    }
-
-    /**
-     * Sort the directory ascending by name.
-     * 
-     * @param files
-     *        {@link java.io.File[]}
-     * @return {@link java.util.List}
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private List<File> dirListByAscendingName(final File[] files) {
-        if (files != null) {
-            Arrays.sort(files, new Comparator() {
-                @Override
-                public int compare(final Object o1, final Object o2) {
-                    return ((File) o1).getName().compareToIgnoreCase(((File) o2).getName());
-                }
-            });
-            return Arrays.asList(files);
-        } else {
-            return new ArrayList<File>();
-        }
+    private String getBodyHtmlResult(final String htmlResult, final String pageName) {
+        final String header = "<h2>" + pageName + "</h2>";
+        final int start = htmlResult.indexOf(header) + header.length();
+        final int stop = htmlResult.indexOf("</body>");
+        return htmlResult.substring(start, stop);
     }
 }

@@ -15,7 +15,7 @@ public class FirstTimeWriter {
     /**
      * 
      * @param nameRootPage
-     *        {@link java.lang.String}
+     *            {@link java.lang.String}
      * @throws IOException
      */
     public FirstTimeWriter(final String nameRootPage) throws IOException {
@@ -52,16 +52,15 @@ public class FirstTimeWriter {
      * Create the wiki page and folder for FitNesse.
      * 
      * @param pageName
-     *        {@link java.lang.String}
+     *            {@link java.lang.String}
      * @param contentTxt
-     *        {@link java.lang.String}
+     *            {@link java.lang.String}
      * @param propertiesXml
-     *        {@link java.lang.String}
+     *            {@link java.lang.String}
      * @throws IOException
      */
     private void createWikiPage(final String pageName, final String contentTxt, final String propertiesXml)
-            throws IOException
-    {
+            throws IOException {
         final File setupDir = new File(nameRootPage + "/FrontPage/" + pageName + "/");
         setupDir.mkdirs();
         final File contentTxtFile = new File(nameRootPage + "/FrontPage/" + pageName + "/" + "content.txt");

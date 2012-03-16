@@ -55,7 +55,7 @@ public class FitnesseContentMojoTest extends AbstractFitNesseTestCase {
         assertTrue(targets[0].equals("./domain"));
         assertTrue(excludeDependencies.length == 1);
         assertTrue(excludeDependencies[0].toString().equals(
-            "Dependency {groupId=log4j, artifactId=log4j, version=1.2.15, type=jar}"));
+                "Dependency {groupId=log4j, artifactId=log4j, version=1.2.15, type=jar}"));
     }
 
     public void testContentFile() throws Exception {

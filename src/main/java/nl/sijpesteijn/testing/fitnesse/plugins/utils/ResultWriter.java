@@ -14,7 +14,7 @@ public interface ResultWriter {
      * Save the summary information.
      * 
      * @param summary
-     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.executioners.TestSummaryAndDuration}
+     *            {@link nl.sijpesteijn.testing.fitnesse.plugins.executioners.TestSummaryAndDuration}
      * @throws MojoExecutionException
      */
     void write(TestSummaryAndDuration summary) throws MojoExecutionException;

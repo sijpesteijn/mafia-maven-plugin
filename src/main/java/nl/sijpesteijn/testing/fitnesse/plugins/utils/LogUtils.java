@@ -25,7 +25,8 @@ public class LogUtils {
     }
 
     /**
-     * Join the dependencies in one string if not empty, otherwise return '[none]'
+     * Join the dependencies in one string if not empty, otherwise return
+     * '[none]'
      * 
      * @param dependencies
      * @return
@@ -34,9 +35,8 @@ public class LogUtils {
         String list = "[none]";
         if (!dependencies.isEmpty()) {
             for (final Dependency dependency : dependencies) {
-                list +=
-                        dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion()
-                                + ", ";
+                list += dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion()
+                        + ", ";
             }
             list = list.substring(0, list.length() - 2);
         }

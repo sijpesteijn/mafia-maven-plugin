@@ -1,7 +1,8 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 
 /**
- * Utility class used by {@link nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter}
+ * Utility class used by
+ * {@link nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter}
  * 
  */
 public class SpecialPages {

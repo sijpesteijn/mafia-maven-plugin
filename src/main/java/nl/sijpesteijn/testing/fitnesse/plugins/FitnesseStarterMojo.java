@@ -79,7 +79,8 @@ public class FitnesseStarterMojo extends AbstractMojo {
     /**
      * The name of the wiki root page.
      * 
-     * @parameter expression="${start.nameRootPage}" default-value="FitNesseRoot"
+     * @parameter expression="${start.nameRootPage}"
+     *            default-value="FitNesseRoot"
      */
     private String nameRootPage;
 

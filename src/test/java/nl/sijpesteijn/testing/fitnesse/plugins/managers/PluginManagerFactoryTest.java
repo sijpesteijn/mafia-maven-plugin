@@ -12,18 +12,18 @@ import org.junit.Test;
 @Ignore
 public class PluginManagerFactoryTest {
 
-	@Test
-	public void getPluginManagers() throws Exception {
-		final Builder builder = new StarterPluginConfig.Builder();
-		final PluginManager starterPluginManager = PluginManagerFactory.getPluginManager(builder.build());
-		assertNotNull(starterPluginManager);
-	}
+    @Test
+    public void getPluginManagers() throws Exception {
+        final Builder builder = new StarterPluginConfig.Builder();
+        final PluginManager starterPluginManager = PluginManagerFactory.getPluginManager(builder.build());
+        assertNotNull(starterPluginManager);
+    }
 
-	@Test(expected = MojoExecutionException.class)
-	public void getNotExisting() throws Exception {
-		PluginManagerFactory.getPluginManager(new StubPluginConfig());
-	}
+    @Test(expected = MojoExecutionException.class)
+    public void getNotExisting() throws Exception {
+        PluginManagerFactory.getPluginManager(new StubPluginConfig());
+    }
 
-	class StubPluginConfig implements PluginConfig {
-	}
+    class StubPluginConfig implements PluginConfig {
+    }
 }

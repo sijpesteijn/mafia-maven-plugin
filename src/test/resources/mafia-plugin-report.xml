@@ -21,8 +21,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <testResultsDirectory>${basedir}/target/fitnesse</testResultsDirectory>
-                    <reportTemplate>${basedir}/src/main/resources/report.html</reportTemplate>
+                	<testResultsDirectory>${basedir}/target/fitnesse-run-results</testResultsDirectory>
+                    <outputDirectory>${basedir}/target/fitnesse</outputDirectory>
                 </configuration>
             </plugin>
 		</plugins>

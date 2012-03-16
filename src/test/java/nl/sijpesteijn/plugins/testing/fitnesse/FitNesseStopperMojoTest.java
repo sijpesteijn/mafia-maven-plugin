@@ -15,30 +15,30 @@ import org.apache.maven.model.Dependency;
  * 
  */
 public class FitNesseStopperMojoTest extends AbstractFitNesseTestCase {
-	private FitnesseStopperMojo mojo;
+    private FitnesseStopperMojo mojo;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		mojo = configureFitNesseMojo(new FitnesseStopperMojo(), "stop");
-		setVariableValueToObject(mojo, "dependencies", createDependencies());
-		setVariableValueToObject(mojo, "baseDir", REPO);
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        mojo = configureFitNesseMojo(new FitnesseStopperMojo(), "stop");
+        setVariableValueToObject(mojo, "dependencies", createDependencies());
+        setVariableValueToObject(mojo, "baseDir", REPO);
+    }
 
-	private List<Dependency> createDependencies() {
-		final List<Dependency> dependencies = new ArrayList<Dependency>();
-		final Dependency fitnesse = new Dependency();
-		fitnesse.setArtifactId("fitnesse");
-		fitnesse.setGroupId("org.fitnesse");
-		fitnesse.setVersion("20111025");
-		dependencies.add(fitnesse);
-		return dependencies;
-	}
+    private List<Dependency> createDependencies() {
+        final List<Dependency> dependencies = new ArrayList<Dependency>();
+        final Dependency fitnesse = new Dependency();
+        fitnesse.setArtifactId("fitnesse");
+        fitnesse.setGroupId("org.fitnesse");
+        fitnesse.setVersion("20111025");
+        dependencies.add(fitnesse);
+        return dependencies;
+    }
 
-	@SuppressWarnings("rawtypes")
-	public void testConfiguration() throws Exception {
-		final Map map = getVariablesAndValuesFromObject(mojo);
-		final String port = (String) map.get("port");
-		assertTrue(port.equals("9090"));
-	}
+    @SuppressWarnings("rawtypes")
+    public void testConfiguration() throws Exception {
+        final Map map = getVariablesAndValuesFromObject(mojo);
+        final String port = (String) map.get("port");
+        assertTrue(port.equals("9090"));
+    }
 }

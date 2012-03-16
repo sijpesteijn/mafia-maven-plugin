@@ -57,7 +57,8 @@ public class FitnesseContentMojo extends AbstractMojo {
     private String[] statics;
 
     /**
-     * List of target directories to add to content.txt Each target is resolved as <target>\target\classes
+     * List of target directories to add to content.txt Each target is resolved
+     * as <target>\target\classes
      * 
      * @parameter expression="${content.targets}"
      */
@@ -88,7 +89,8 @@ public class FitnesseContentMojo extends AbstractMojo {
     /**
      * Name of the wiki root page
      * 
-     * @parameter expression="${content.nameRootPage}" default-value="FitNesseRoot"
+     * @parameter expression="${content.nameRootPage}"
+     *            default-value="FitNesseRoot"
      * @required
      */
     private String nameRootPage;

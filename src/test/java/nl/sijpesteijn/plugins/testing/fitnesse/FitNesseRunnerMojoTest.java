@@ -28,7 +28,7 @@ public class FitNesseRunnerMojoTest extends AbstractFitNesseTestCase {
         final String nameRootPage = (String) map.get("nameRootPage");
         assertTrue(nameRootPage.equals(FITNESSE_ROOT));
         final String fitnesseOutputDirectory = (String) map.get("fitnesseOutputDirectory");
-        assertTrue(fitnesseOutputDirectory.equals(getTestDirectory() + TARGET + "/fitnesse"));
+        assertTrue(fitnesseOutputDirectory.equals(getTestDirectory() + TARGET + "/fitnesse-run-results"));
         final String[] tests = (String[]) map.get("tests");
         assertTrue(tests[0].equals("FrontPage.BuyMilk"));
         final Boolean stopTestsOnFailure = (Boolean) map.get("stopTestsOnFailure");

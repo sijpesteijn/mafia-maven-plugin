@@ -25,7 +25,7 @@ public class StarterPluginManager implements PluginManager {
     /**
      * 
      * @param starterPluginConfig
-     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StarterPluginConfig}
+     *            {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StarterPluginConfig}
      */
     public StarterPluginManager(final StarterPluginConfig starterPluginConfig) {
         this.starterPluginConfig = starterPluginConfig;
@@ -35,26 +35,23 @@ public class StarterPluginManager implements PluginManager {
      * Start FitNesse
      * 
      * @throws MojoFailureException
-     *         , MojoExecutionException
+     *             , MojoExecutionException
      */
     @Override
     public void run() throws MojoExecutionException, MojoFailureException {
         String jarLocation;
-        jarLocation =
-                resolver.getJarLocation(starterPluginConfig.getDependencies(), "org/fitnesse",
-                    starterPluginConfig.getBaseDir());
+        jarLocation = resolver.getJarLocation(starterPluginConfig.getDependencies(), "org/fitnesse",
+                starterPluginConfig.getBaseDir());
         final String jvmArgumentsString = getJVMArguments(starterPluginConfig.getJvmArguments());
         final String dependencyList = getDependencyList();
-        final String command =
-                "java"
-                        + jvmArgumentsString
-                        + " -cp "
-                        + jarLocation
-                        + File.pathSeparatorChar
-                        + (dependencyList + " fitnesseMain.FitNesseMain -p " + starterPluginConfig.getFitNessePort()
-                                + " -d " + starterPluginConfig.getWikiRoot() + " -r "
-                                + starterPluginConfig.getNameRootPage() + getLogArgument() + " -e " + starterPluginConfig
-                            .getRetainDays());
+        final String command = "java"
+                + jvmArgumentsString
+                + " -cp "
+                + jarLocation
+                + File.pathSeparatorChar
+                + (dependencyList + " fitnesseMain.FitNesseMain -p " + starterPluginConfig.getFitNessePort() + " -d "
+                        + starterPluginConfig.getWikiRoot() + " -r " + starterPluginConfig.getNameRootPage()
+                        + getLogArgument() + " -e " + starterPluginConfig.getRetainDays());
 
         starterPluginConfig.getLog().info(command);
         final CommandRunner runner = new CommandRunner(starterPluginConfig.getLog());
@@ -105,7 +102,7 @@ public class StarterPluginManager implements PluginManager {
      * Return the list of jvm arguments.
      * 
      * @param arguments
-     *        {@link java.util.List}
+     *            {@link java.util.List}
      * @return {@link java.lang.String}
      */
     private String getJVMArguments(final List<String> arguments) {
