@@ -1,4 +1,4 @@
-package nl.sijpesteijn.testing.fitnesse.plugins.managers;
+package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 
 import fitnesse.responders.testHistory.TestResultRecord;
 

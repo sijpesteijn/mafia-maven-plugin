@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaReportGenerator;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaTestResult;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

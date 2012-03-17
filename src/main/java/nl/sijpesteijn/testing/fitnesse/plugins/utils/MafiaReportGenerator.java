@@ -1,10 +1,11 @@
-package nl.sijpesteijn.testing.fitnesse.plugins.managers;
+package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import nl.sijpesteijn.testing.fitnesse.plugins.managers.ReportResource;
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig;
 
 import org.apache.maven.doxia.sink.Sink;
@@ -42,9 +43,6 @@ public class MafiaReportGenerator {
         sink.title();
         sink.text(bundle.getString("report.mafia.title"));
         sink.title_();
-        sink.rawText("<link rel='stylesheet' type='text/css' href='./css/fitnesse.css' media='screen'/>");
-        sink.rawText("<link rel='stylesheet' type='text/css' href='./css/fitnesse_print.css' media='print'/>");
-        sink.rawText("<script src='./javascript/fitnesse.js' type='text/javascript'></script>");
         sink.head_();
 
     }
@@ -212,7 +210,18 @@ public class MafiaReportGenerator {
 
         for (final MafiaTestResult mafiaTestResult : mafiaTestResults) {
             sink.anchor(mafiaTestResult.getPageName());
+            sink.table();
+            sink.tableRow();
+            sink.tableHeaderCell();
+            sink.text(mafiaTestResult.getPageName());
+            sink.tableHeaderCell_();
+            sink.tableRow_();
+            sink.tableRow();
+            sink.tableCell();
             sink.rawText(mafiaTestResult.getHtmlResult());
+            sink.tableCell_();
+            sink.tableRow_();
+            sink.table_();
             sink.anchor_();
         }
         sink.section1_();
@@ -263,14 +272,15 @@ public class MafiaReportGenerator {
 
         final ReportResource rresource = new ReportResource(PLUGIN_RESOURCES, outputDirectory);
         try {
+            final String javascript = SpecialPages.javascript;
+            sink.rawText("<script type='text/javascript'>" + javascript + "</script>");
+
             rresource.copy("images/icon_error_sml.gif");
             rresource.copy("images/icon_exception_sml.gif");
             rresource.copy("images/icon_ignore_sml.gif");
             rresource.copy("images/icon_success_sml.gif");
             rresource.copy("images/collapsableClosed.gif");
             rresource.copy("images/collapsableOpen.gif");
-            rresource.copy("javascript/fitnesse.js");
-            rresource.copy("css/fitnesse.css");
 
         } catch (final IOException e) {
             throw new MavenReportException("Unable to copy static resources.", e);
