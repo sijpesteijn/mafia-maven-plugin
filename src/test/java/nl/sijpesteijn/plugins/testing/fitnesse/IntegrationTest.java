@@ -135,7 +135,13 @@ public class IntegrationTest extends AbstractFitNesseTestCase {
         setVariableValueToObject(starterMojo, "dependencies", createDependencies());
         setVariableValueToObject(starterMojo, "baseDir", new File(REPO));
         setVariableValueToObject(starterMojo, "jvmArguments", new String[0]);
-        setVariableValueToObject(starterMojo, "jvmDependencies", new Dependency[0]);
+        final Dependency velocity = new Dependency();
+        velocity.setGroupId("org.apache.velocity");
+        velocity.setArtifactId("velocity");
+        velocity.setVersion("1.7");
+        final Dependency[] jvmDependencies = new Dependency[1];
+        jvmDependencies[0] = velocity;
+        setVariableValueToObject(starterMojo, "jvmDependencies", jvmDependencies);
 
     }
 

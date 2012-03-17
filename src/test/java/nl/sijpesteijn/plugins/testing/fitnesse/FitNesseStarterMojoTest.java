@@ -21,10 +21,16 @@ public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         mojo = configureFitNesseMojo(new FitnesseStarterMojo(), "starter");
+        final Dependency velocity = new Dependency();
+        velocity.setGroupId("org.apache.velocity");
+        velocity.setArtifactId("velocity");
+        velocity.setVersion("1.7");
         setVariableValueToObject(mojo, "dependencies", createDependencies());
         setVariableValueToObject(mojo, "baseDir", new File(REPO));
         setVariableValueToObject(mojo, "jvmArguments", new String[0]);
-        setVariableValueToObject(mojo, "jvmDependencies", new Dependency[0]);
+        final Dependency[] jvmDependencies = new Dependency[1];
+        jvmDependencies[0] = velocity;
+        setVariableValueToObject(mojo, "jvmDependencies", jvmDependencies);
     }
 
     private List<Dependency> createDependencies() {
