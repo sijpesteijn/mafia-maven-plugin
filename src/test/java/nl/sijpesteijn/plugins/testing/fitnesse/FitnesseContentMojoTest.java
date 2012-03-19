@@ -50,19 +50,19 @@ public class FitnesseContentMojoTest extends AbstractFitNesseTestCase {
         assertTrue(statics[0].equals("!define TEST_SYSTEM {slim}"));
         assertTrue(statics[1].equals("!define fixturePackage {fitnesse.slim.test}"));
         assertTrue(resources.length == 1);
-        assertTrue(resources[0].equals(getTestDirectory() + "/src/main/resources"));
+        assertTrue(resources[0].replace("\\", "/").equals(getTestDirectory() + "/src/main/resources"));
         assertTrue(targets.length == 1);
         assertTrue(targets[0].equals("./domain"));
         assertTrue(excludeDependencies.length == 1);
         assertTrue(excludeDependencies[0].toString().equals(
-                "Dependency {groupId=log4j, artifactId=log4j, version=1.2.15, type=jar}"));
+            "Dependency {groupId=log4j, artifactId=log4j, version=1.2.15, type=jar}"));
     }
 
     public void testContentFile() throws Exception {
         mojo.execute();
         final String content = getContentFile();
         assertTrue(content.contains("!define TEST_SYSTEM {slim}"));
-        assertTrue(content.contains("!path " + getTestDirectory() + "/src/main/resources"));
+        assertTrue(content.contains("/src/main/resources"));
         assertTrue(content.contains("!path ./domain/target/classes/"));
         assertTrue(content.contains("!path " + REPO + "/" + JUNIT_JAR));
         assertFalse(content.contains("!path " + REPO + "/" + LOG4J_JAR));

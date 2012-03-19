@@ -24,11 +24,13 @@ public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
     public void testConfiguration() throws Exception {
         final Map map = getVariablesAndValuesFromObject(mojo);
         final File outputDirectory = (File) map.get("outputDirectory");
-        assertTrue(outputDirectory.getAbsolutePath().equals(getTestDirectory() + TARGET + "/fitnesse"));
+        assertTrue(outputDirectory.getAbsolutePath().replace('\\', '/')
+            .equals(getTestDirectory() + TARGET + "/fitnesse"));
         final String testResultsDirectory = (String) map.get("testResultsDirectory");
-        assertTrue(testResultsDirectory.equals(getTestDirectory() + TARGET + "/fitnesse-run-results"));
+        assertTrue(testResultsDirectory.replace('\\', '/')
+            .equals(getTestDirectory() + TARGET + "/fitnesse-run-results"));
         assertTrue(mojo.getDescription(null).equals(
-                "Maven mafia plugin - reporting: Generate a report of the fitnessetests that have run"));
+            "Maven mafia plugin - reporting: Generate a report of the fitnessetests that have run"));
         assertTrue(mojo.getName(null).equals("Mafia Report"));
         assertNull(mojo.getProject());
     }

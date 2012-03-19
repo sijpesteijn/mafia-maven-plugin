@@ -52,7 +52,7 @@ public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
         final String nameRootPage = (String) map.get("nameRootPage");
         assertTrue(port.equals("9090"));
         assertTrue(retainDays.equals("14"));
-        assertTrue(wikiRoot.equals(getTestDirectory() + TARGET));
+        assertTrue(wikiRoot.replace("\\", "/").equals(getTestDirectory() + TARGET));
         assertTrue(nameRootPage.equals("FitNesseRoot"));
     }
 }
