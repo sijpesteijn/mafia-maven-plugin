@@ -22,7 +22,7 @@
                 </executions>
                 <configuration>
                     <port>9091</port>
-                    <fitnesseOutputDirectory>mafiaTestResults</fitnesseOutputDirectory>
+                    <mafiaTestResultsDirectory>mafiaTestResults</mafiaTestResultsDirectory>
                     <wikiRoot>${basedir}/target</wikiRoot>
                     <nameRootPage>FitNesseRoot</nameRootPage>
                     <stopTestsOnFailure>true</stopTestsOnFailure>

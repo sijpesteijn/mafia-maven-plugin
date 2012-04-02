@@ -78,7 +78,7 @@ public class RunnerPluginConfig implements PluginConfig {
 			return this;
 		}
 
-		public Builder setFitNesseOutputDirectory(final String fitnesseOutputDirectory) {
+		public Builder setMafiaTestResultsDirectory(final String fitnesseOutputDirectory) {
 			this.fitnesseOutputDirectory = fitnesseOutputDirectory;
 			return this;
 		}

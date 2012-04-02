@@ -48,11 +48,11 @@ public class FitnesseRunnerMojo extends AbstractMojo {
 	/**
 	 * The directory where the Fitnesse reports have been generated.
 	 * 
-	 * @parameter expression="${run-tests.fitnesseReportDirectory}"
+	 * @parameter expression="${run-tests.mafiaTestResultsDirectory}"
 	 *            default-value
-	 *            ="${project.build.directory}/fitnesse-run-results/"
+	 *            ="${project.build.directory}/FitNesseRoot/files/mafiaTestResults/"
 	 */
-	private String fitnesseOutputDirectory;
+	private String mafiaTestResultsDirectory;
 
 	/**
 	 * List of test to be run.
@@ -120,15 +120,6 @@ public class FitnesseRunnerMojo extends AbstractMojo {
 	private boolean stopTestsOnWrong;
 
 	/**
-	 * A resultlistener class that listens to the outcome of tests. Should
-	 * implement {@link fitnesse.responders.run.ResultsListener}
-	 * 
-	 * @parameter expression="${run-tests.resultsListener}" default-value=""
-	 * 
-	 */
-	private String resultsListenerClass;
-
-	/**
 	 * 
 	 * {@inheritDoc}
 	 */
@@ -150,7 +141,7 @@ public class FitnesseRunnerMojo extends AbstractMojo {
 		final Builder pluginConfigBuilder = PluginManagerFactory.getPluginConfigBuilder(RunnerPluginConfig.class);
 		pluginConfigBuilder.setWikiRoot(this.wikiRoot);
 		pluginConfigBuilder.setNameRootPage(this.nameRootPage);
-		pluginConfigBuilder.setFitNesseOutputDirectory(this.fitnesseOutputDirectory);
+		pluginConfigBuilder.setMafiaTestResultsDirectory(this.mafiaTestResultsDirectory);
 		pluginConfigBuilder.setPort(this.port);
 		pluginConfigBuilder.setLog(getLog());
 		pluginConfigBuilder.setStopTestsOnException(stopTestsOnException);

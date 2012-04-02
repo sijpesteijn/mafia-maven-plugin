@@ -13,16 +13,16 @@
 		<plugins>
             <plugin>
                 <artifactId>mafia-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
-                	<testResultsDirectory>${basedir}/target/fitnesse-run-results</testResultsDirectory>
+                    <mafiaTestResultsDirectory>${basedir}/target/FitNesseRoot/files/mafiaTestResults</mafiaTestResultsDirectory>
                     <outputDirectory>${basedir}/target/fitnesse</outputDirectory>
+                    <tests>
+                        <test>FrontPage.BuyMilkSuite.BuyMilk</test>
+                        <test>FrontPage.BuyMilkSuite.BuyMilk1</test>
+                    </tests>
+                    <suites>
+                        <suite>FrontPage.BuyMilkSuite</suite>
+                    </suites>
                 </configuration>
             </plugin>
 		</plugins>
