@@ -28,10 +28,12 @@ public class FitNesseRunnerMojoTest extends AbstractFitNesseTestCase {
         final String nameRootPage = (String) map.get("nameRootPage");
         assertTrue(nameRootPage.equals(FITNESSE_ROOT));
         final String fitnesseOutputDirectory = (String) map.get("fitnesseOutputDirectory");
-        assertTrue(fitnesseOutputDirectory.replace("\\", "/").equals(
-            getTestDirectory() + TARGET + "/fitnesse-run-results"));
+        assertTrue(fitnesseOutputDirectory.equals("mafiaTestResults"));
         final String[] tests = (String[]) map.get("tests");
-        assertTrue(tests[0].equals("FrontPage.BuyMilk"));
+        assertTrue(tests[0].equals("FrontPage.BuyMilkSuite.BuyMilk"));
+        assertTrue(tests[1].equals("FrontPage.BuyMilkSuite.BuyMilk1"));
+        final String[] suites = (String[]) map.get("suites");
+        assertTrue(suites[0].equals("FrontPage.BuyMilkSuite"));
         final Boolean stopTestsOnFailure = (Boolean) map.get("stopTestsOnFailure");
         assertTrue(stopTestsOnFailure);
         final Boolean stopTestsOnIgnore = (Boolean) map.get("stopTestsOnIgnore");

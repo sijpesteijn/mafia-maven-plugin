@@ -30,8 +30,8 @@
                     <stopTestsOnException>true</stopTestsOnException>
                     <stopTestsOnWrong>true</stopTestsOnWrong>
                     <tests>
-                        <test>FrontPage.BuyMilk</test>
-                        <test>FrontPage.BuyMilk1</test>
+                        <test>FrontPage.BuyMilkSuite.BuyMilk</test>
+                        <test>FrontPage.BuyMilkSuite.BuyMilk1</test>
                     </tests>
                     <suites>
                         <suite>FrontPage.BuyMilkSuite</suite>
