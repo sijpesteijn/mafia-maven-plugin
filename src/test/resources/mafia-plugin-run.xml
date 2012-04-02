@@ -22,7 +22,7 @@
                 </executions>
                 <configuration>
                     <port>9091</port>
-                    <fitnesseOutputDirectory>${basedir}/target/fitnesse-run-results</fitnesseOutputDirectory>
+                    <fitnesseOutputDirectory>mafiaTestResults</fitnesseOutputDirectory>
                     <wikiRoot>${basedir}/target</wikiRoot>
                     <nameRootPage>FitNesseRoot</nameRootPage>
                     <stopTestsOnFailure>true</stopTestsOnFailure>
@@ -33,6 +33,9 @@
                         <test>FrontPage.BuyMilk</test>
                         <test>FrontPage.BuyMilk1</test>
                     </tests>
+                    <suites>
+                        <suite>FrontPage.BuyMilkSuite</suite>
+                    </suites>
                 </configuration>
             </plugin>
 		</plugins>
