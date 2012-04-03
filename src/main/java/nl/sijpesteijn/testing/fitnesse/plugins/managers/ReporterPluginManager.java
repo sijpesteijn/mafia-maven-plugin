@@ -24,6 +24,7 @@ import fitnesse.responders.run.TestExecutionReport;
 import fitnesse.responders.testHistory.PageHistory;
 import fitnesse.responders.testHistory.TestHistory;
 import fitnesse.responders.testHistory.TestResultRecord;
+import fitnesse.wiki.PageType;
 
 /**
  * Plugin manager responsible for collecting report results.
@@ -31,102 +32,110 @@ import fitnesse.responders.testHistory.TestResultRecord;
  */
 public class ReporterPluginManager implements PluginManager {
 
-	private final ReporterPluginConfig reporterPluginConfig;
-	private VelocityContext velocityContext;
+    private final ReporterPluginConfig reporterPluginConfig;
+    private VelocityContext velocityContext;
+    File historyDirectory;
 
-	/**
-	 * 
-	 * @param reporterPluginConfig
-	 *            {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig}
-	 */
-	public ReporterPluginManager(final ReporterPluginConfig reporterPluginConfig) {
-		this.reporterPluginConfig = reporterPluginConfig;
-	}
+    /**
+     * 
+     * @param reporterPluginConfig
+     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig}
+     */
+    public ReporterPluginManager(final ReporterPluginConfig reporterPluginConfig) {
+        this.reporterPluginConfig = reporterPluginConfig;
+        this.historyDirectory = new File(reporterPluginConfig.getMafiaTestResultsDirectory());
+    }
 
-	/**
-	 * Collect the reports
-	 * 
-	 * @throws MavenReportException
-	 */
-	@Override
-	public void run() throws MojoFailureException, MojoExecutionException {
-		try {
-			final List<MafiaTestResult> mafiaTestResults = getMafiaTestResults();
+    /**
+     * Collect the reports
+     * 
+     * @throws MavenReportException
+     */
+    @Override
+    public void run() throws MojoFailureException, MojoExecutionException {
+        try {
+            final List<MafiaTestResult> mafiaTestResults = getMafiaTestResults();
 
-			final MafiaReportGenerator generator = new MafiaReportGenerator(reporterPluginConfig.getSink(),
-					reporterPluginConfig.getResourceBundle(), reporterPluginConfig, mafiaTestResults);
-			generator.generate();
-		} catch (final MavenReportException e) {
-			new MojoExecutionException("Could not generate mafia report: ", e);
-		} catch (final Exception e) {
-			new MojoExecutionException("Could not generate mafia report: ", e);
-		}
-	}
+            final MafiaReportGenerator generator =
+                    new MafiaReportGenerator(reporterPluginConfig.getSink(), reporterPluginConfig.getResourceBundle(),
+                        reporterPluginConfig, mafiaTestResults);
+            generator.generate();
+        } catch (final MavenReportException e) {
+            new MojoExecutionException("Could not generate mafia report: ", e);
+        } catch (final Exception e) {
+            new MojoExecutionException("Could not generate mafia report: ", e);
+        }
+    }
 
-	public List<MafiaTestResult> getMafiaTestResults() throws Exception {
-		final List<MafiaTestResult> testResultRecords = new ArrayList<MafiaTestResult>();
-		final File historyDirectory = new File(reporterPluginConfig.getMafiaTestResultsDirectory());
-		addSuiteResults(testResultRecords, historyDirectory);
-		addSuiteFilteredResults(testResultRecords, historyDirectory);
-		addTestResults(testResultRecords, historyDirectory);
-		return testResultRecords;
-	}
+    public List<MafiaTestResult> getMafiaTestResults() throws Exception {
+        final List<MafiaTestResult> testResultRecords = new ArrayList<MafiaTestResult>();
+        addSuiteResults(testResultRecords);
+        addSuiteFilteredResults(testResultRecords);
+        addTestResults(testResultRecords);
+        return testResultRecords;
+    }
 
-	private void addSuiteResults(final List<MafiaTestResult> testResultRecords, final File historyDirectory) {
-		final List<String> suites = reporterPluginConfig.getSuites();
-		if (suites != null && !suites.isEmpty()) {
-			for (final String suite : suites) {
+    private void addSuiteResults(final List<MafiaTestResult> testResultRecords) throws Exception {
+        final List<String> suites = reporterPluginConfig.getSuites();
+        if (suites != null && !suites.isEmpty()) {
+            for (final String suite : suites) {
+                testResultRecords.add(getMafiaTestResult(suite, PageType.SUITE));
+            }
+        }
+    }
 
-			}
-		}
-	}
+    private void addSuiteFilteredResults(final List<MafiaTestResult> testResultRecords) throws Exception {
+        final String suitePageName = reporterPluginConfig.getSuitePageName();
+        if (suitePageName != null && !suitePageName.equals("")) {
+            testResultRecords.add(getMafiaTestResult(suitePageName, PageType.SUITE));
+        }
+    }
 
-	private void addSuiteFilteredResults(final List<MafiaTestResult> testResultRecords, final File historyDirectory) {
-		// TODO Auto-generated method stub
+    private void addTestResults(final List<MafiaTestResult> testResultRecords) throws Exception {
+        final List<String> tests = reporterPluginConfig.getTests();
+        if (tests != null && !tests.isEmpty()) {
+            for (final String test : tests) {
+                testResultRecords.add(getMafiaTestResult(test, PageType.TEST));
+            }
+        }
+    }
 
-	}
+    private MafiaTestResult getMafiaTestResult(final String pageName, final PageType pageType) throws Exception {
+        final TestHistory history = new TestHistory();
+        history.readPageHistoryDirectory(historyDirectory, pageName);
+        final PageHistory pageHistory = history.getPageHistory(pageName);
+        final Date latestDate = pageHistory.getLatestDate();
+        final TestResultRecord testResultRecord = pageHistory.get(latestDate);
+        velocityContext = new VelocityContext();
 
-	private void addTestResults(final List<MafiaTestResult> testResultRecords, final File historyDirectory)
-			throws Exception {
-		final List<String> tests = reporterPluginConfig.getTests();
-		if (tests != null && !tests.isEmpty()) {
-			final TestHistory history = new TestHistory();
-			for (final String test : tests) {
-				history.readPageHistoryDirectory(historyDirectory, test);
-				final PageHistory pageHistory = history.getPageHistory(test);
-				final Date latestDate = pageHistory.getLatestDate();
-				final TestResultRecord testResultRecord = pageHistory.get(latestDate);
-				velocityContext = new VelocityContext();
+        final String content = FileUtil.getFileContent(testResultRecord.getFile());
+        final ExecutionReport report = ExecutionReport.makeReport(content);
+        String html = "";
+        if (report instanceof TestExecutionReport) {
+            report.setDate(latestDate);
+            html = generateTestExecutionHTML((TestExecutionReport) report);
+        } else if (report instanceof SuiteExecutionReport) {
+            html = generateSuiteExecutionHTML((SuiteExecutionReport) report);
+        }
+        System.out.println(pageName + "*****************" + html);
+        return new MafiaTestResult(pageType, pageName, testResultRecord, html);
+    }
 
-				final String content = FileUtil.getFileContent(testResultRecord.getFile());
-				final ExecutionReport report = ExecutionReport.makeReport(content);
-				String html = "";
-				if (report instanceof TestExecutionReport) {
-					report.setDate(latestDate);
-					html = generateTestExecutionHTML((TestExecutionReport) report);
-				} else if (report instanceof SuiteExecutionReport) {
-					html = generateSuiteExecutionHTML((SuiteExecutionReport) report);
-				}
-				System.out.println(html);
-			}
-		}
-	}
+    private String generateSuiteExecutionHTML(final SuiteExecutionReport report) throws Exception {
+        velocityContext.put("suiteExecutionReport", report);
+        final Template template = VelocityFactory.getVelocityEngine().getTemplate("suiteExecutionReport.vm");
+        return makeHTMLFromTemplate(template);
+    }
 
-	private String generateSuiteExecutionHTML(final SuiteExecutionReport report) throws Exception {
-		velocityContext.put("suiteExecutionReport", report);
-		final Template template = VelocityFactory.getVelocityEngine().getTemplate("suiteExecutionReport.vm");
-		return makeHTMLFromTemplate(template);
-	}
+    private String generateTestExecutionHTML(final TestExecutionReport report) throws Exception {
+        velocityContext.put("testExecutionReport", report);
+        final Template template = VelocityFactory.getVelocityEngine().getTemplate("testExecutionReport.vm");
+        return makeHTMLFromTemplate(template);
+    }
 
-	private String generateTestExecutionHTML(final TestExecutionReport report) throws Exception {
-		velocityContext.put("testExecutionReport", report);
-		final Template template = VelocityFactory.getVelocityEngine().getTemplate("testExecutionReport.vm");
-		return makeHTMLFromTemplate(template);
-	}
-
-	private String makeHTMLFromTemplate(final Template template) throws Exception {
-		final StringWriter writer = new StringWriter();
-		template.merge(velocityContext, writer);
-		return writer.toString();
-	}
+    private String makeHTMLFromTemplate(final Template template) throws Exception {
+        final StringWriter writer = new StringWriter();
+        template.merge(velocityContext, writer);
+        return writer.toString();
+    }
 }

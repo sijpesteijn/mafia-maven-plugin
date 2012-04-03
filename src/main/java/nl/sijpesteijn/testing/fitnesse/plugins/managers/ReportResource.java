@@ -17,12 +17,12 @@ public class ReportResource {
     }
 
     public void copy(final String resourceName) throws IOException {
-        final File resource = new File(outputDirectory, resourceName);
-        if ((resource != null) && (!resource.exists())) {
-            final URL url = Thread.currentThread().getContextClassLoader()
-                    .getResource(resourcePathBase + File.separatorChar + resourceName);
+        final File destination = new File(outputDirectory, resourceName);
+        if ((destination != null) && !destination.exists()) {
+            final URL url =
+                    Thread.currentThread().getContextClassLoader().getResource(resourcePathBase + "/" + resourceName);
             if (url != null) {
-                FileUtils.copyURLToFile(url, resource);
+                FileUtils.copyURLToFile(url, destination);
             }
         }
     }
