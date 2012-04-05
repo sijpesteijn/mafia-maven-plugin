@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 	<artifactId>mafia-maven-plugin</artifactId>
@@ -29,20 +30,64 @@
 		</developer>
 	</developers>
 
-    <issueManagement>
-        <url>https://github.com/sijpesteijn/mafia-maven-plugin/issues</url>
-        <system>Github</system>
-    </issueManagement>	
+	<issueManagement>
+		<url>https://github.com/sijpesteijn/mafia-maven-plugin/issues</url>
+		<system>Github</system>
+	</issueManagement>
 
 	<scm>
 		<connection>scm:git:git://github.com/sijpesteijn/mafia-maven-plugin.git</connection>
-		<developerConnection>scm:git:git@github.com:sijpesteijn/mafia-maven-plugin.git</developerConnection>		
+		<developerConnection>scm:git:git@github.com:sijpesteijn/mafia-maven-plugin.git</developerConnection>
 		<url>scm:git:http://github.com//sijpesteijn/mafia-maven-plugin</url>
 	</scm>
 
 	<properties>
 		<maven-version>3.0.4</maven-version>
 	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.fitnesse</groupId>
+			<artifactId>fitnesse</artifactId>
+			<version>20111025</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>${maven-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.reporting</groupId>
+			<artifactId>maven-reporting-impl</artifactId>
+			<version>2.2</version>
+		</dependency>
+
+		<!-- Testing -->
+		<dependency>
+			<groupId>org.apache.maven.plugin-testing</groupId>
+			<artifactId>maven-plugin-testing-harness</artifactId>
+			<version>2.0-alpha-1</version>
+		</dependency>
+		<!-- <dependency> <groupId>org.codehaus.plexus</groupId> <artifactId>plexus-container-default</artifactId> 
+			<version>1.5.5</version> </dependency> -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
@@ -71,7 +116,7 @@
 				<configuration>
 					<mavenExecutorId>forked-path</mavenExecutorId>
 				</configuration>
-			</plugin>			
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
@@ -97,7 +142,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>		
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -109,8 +154,8 @@
 							<goal>jar</goal>
 						</goals>
 					</execution>
-				</executions>				
-			</plugin>	
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
@@ -146,52 +191,5 @@
 		</plugins>
 	</build>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.fitnesse</groupId>
-			<artifactId>fitnesse</artifactId>
-			<version>20111025</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.velocity</groupId>
-		    <artifactId>velocity</artifactId>
-		    <version>1.7</version>
-		</dependency>		
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-plugin-api</artifactId>
-			<version>${maven-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven.reporting</groupId>
-			<artifactId>maven-reporting-impl</artifactId>
-			<version>2.2</version>
-		</dependency>
-
-		<!-- Testing -->
-		<dependency>
-			<groupId>org.apache.maven.plugin-testing</groupId>
-			<artifactId>maven-plugin-testing-harness</artifactId>
-			<version>2.0-alpha-1</version>
-            <scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.plexus</groupId>
-			<artifactId>plexus-container-default</artifactId>
-			<version>1.5.5</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.easymock</groupId>
-			<artifactId>easymock</artifactId>
-			<version>3.1</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 
 </project>

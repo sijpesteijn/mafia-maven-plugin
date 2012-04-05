@@ -15,7 +15,6 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 
 /**
@@ -24,7 +23,7 @@ import org.apache.maven.reporting.MavenReportException;
  * @phase site
  * @goal collect-report
  */
-public class FitnesseReportMojo extends AbstractMavenReport {
+public class FitnesseReportMojo extends AbstractMafiaMavenReport {
 	public static final String OUTPUT_NAME = "fitnesse";
 
 	/**
