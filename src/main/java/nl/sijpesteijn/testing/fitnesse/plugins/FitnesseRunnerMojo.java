@@ -16,146 +16,157 @@ import org.apache.maven.plugin.MojoFailureException;
 /**
  * Goal to run the Fitnesse tests.
  * 
- * @goal run-tests
+ * @goal test
  * 
  * @phase integration-test
  */
 public class FitnesseRunnerMojo extends AbstractMojo {
 
-    /**
-     * The port number for FitNesse to run the tests.
-     * 
-     * @parameter expression="${run-tests.port}" default-value="9091"
-     */
-    private String port;
+	/**
+	 * The port number for FitNesse to run the tests.
+	 * 
+	 * @parameter expression="${test.port}" default-value="9091"
+	 */
+	private String port;
 
-    /**
-     * Location of the wiki root directory.
-     * 
-     * @parameter expression="${run-tests.wikiRoot}" default-value="${basedir}"
-     * @required
-     */
-    private String wikiRoot;
+	/**
+	 * Location of the wiki root directory.
+	 * 
+	 * @parameter expression="${test.wikiRoot}" default-value="${basedir}"
+	 * @required
+	 */
+	private String wikiRoot;
 
-    /**
-     * The name of the wiki root page.
-     * 
-     * @parameter expression="${start.nameRootPage}" default-value="FitNesseRoot"
-     */
-    private String nameRootPage;
+	/**
+	 * The name of the wiki root page.
+	 * 
+	 * @parameter expression="${test.nameRootPage}" default-value="FitNesseRoot"
+	 */
+	private String nameRootPage;
 
-    /**
-     * The directory where the Fitnesse reports have been generated.
-     * 
-     * @parameter expression="${run-tests.mafiaTestResultsDirectory}" default-value
-     *            ="${project.build.directory}/FitNesseRoot/files/mafiaTestResults/"
-     */
-    private String mafiaTestResultsDirectory;
+	/**
+	 * The location for FitNesse to place the log files.
+	 * 
+	 * @parameter expression="${test.log}"
+	 *            default-value="${basedir}/log/testlog/"
+	 */
+	private String logDirectory;
 
-    /**
-     * List of test to be run.
-     * 
-     * @parameter expression="${run-tests.tests}"
-     */
-    private String[] tests;
+	/**
+	 * The directory where the Fitnesse reports have been generated.
+	 * 
+	 * @parameter expression="${test.mafiaTestResultsDirectory}" default-value
+	 *            ="mafiaTestResults"
+	 */
+	private String mafiaTestResultsDirectory;
 
-    /**
-     * List of suites to be run.
-     * 
-     * @parameter expression="${run-tests.suites}"
-     */
-    private String[] suites;
+	/**
+	 * List of test to be run.
+	 * 
+	 * @parameter expression="${test.tests}"
+	 */
+	private String[] tests;
 
-    /**
-     * Name of the suite page name.
-     * 
-     * @parameter expression="${run-tests.suitePageName}"
-     */
-    private String suitePageName;
+	/**
+	 * List of suites to be run.
+	 * 
+	 * @parameter expression="${test.suites}"
+	 */
+	private String[] suites;
 
-    /**
-     * Suite filter to run in the specified suite (=suitePageName).
-     * 
-     * @parameter expression="${run-tests.suiteFilter}"
-     */
-    private String suiteFilter;
+	/**
+	 * Name of the suite page name.
+	 * 
+	 * @parameter expression="${test.suitePageName}"
+	 */
+	private String suitePageName;
 
-    /**
-     * If true, the mojo will stop when it encountered a failure error message.
-     * 
-     * @parameter expression="${run-tests.stopTestsOnFailure}" default-value="true"
-     * 
-     */
-    private boolean stopTestsOnFailure;
+	/**
+	 * Suite filter to run in the specified suite (=suitePageName).
+	 * 
+	 * @parameter expression="${test.suiteFilter}"
+	 */
+	private String suiteFilter;
 
-    /**
-     * If true, the mojo will stop when it encountered an ignored error message.
-     * 
-     * @parameter expression="${run-tests.stopTestsOnIgnore}" default-value="false"
-     * 
-     */
-    private boolean stopTestsOnIgnore;
+	/**
+	 * If true, the mojo will stop when it encountered a failure error message.
+	 * 
+	 * @parameter expression="${test.stopTestsOnFailure}" default-value="true"
+	 * 
+	 */
+	private boolean stopTestsOnFailure;
 
-    /**
-     * If true, the mojo will stop when it encountered an exception error message.
-     * 
-     * @parameter expression="${run-tests.stopTestsOnException}" default-value="true"
-     * 
-     */
-    private boolean stopTestsOnException;
+	/**
+	 * If true, the mojo will stop when it encountered an ignored error message.
+	 * 
+	 * @parameter expression="${run-tests.stopTestsOnIgnore}"
+	 *            default-value="false"
+	 * 
+	 */
+	private boolean stopTestsOnIgnore;
 
-    /**
-     * If true, the mojo will stop when it encountered a wrong error message.
-     * 
-     * @parameter expression="${run-tests.stopTestsOnWrong}" default-value="true"
-     * 
-     */
-    private boolean stopTestsOnWrong;
+	/**
+	 * If true, the mojo will stop when it encountered an exception error
+	 * message.
+	 * 
+	 * @parameter expression="${test.stopTestsOnException}" default-value="true"
+	 * 
+	 */
+	private boolean stopTestsOnException;
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        final PluginConfig runnerPluginConfig = getPluginConfig();
-        getLog().info("Runner config: " + runnerPluginConfig.toString());
-        final PluginManager pluginManager = PluginManagerFactory.getPluginManager(runnerPluginConfig);
-        pluginManager.run();
-    }
+	/**
+	 * If true, the mojo will stop when it encountered a wrong error message.
+	 * 
+	 * @parameter expression="${test.stopTestsOnWrong}" default-value="true"
+	 * 
+	 */
+	private boolean stopTestsOnWrong;
 
-    /**
-     * Collect the plugin configuration settings
-     * 
-     * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.RunnerPluginConfig}
-     * @throws MojoExecutionException
-     */
-    private RunnerPluginConfig getPluginConfig() throws MojoExecutionException {
-        final Builder pluginConfigBuilder = PluginManagerFactory.getPluginConfigBuilder(RunnerPluginConfig.class);
-        pluginConfigBuilder.setWikiRoot(this.wikiRoot);
-        pluginConfigBuilder.setNameRootPage(this.nameRootPage);
-        pluginConfigBuilder.setMafiaTestResultsDirectory(this.mafiaTestResultsDirectory);
-        pluginConfigBuilder.setPort(Integer.valueOf(this.port));
-        pluginConfigBuilder.setLog(getLog());
-        pluginConfigBuilder.setStopTestsOnException(stopTestsOnException);
-        pluginConfigBuilder.setStopTestsOnFailure(stopTestsOnFailure);
-        pluginConfigBuilder.setStopTestsOnIgnore(stopTestsOnIgnore);
-        pluginConfigBuilder.setStopTestsOnWrong(stopTestsOnWrong);
-        pluginConfigBuilder.setTests(createList(tests));
-        pluginConfigBuilder.setSuites(createList(suites));
-        pluginConfigBuilder.setSuiteFilter(suiteFilter);
-        pluginConfigBuilder.setSuitePageName(suitePageName);
-        return pluginConfigBuilder.build();
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		final PluginConfig runnerPluginConfig = getPluginConfig();
+		getLog().info("Runner config: " + runnerPluginConfig.toString());
+		final PluginManager pluginManager = PluginManagerFactory.getPluginManager(runnerPluginConfig);
+		pluginManager.run();
+	}
 
-    private List<String> createList(final String[] array) {
-        final List<String> list = new ArrayList<String>();
-        if (array != null) {
-            for (final String element : array) {
-                list.add(element);
-            }
-        }
-        return list;
-    }
+	/**
+	 * Collect the plugin configuration settings
+	 * 
+	 * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.RunnerPluginConfig}
+	 * @throws MojoExecutionException
+	 */
+	private RunnerPluginConfig getPluginConfig() throws MojoExecutionException {
+		final Builder pluginConfigBuilder = PluginManagerFactory.getPluginConfigBuilder(RunnerPluginConfig.class);
+		pluginConfigBuilder.setWikiRoot(this.wikiRoot);
+		pluginConfigBuilder.setNameRootPage(this.nameRootPage);
+		pluginConfigBuilder.setMafiaTestResultsDirectory(this.mafiaTestResultsDirectory);
+		pluginConfigBuilder.setPort(Integer.valueOf(this.port));
+		pluginConfigBuilder.setMavenLogger(getLog());
+		pluginConfigBuilder.setLogDirectory(logDirectory);
+		pluginConfigBuilder.setStopTestsOnException(stopTestsOnException);
+		pluginConfigBuilder.setStopTestsOnFailure(stopTestsOnFailure);
+		pluginConfigBuilder.setStopTestsOnIgnore(stopTestsOnIgnore);
+		pluginConfigBuilder.setStopTestsOnWrong(stopTestsOnWrong);
+		pluginConfigBuilder.setTests(createList(tests));
+		pluginConfigBuilder.setSuites(createList(suites));
+		pluginConfigBuilder.setSuiteFilter(suiteFilter);
+		pluginConfigBuilder.setSuitePageName(suitePageName);
+		return pluginConfigBuilder.build();
+	}
+
+	private List<String> createList(final String[] array) {
+		final List<String> list = new ArrayList<String>();
+		if (array != null) {
+			for (final String element : array) {
+				list.add(element);
+			}
+		}
+		return list;
+	}
 
 }

@@ -41,7 +41,7 @@ public class StarterPluginManager implements PluginManager {
     public void run() throws MojoExecutionException, MojoFailureException {
         String jarLocation;
         jarLocation = resolver.getJarLocation(starterPluginConfig.getDependencies(), "org/fitnesse",
-                starterPluginConfig.getBaseDir());
+                starterPluginConfig.getRepositoryDirectory());
         final String jvmArgumentsString = getJVMArguments(starterPluginConfig.getJvmArguments());
         final String dependencyList = getDependencyList();
         final String command = "java"
@@ -90,7 +90,7 @@ public class StarterPluginManager implements PluginManager {
         }
         String list = "";
         for (final Dependency dependency : starterPluginConfig.getJvmDependencies()) {
-            final String dependencyPath = resolver.resolveDependencyPath(dependency, starterPluginConfig.getBaseDir());
+            final String dependencyPath = resolver.resolveDependencyPath(dependency, starterPluginConfig.getRepositoryDirectory());
             if (!dependencyPath.trim().equals("")) {
                 list += dependencyPath;
             }

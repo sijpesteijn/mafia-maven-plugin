@@ -11,7 +11,7 @@ import org.apache.maven.plugin.logging.Log;
 public class RunnerPluginConfig implements PluginConfig {
 
 	private final String wikiRoot;
-	private final String fitnesseOutputDirectory;
+	private final String mafiaTestResultsDirectory;
 	private final int port;
 	private final boolean stopTestsOnFailure;
 	private final boolean stopTestsOnIgnore;
@@ -23,23 +23,21 @@ public class RunnerPluginConfig implements PluginConfig {
 	private final String suitePageName;
 	private final String nameRootPage;
 	private final String logDirectory;
-	private final String testResultsDirectory;
 	private final int retainDays;
-	private final Log log;
+	private final Log mavenLogger;
 
-	public RunnerPluginConfig(final String wikiRoot, final String nameRootPage, final String fitnesseOutputDirectory,
-			final int port, final int retainDays, final String logDirectory, final String testResultsDirecotory,
-			final Log log, final boolean stopTestsOnFailure, final boolean stopTestsOnIgnore,
-			final boolean stopTestsOnException, final boolean stopTestsOnWrong, final List<String> tests,
-			final List<String> suites, final String suiteFilter, final String suitePageName) {
+	public RunnerPluginConfig(final String wikiRoot, final String nameRootPage, final String mafiaTestResultsDirectory,
+			final int port, final int retainDays, final String logDirectory, final Log log,
+			final boolean stopTestsOnFailure, final boolean stopTestsOnIgnore, final boolean stopTestsOnException,
+			final boolean stopTestsOnWrong, final List<String> tests, final List<String> suites,
+			final String suiteFilter, final String suitePageName) {
 		this.wikiRoot = wikiRoot;
 		this.nameRootPage = nameRootPage;
-		this.fitnesseOutputDirectory = fitnesseOutputDirectory;
+		this.mafiaTestResultsDirectory = mafiaTestResultsDirectory;
 		this.port = port;
 		this.retainDays = retainDays;
 		this.logDirectory = logDirectory;
-		testResultsDirectory = testResultsDirecotory;
-		this.log = log;
+		this.mavenLogger = log;
 		this.stopTestsOnFailure = stopTestsOnFailure;
 		this.stopTestsOnIgnore = stopTestsOnIgnore;
 		this.stopTestsOnException = stopTestsOnException;
@@ -57,7 +55,7 @@ public class RunnerPluginConfig implements PluginConfig {
 	public static class Builder implements PluginConfigBuilder {
 
 		private String wikiRoot;
-		private String fitnesseOutputDirectory;
+		private String mafiaTestResultsDirectory;
 		private int port;
 		private boolean stopTestsOnFailure;
 		private boolean stopTestsOnIgnore;
@@ -69,17 +67,16 @@ public class RunnerPluginConfig implements PluginConfig {
 		private String suitePageName;
 		private String nameRootPage;
 		private String logDirectory;
-		private String testResultsDirectory;
 		private int retainDays;
-		private Log log;
+		private Log mavenLogger;
 
 		public Builder setWikiRoot(final String wikiRoot) {
 			this.wikiRoot = wikiRoot;
 			return this;
 		}
 
-		public Builder setMafiaTestResultsDirectory(final String fitnesseOutputDirectory) {
-			this.fitnesseOutputDirectory = fitnesseOutputDirectory;
+		public Builder setMafiaTestResultsDirectory(final String mafiaTestResultsDirectory) {
+			this.mafiaTestResultsDirectory = mafiaTestResultsDirectory;
 			return this;
 		}
 
@@ -93,18 +90,13 @@ public class RunnerPluginConfig implements PluginConfig {
 			return this;
 		}
 
-		public Builder setLog(final Log log) {
-			this.log = log;
+		public Builder setMavenLogger(final Log mavenLogger) {
+			this.mavenLogger = mavenLogger;
 			return this;
 		}
 
 		public Builder setLogDirectory(final String logDirectory) {
 			this.logDirectory = logDirectory;
-			return this;
-		}
-
-		public Builder setTestResultsDirectory(final String testResultsDirectory) {
-			this.testResultsDirectory = testResultsDirectory;
 			return this;
 		}
 
@@ -129,9 +121,9 @@ public class RunnerPluginConfig implements PluginConfig {
 		}
 
 		public RunnerPluginConfig build() {
-			return new RunnerPluginConfig(wikiRoot, nameRootPage, fitnesseOutputDirectory, port, retainDays,
-					logDirectory, testResultsDirectory, log, stopTestsOnFailure, stopTestsOnIgnore,
-					stopTestsOnException, stopTestsOnWrong, tests, suites, suiteFilter, suitePageName);
+			return new RunnerPluginConfig(wikiRoot, nameRootPage, mafiaTestResultsDirectory, port, retainDays,
+					logDirectory, mavenLogger, stopTestsOnFailure, stopTestsOnIgnore, stopTestsOnException,
+					stopTestsOnWrong, tests, suites, suiteFilter, suitePageName);
 		}
 
 		public void setTests(final List<String> tests) {
@@ -164,8 +156,8 @@ public class RunnerPluginConfig implements PluginConfig {
 		return nameRootPage;
 	}
 
-	public String getFitnesseOutputDirectory() {
-		return fitnesseOutputDirectory;
+	public String getMafiaTestResultsDirectory() {
+		return mafiaTestResultsDirectory;
 	}
 
 	public int getPort() {
@@ -212,12 +204,8 @@ public class RunnerPluginConfig implements PluginConfig {
 		return logDirectory;
 	}
 
-	public String getTestResultsDirectory() {
-		return testResultsDirectory;
-	}
-
-	public Log getLog() {
-		return log;
+	public Log getMavenLogger() {
+		return mavenLogger;
 	}
 
 	/**
@@ -225,9 +213,9 @@ public class RunnerPluginConfig implements PluginConfig {
 	 */
 	@Override
 	public String toString() {
-		return "FitNesse Output Directory: " + this.fitnesseOutputDirectory + ", Port: " + this.port + ", Wiki Root: "
-				+ this.wikiRoot + ", Name Root page: " + this.nameRootPage + ",Log Direcotry" + this.logDirectory
-				+ "Test Results Directory " + this.testResultsDirectory + ", Stop Tests On Exception: "
+		return "Port: " + this.port + ", Wiki Root: " + this.wikiRoot + ", Name Root Page: " + this.nameRootPage
+				+ ", Retain days: " + this.retainDays + ", Log path: " + this.logDirectory
+				+ ", Mafia Test Results Directory " + this.mafiaTestResultsDirectory + ", Stop Tests On Exception: "
 				+ this.stopTestsOnException + ", Stop Tests On Failure: " + this.stopTestsOnFailure
 				+ ", Stop Tests On Ignore: " + this.stopTestsOnIgnore + ", Stop Tests On Wrong: "
 				+ this.stopTestsOnWrong + ", Tests: " + this.tests.toString() + ", Suites: " + this.suites.toString()
