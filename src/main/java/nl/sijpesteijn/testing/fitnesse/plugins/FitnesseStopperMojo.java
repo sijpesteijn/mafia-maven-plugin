@@ -18,7 +18,6 @@ import org.apache.maven.plugin.MojoFailureException;
  * 
  * @goal stop
  * 
- * @phase clean
  */
 public class FitnesseStopperMojo extends AbstractMojo {
 

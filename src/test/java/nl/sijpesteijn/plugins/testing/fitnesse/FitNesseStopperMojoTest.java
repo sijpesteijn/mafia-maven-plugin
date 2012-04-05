@@ -1,12 +1,10 @@
 package nl.sijpesteijn.plugins.testing.fitnesse;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseStopperMojo;
 
-import org.apache.maven.model.Dependency;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * 
@@ -20,19 +18,11 @@ public class FitNesseStopperMojoTest extends AbstractFitNesseTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mojo = configureFitNesseMojo(new FitnesseStopperMojo(), "stop");
-        setVariableValueToObject(mojo, "dependencies", createDependencies());
+        mojo = new FitnesseStopperMojo();
+        final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "stop");
+        setVariableValueToObject(mojo, "port", getStringValueFromConfiguration(configuration, "port", "9090"));
+        setVariableValueToObject(mojo, "dependencies", model.getDependencies());
         setVariableValueToObject(mojo, "baseDir", REPO);
-    }
-
-    private List<Dependency> createDependencies() {
-        final List<Dependency> dependencies = new ArrayList<Dependency>();
-        final Dependency fitnesse = new Dependency();
-        fitnesse.setArtifactId("fitnesse");
-        fitnesse.setGroupId("org.fitnesse");
-        fitnesse.setVersion("20111025");
-        dependencies.add(fitnesse);
-        return dependencies;
     }
 
     @SuppressWarnings("rawtypes")

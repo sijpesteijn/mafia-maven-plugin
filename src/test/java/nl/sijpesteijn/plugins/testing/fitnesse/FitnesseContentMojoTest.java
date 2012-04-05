@@ -3,13 +3,12 @@ package nl.sijpesteijn.plugins.testing.fitnesse;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseContentMojo;
 
 import org.apache.maven.model.Dependency;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * 
@@ -24,19 +23,18 @@ public class FitnesseContentMojoTest extends AbstractFitNesseTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mojo = configureFitNesseMojo(new FitnesseContentMojo(), "content");
-        setVariableValueToObject(mojo, "compileClasspathElements", createCompileClasspathElements());
+        final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "content");
+
+        mojo = new FitnesseContentMojo();
+        setVariableValueToObject(mojo, "statics", getStringArrayFromConfiguration(configuration, "statics"));
+        setVariableValueToObject(mojo, "resources", getStringArrayFromConfiguration(configuration, "resources"));
+        setVariableValueToObject(mojo, "targets", getStringArrayFromConfiguration(configuration, "targets"));
+        setVariableValueToObject(mojo, "excludeDependencies",
+            getDependencyArrayFromConfiguration(configuration, "excludeDependencies"));
+        setVariableValueToObject(mojo, "compileClasspathElements", getClasspathElements(model.getDependencies()));
         setVariableValueToObject(mojo, "baseDir", new File(REPO));
         setVariableValueToObject(mojo, "wikiRoot", getTestDirectory() + TARGET);
         setVariableValueToObject(mojo, "nameRootPage", FITNESSE_ROOT);
-    }
-
-    private List<String> createCompileClasspathElements() {
-        final List<String> compileSourceRoots = new ArrayList<String>();
-        compileSourceRoots.add(REPO + "/" + JUNIT_JAR);
-        compileSourceRoots.add(REPO + "/" + LOG4J_JAR);
-        compileSourceRoots.add(getTestDirectory() + TARGET_CLASSES);
-        return compileSourceRoots;
     }
 
     @SuppressWarnings("rawtypes")

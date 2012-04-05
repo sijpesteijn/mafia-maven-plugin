@@ -16,13 +16,10 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
-import edu.emory.mathcs.backport.java.util.Collections;
-
 /**
  * 
- * This plugin manager will create and fill the content.txt file for FitNesse.
- * This content.txt file (root page) will hold all defined variables & classpath
- * entries.
+ * This plugin manager will create and fill the content.txt file for FitNesse. This content.txt file (root page) will
+ * hold all defined variables & classpath entries.
  * 
  */
 public class ContentPluginManager implements PluginManager {
@@ -35,7 +32,7 @@ public class ContentPluginManager implements PluginManager {
     /**
      * 
      * @param contentPluginConfig
-     *            {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ContentPluginConfig}
+     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ContentPluginConfig}
      */
     public ContentPluginManager(final ContentPluginConfig contentPluginConfig) {
         this.contentPluginConfig = contentPluginConfig;
@@ -97,14 +94,13 @@ public class ContentPluginManager implements PluginManager {
     }
 
     /**
-     * Creates the content.txt file in the location as set in the plugin
-     * configuration.
+     * Creates the content.txt file in the location as set in the plugin configuration.
      * 
      * @return {@link java.io.File}
      */
     private File createContentFile() {
-        final File contentDirectory = new File(contentPluginConfig.getWikiRoot() + "/"
-                + contentPluginConfig.getNameRootPage());
+        final File contentDirectory =
+                new File(contentPluginConfig.getWikiRoot() + "/" + contentPluginConfig.getNameRootPage());
         if (!contentDirectory.exists()) {
             contentDirectory.mkdirs();
         }
@@ -114,8 +110,7 @@ public class ContentPluginManager implements PluginManager {
     }
 
     /**
-     * Add the compile classpath dependencies to the content.txt. Dependencies
-     * are searched in the local repository
+     * Add the compile classpath dependencies to the content.txt. Dependencies are searched in the local repository
      * 
      * @throws IOException
      */
@@ -124,7 +119,7 @@ public class ContentPluginManager implements PluginManager {
         final List classpathElements = contentPluginConfig.getCompileClasspathElements();
         if (classpathElements != null) {
             w.write("!note Class Dependencies:" + DEF_RETURN);
-            Collections.sort(classpathElements);
+            // Collections.sort(classpathElements);
             for (int i = 0; i < classpathElements.size(); i++) {
                 final String element = classpathElements.get(i).toString().replace('\\', '/');
                 if (!isExcludeDependency(element)) {
@@ -142,7 +137,7 @@ public class ContentPluginManager implements PluginManager {
      * Check if the dependency is not part of the list of excluded dependencies.
      * 
      * @param classpathElement
-     *            {@link java.lang.String}
+     *        {@link java.lang.String}
      * @return {@link boolean}
      * @throws IOException
      */
@@ -152,8 +147,8 @@ public class ContentPluginManager implements PluginManager {
         }
         if (contentPluginConfig.getExcludeDependencies() != null) {
             for (final Dependency excludeDependency : contentPluginConfig.getExcludeDependencies()) {
-                final String dependencyPath = resolver.resolveDependencyPath(excludeDependency,
-                        contentPluginConfig.getBasedir());
+                final String dependencyPath =
+                        resolver.resolveDependencyPath(excludeDependency, contentPluginConfig.getBasedir());
                 if (dependencyPath.equals(classpathElement)) {
                     return true;
                 }
@@ -166,14 +161,15 @@ public class ContentPluginManager implements PluginManager {
      * Add lines to the content.txt file.
      * 
      * @param chapter
-     *            {@link java.lang.String}
+     *        {@link java.lang.String}
      * @param lines
-     *            {@link java.util.List}
+     *        {@link java.util.List}
      * @param suffix
      * @throws IOException
      */
     private void addLines(final String chapter, final List<String> lines, final String prefix, final String suffix)
-            throws IOException {
+            throws IOException
+    {
         if (lines != null && !lines.isEmpty()) {
             w.write("!note " + chapter + ":" + DEF_RETURN);
             for (final String entry : lines) {

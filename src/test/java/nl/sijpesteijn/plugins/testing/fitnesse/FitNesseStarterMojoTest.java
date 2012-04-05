@@ -1,13 +1,11 @@
 package nl.sijpesteijn.plugins.testing.fitnesse;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseStarterMojo;
 
-import org.apache.maven.model.Dependency;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * 
@@ -20,27 +18,17 @@ public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mojo = configureFitNesseMojo(new FitnesseStarterMojo(), "starter");
-        final Dependency velocity = new Dependency();
-        velocity.setGroupId("org.apache.velocity");
-        velocity.setArtifactId("velocity");
-        velocity.setVersion("1.7");
-        setVariableValueToObject(mojo, "dependencies", createDependencies());
+        mojo = new FitnesseStarterMojo();
+        final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "start");
+        setVariableValueToObject(mojo, "dependencies", model.getDependencies());
         setVariableValueToObject(mojo, "baseDir", new File(REPO));
         setVariableValueToObject(mojo, "jvmArguments", new String[0]);
-        final Dependency[] jvmDependencies = new Dependency[1];
-        jvmDependencies[0] = velocity;
-        setVariableValueToObject(mojo, "jvmDependencies", jvmDependencies);
-    }
-
-    private List<Dependency> createDependencies() {
-        final List<Dependency> dependencies = new ArrayList<Dependency>();
-        final Dependency fitnesse = new Dependency();
-        fitnesse.setArtifactId("fitnesse");
-        fitnesse.setGroupId("org.fitnesse");
-        fitnesse.setVersion("20111025");
-        dependencies.add(fitnesse);
-        return dependencies;
+        setVariableValueToObject(mojo, "port", getStringValueFromConfiguration(configuration, "port", "9090"));
+        setVariableValueToObject(mojo, "retainDays", getStringValueFromConfiguration(configuration, "retainDays", "14"));
+        setVariableValueToObject(mojo, "wikiRoot",
+            getStringValueFromConfiguration(configuration, "wikiRoot", "${basedir}/target"));
+        setVariableValueToObject(mojo, "nameRootPage",
+            getStringValueFromConfiguration(configuration, "nameRootPage", "FitNesseRoot"));
     }
 
     @SuppressWarnings("rawtypes")
