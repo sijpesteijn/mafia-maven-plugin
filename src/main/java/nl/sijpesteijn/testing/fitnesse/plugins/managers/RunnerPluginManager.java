@@ -70,15 +70,15 @@ public class RunnerPluginManager implements PluginManager {
 			final TestSummary testSummary = testSummaries.get(key);
 			if (testSummary.wrong > 0 && runnerPluginConfig.isStopTestsOnWrong()) {
 				stop = true;
-				runnerPluginConfig.getMavenLogger().debug(key + " result: wrong");
+				runnerPluginConfig.getMavenLogger().info(key + " result: failed");
 			}
 			if (testSummary.ignores > 0 && runnerPluginConfig.isStopTestsOnIgnore()) {
 				stop = true;
-				runnerPluginConfig.getMavenLogger().debug(key + " result: ignore");
+				runnerPluginConfig.getMavenLogger().info(key + " result: ignore");
 			}
 			if (testSummary.exceptions > 0 && runnerPluginConfig.isStopTestsOnException()) {
 				stop = true;
-				runnerPluginConfig.getMavenLogger().debug(key + " result: exception");
+				runnerPluginConfig.getMavenLogger().info(key + " result: exception");
 			}
 		}
 		if (stop) {

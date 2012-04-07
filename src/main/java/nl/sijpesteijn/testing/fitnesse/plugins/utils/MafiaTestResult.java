@@ -1,37 +1,36 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 
-import fitnesse.responders.testHistory.TestResultRecord;
+import fitnesse.responders.run.TestSummary;
 import fitnesse.wiki.PageType;
 
 public class MafiaTestResult {
 
-    private final String pageName;
-    private final TestResultRecord testResultRecord;
-    private final String htmlResult;
-    private final PageType pageType;
+	private final String pageName;
+	private final TestSummary testSummary;
+	private final String htmlResult;
+	private final PageType pageType;
 
-    public MafiaTestResult(final PageType pageType, final String pageName, final TestResultRecord testResultRecord,
-                           final String htmlResult)
-    {
-        this.pageType = pageType;
-        this.pageName = pageName;
-        this.testResultRecord = testResultRecord;
-        this.htmlResult = htmlResult;
-    }
+	public MafiaTestResult(final PageType pageType, final String pageName, final TestSummary testSummary,
+			final String htmlResult) {
+		this.pageType = pageType;
+		this.pageName = pageName;
+		this.testSummary = testSummary;
+		this.htmlResult = htmlResult;
+	}
 
-    public String getPageName() {
-        return pageName;
-    }
+	public String getPageName() {
+		return pageName;
+	}
 
-    public TestResultRecord getTestResultRecord() {
-        return testResultRecord;
-    }
+	public TestSummary getTestSummary() {
+		return testSummary;
+	}
 
-    public String getHtmlResult() {
-        return htmlResult;
-    }
+	public String getHtmlResult() {
+		return htmlResult;
+	}
 
-    public PageType getPageType() {
-        return pageType;
-    }
+	public PageType getPageType() {
+		return pageType;
+	}
 }

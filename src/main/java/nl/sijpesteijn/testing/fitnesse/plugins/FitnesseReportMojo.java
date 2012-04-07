@@ -39,8 +39,7 @@ public class FitnesseReportMojo extends AbstractMavenReport {
 	/**
 	 * The build directory
 	 * 
-	 * @parameter expression="${report.buildDirectory}" default-value=
-	 *            "${project.build.directory}"
+	 * @parameter expression="${project.build.directory}"
 	 * @required
 	 */
 	private String buildDirectory;

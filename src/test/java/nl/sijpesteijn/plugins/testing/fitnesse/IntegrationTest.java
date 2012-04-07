@@ -1,7 +1,5 @@
 package nl.sijpesteijn.plugins.testing.fitnesse;
 
-import static org.easymock.EasyMock.createMock;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -15,7 +13,7 @@ import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseStarterMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseStopperMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.SpecialPages;
 
-import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.doxia.siterenderer.DefaultSiteRenderer;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.junit.Test;
@@ -27,7 +25,6 @@ public class IntegrationTest extends AbstractFitNesseTestCase {
 	private FitnesseRunnerMojo runnerMojo;
 	private FitnesseReportMojo reportMojo;
 	private FitnesseStopperMojo stopperMojo;
-	private Renderer rendererMock;
 
 	@Test
 	public void testSetupPluginIntegration() throws Exception {
@@ -46,15 +43,9 @@ public class IntegrationTest extends AbstractFitNesseTestCase {
 		createDummyTest("");
 		createDummyTest("1");
 		runnerMojo.execute();
+
 		reportMojo.execute();
 
-		// rendererMock.generateDocument(isA(OutputStreamWriter.class),
-		// isA(SiteRendererSink.class),
-		// isA(SiteRenderingContext.class));
-		// expectLastCall();
-		// replay(rendererMock);
-		// verify(rendererMock);
-		//
 		// final String report = getReport();
 		// assertTrue(report.contains("success: 2"));
 		// assertTrue(report.contains("failure: 0"));
@@ -135,8 +126,7 @@ public class IntegrationTest extends AbstractFitNesseTestCase {
 	private void setupFitNesseReportMojo() throws Exception {
 		reportMojo = new FitnesseReportMojo();
 		final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "collect-report");
-		rendererMock = createMock(Renderer.class);
-		setVariableValueToObject(reportMojo, "siteRenderer", rendererMock);
+		setVariableValueToObject(reportMojo, "siteRenderer", new DefaultSiteRenderer());
 		setVariableValueToObject(
 				reportMojo,
 				"outputDirectory",
@@ -149,6 +139,8 @@ public class IntegrationTest extends AbstractFitNesseTestCase {
 						"${basedir}/target/FitNesseRoot/files/mafiaTestResults"));
 		setVariableValueToObject(reportMojo, "suites", getStringArrayFromConfiguration(configuration, "suites"));
 		setVariableValueToObject(reportMojo, "tests", getStringArrayFromConfiguration(configuration, "tests"));
+		setVariableValueToObject(reportMojo, "buildDirectory",
+				getStringValueFromConfiguration(configuration, "${project.build.directory}", "${basedir}/target"));
 	}
 
 	private void setupFitNesseRunnerMojo() throws Exception {

@@ -41,6 +41,7 @@ public abstract class AbstractFitNesseTestCase extends AbstractMojoTestCase {
 		model = reader.read(new InputStreamReader(new FileInputStream(pom)), true);
 		final Properties properties = model.getProperties();
 		properties.put("basedir", getBasedir());
+		properties.put("${project.build.directory}", getBasedir() + File.separatorChar + "target");
 		super.setUp();
 	}
 
@@ -70,8 +71,7 @@ public abstract class AbstractFitNesseTestCase extends AbstractMojoTestCase {
 				}
 			}
 		}
-		throw new MojoExecutionException("Could not find plugin configuration for artifactId: " + artifactId
-				+ ", goal: " + goal);
+		return null;
 	}
 
 	private List<Plugin> getTestingProfilePlugins() throws MojoExecutionException {
@@ -107,12 +107,17 @@ public abstract class AbstractFitNesseTestCase extends AbstractMojoTestCase {
 	}
 
 	protected String[] getStringArrayFromConfiguration(final Xpp3Dom configuration, final String name) {
-		final Xpp3Dom child = configuration.getChild(name);
-		final String[] statics = new String[child.getChildCount()];
-		for (int i = 0; i < child.getChildCount(); i++) {
-			statics[i] = resolvePlaceHolder(child.getChild(i).getValue());
+		if (configuration != null) {
+			final Xpp3Dom child = configuration.getChild(name);
+			if (child != null) {
+				final String[] statics = new String[child.getChildCount()];
+				for (int i = 0; i < child.getChildCount(); i++) {
+					statics[i] = resolvePlaceHolder(child.getChild(i).getValue());
+				}
+				return statics;
+			}
 		}
-		return statics;
+		return new String[0];
 	}
 
 	private String resolvePlaceHolder(final String value) {
@@ -142,40 +147,46 @@ public abstract class AbstractFitNesseTestCase extends AbstractMojoTestCase {
 	}
 
 	protected Dependency[] getDependencyArrayFromConfiguration(final Xpp3Dom configuration, final String name) {
-		final Xpp3Dom child = configuration.getChild(name);
-		final Dependency[] dependencies = new Dependency[child.getChildCount()];
-		for (int i = 0; i < child.getChildCount(); i++) {
-			final Xpp3Dom excludeDependency = child.getChild(i);
-			final Dependency dependency = new Dependency();
-			for (int j = 0; j < excludeDependency.getChildCount(); j++) {
-				final Xpp3Dom xpp3Dom = excludeDependency.getChild(j);
-				if (xpp3Dom.getName().equals("groupId")) {
-					dependency.setGroupId(xpp3Dom.getValue());
+		if (configuration != null) {
+			final Xpp3Dom child = configuration.getChild(name);
+			final Dependency[] dependencies = new Dependency[child.getChildCount()];
+			for (int i = 0; i < child.getChildCount(); i++) {
+				final Xpp3Dom excludeDependency = child.getChild(i);
+				final Dependency dependency = new Dependency();
+				for (int j = 0; j < excludeDependency.getChildCount(); j++) {
+					final Xpp3Dom xpp3Dom = excludeDependency.getChild(j);
+					if (xpp3Dom.getName().equals("groupId")) {
+						dependency.setGroupId(xpp3Dom.getValue());
+					}
+					if (xpp3Dom.getName().equals("artifactId")) {
+						dependency.setArtifactId(xpp3Dom.getValue());
+					}
+					if (xpp3Dom.getName().equals("version")) {
+						dependency.setVersion(xpp3Dom.getValue());
+					}
+					if (xpp3Dom.getName().equals("classifier")) {
+						dependency.setClassifier(xpp3Dom.getValue());
+					}
+					if (xpp3Dom.getName().equals("type")) {
+						dependency.setType(xpp3Dom.getValue());
+					}
 				}
-				if (xpp3Dom.getName().equals("artifactId")) {
-					dependency.setArtifactId(xpp3Dom.getValue());
-				}
-				if (xpp3Dom.getName().equals("version")) {
-					dependency.setVersion(xpp3Dom.getValue());
-				}
-				if (xpp3Dom.getName().equals("classifier")) {
-					dependency.setClassifier(xpp3Dom.getValue());
-				}
-				if (xpp3Dom.getName().equals("type")) {
-					dependency.setType(xpp3Dom.getValue());
-				}
+				dependencies[i] = dependency;
 			}
-			dependencies[i] = dependency;
+			return dependencies;
 		}
-		return dependencies;
+		return new Dependency[0];
 	}
 
 	protected String getStringValueFromConfiguration(final Xpp3Dom configuration, final String name,
 			final String defaultValue) {
-		final Xpp3Dom child = configuration.getChild(name);
-		if (child != null) {
-			return resolvePlaceHolder(child.getValue());
+		if (configuration != null) {
+			final Xpp3Dom child = configuration.getChild(name);
+			if (child != null) {
+				return resolvePlaceHolder(child.getValue());
+			}
 		}
 		return resolvePlaceHolder(defaultValue);
+
 	}
 }

@@ -157,11 +157,17 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
+				<version>3.0</version>
 				<configuration>
 					<reportPlugins>
 						<plugin>
 							<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 							<artifactId>mafia-maven-plugin</artifactId>
+							<configuration>
+								<suites>
+									<suite>FrontPage.BuyMilkSuite</suite>
+								</suites>
+							</configuration>
 						</plugin>
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
@@ -191,7 +197,7 @@
 
 	<profiles>
 		<profile>
-            <id>internal-unit-test</id>	      
+			<id>internal-unit-test</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -232,17 +238,13 @@
 						<executions>
 							<execution>
 								<goals>
-									<goal>collect-report</goal>
+									<goal>report</goal>
 								</goals>
 							</execution>
 						</executions>
 						<configuration>
-							<mafiaTestResultsDirectory>${basedir}/target/FitNesseRoot/files/mafiaTestResults</mafiaTestResultsDirectory>
-							<outputDirectory>${basedir}/target/fitnesse</outputDirectory>
-							<tests>
-								<test>FrontPage.BuyMilkSuite.BuyMilk</test>
-								<test>FrontPage.BuyMilkSuite.BuyMilk1</test>
-							</tests>
+							<!-- tests> <test>FrontPage.BuyMilkSuite.BuyMilk</test> <test>FrontPage.BuyMilkSuite.BuyMilk1</test> 
+								</tests -->
 							<suites>
 								<suite>FrontPage.BuyMilkSuite</suite>
 							</suites>
@@ -254,19 +256,11 @@
 						<executions>
 							<execution>
 								<goals>
-									<goal>run-tests</goal>
+									<goal>test</goal>
 								</goals>
 							</execution>
 						</executions>
 						<configuration>
-							<port>9091</port>
-							<mafiaTestResultsDirectory>mafiaTestResults</mafiaTestResultsDirectory>
-							<wikiRoot>${basedir}/target</wikiRoot>
-							<nameRootPage>FitNesseRoot</nameRootPage>
-							<stopTestsOnFailure>true</stopTestsOnFailure>
-							<stopTestsOnIgnore>true</stopTestsOnIgnore>
-							<stopTestsOnException>true</stopTestsOnException>
-							<stopTestsOnWrong>true</stopTestsOnWrong>
 							<tests>
 								<test>FrontPage.BuyMilkSuite.BuyMilk</test>
 								<test>FrontPage.BuyMilkSuite.BuyMilk1</test>
@@ -274,45 +268,6 @@
 							<suites>
 								<suite>FrontPage.BuyMilkSuite</suite>
 							</suites>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-						<artifactId>mafia-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>start</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<port>9090</port>
-							<retainDays>14</retainDays>
-							<wikiRoot>${basedir}/target</wikiRoot>
-							<nameRootPage>FitNesseRoot</nameRootPage>
-							<jvmDependencies>
-								<dependency>
-									<groupId>org.apache.velocity</groupId>
-									<artifactId>velocity</artifactId>
-									<version>1.7</version>
-								</dependency>
-							</jvmDependencies>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-						<artifactId>mafia-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-								<phase></phase>
-							</execution>
-						</executions>
-						<configuration>
-							<port>9090</port>
 						</configuration>
 					</plugin>
 				</plugins>
