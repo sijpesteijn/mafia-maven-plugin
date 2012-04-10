@@ -7,11 +7,11 @@ import java.net.URL;
 import org.codehaus.plexus.util.FileUtils;
 
 public class ReportResource {
-    private String resourcePathBase;
+    private final String resourcePathBase;
 
-    private File outputDirectory;
+    private final String outputDirectory;
 
-    public ReportResource(final String resourcePathBase, final File outputDirectory) {
+    public ReportResource(final String resourcePathBase, final String outputDirectory) {
         this.resourcePathBase = resourcePathBase;
         this.outputDirectory = outputDirectory;
     }
@@ -26,21 +26,4 @@ public class ReportResource {
             }
         }
     }
-
-    public File getOutputDirectory() {
-        return outputDirectory;
-    }
-
-    public void setOutputDirectory(final File outputDirectory) {
-        this.outputDirectory = outputDirectory;
-    }
-
-    public String getResourcePathBase() {
-        return resourcePathBase;
-    }
-
-    public void setResourcePathBase(final String resourcePathBase) {
-        this.resourcePathBase = resourcePathBase;
-    }
-
 }
