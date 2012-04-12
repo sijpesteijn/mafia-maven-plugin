@@ -22,7 +22,7 @@ import org.apache.maven.reporting.MavenReportException;
  * This mojo will collect the test results from the run tests.
  * 
  * @phase site
- * @execute test
+ * @execute goal="test"
  * @goal report
  */
 public class FitnesseReportMojo extends AbstractMavenReport {

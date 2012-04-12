@@ -21,8 +21,7 @@ public class MafiaReportGenerator {
     private final List<MafiaTestResult> mafiaTestResults;
 
     public MafiaReportGenerator(final Sink sink, final ResourceBundle bundle, final String outputDirectory,
-                                final List<MafiaTestResult> mafiaTestResults)
-    {
+            final List<MafiaTestResult> mafiaTestResults) {
         this.sink = sink;
         this.bundle = bundle;
         this.outputDirectory = outputDirectory;
@@ -32,23 +31,10 @@ public class MafiaReportGenerator {
     public void generate() throws MavenReportException {
         addStaticResources();
 
-        sink.head();
-        sink.title();
-        sink.text("Hello World Title");
-        sink.title_();
-        sink.head_();
+        createHead();
+        createBody();
 
-        sink.body();
-        sink.text("Hello World!");
-        sink.body_();
-
-        sink.flush();
-
-        //
-        // createHead();
-        // createBody();
-        //
-        // flushAndCloseSink();
+        flushAndCloseSink();
     }
 
     private void createHead() {
