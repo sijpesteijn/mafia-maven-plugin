@@ -43,7 +43,7 @@ public class ReporterPluginManager implements PluginManager {
     /**
      * 
      * @param reporterPluginConfig
-     *            {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig}
+     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig}
      */
     public ReporterPluginManager(final ReporterPluginConfig reporterPluginConfig) {
         this.reporterPluginConfig = reporterPluginConfig;
@@ -59,9 +59,9 @@ public class ReporterPluginManager implements PluginManager {
     public void run() throws MojoFailureException, MojoExecutionException {
         try {
             final List<MafiaTestResult> mafiaTestResults = getMafiaTestResults();
-            final MafiaReportGenerator generator = new MafiaReportGenerator(reporterPluginConfig.getSink(),
-                    reporterPluginConfig.getResourceBundle(), reporterPluginConfig.getOutputDirectory(),
-                    mafiaTestResults);
+            final MafiaReportGenerator generator =
+                    new MafiaReportGenerator(reporterPluginConfig.getSink(), reporterPluginConfig.getResourceBundle(),
+                        reporterPluginConfig.getOutputDirectory(), mafiaTestResults);
             generator.generate();
         } catch (final MavenReportException e) {
             throw new MojoFailureException("Could not generate mafia report: ", e);
@@ -104,16 +104,17 @@ public class ReporterPluginManager implements PluginManager {
     }
 
     private MafiaTestResult getMafiaTestResult(final String pageName, final PageType pageType)
-            throws MojoFailureException {
+            throws MojoFailureException
+    {
         final TestHistory history = new TestHistory();
         history.readPageHistoryDirectory(historyDirectory, pageName);
         final PageHistory pageHistory = history.getPageHistory(pageName);
         if (pageHistory == null) {
             throw new MojoFailureException(
-                    "No test history for "
-                            + pageName
-                            + ". Did you use the FitNesseRunnerMojo to run the tests? FitNesse Report mojo is looking for test history in "
-                            + historyDirectory);
+                "No test history for "
+                        + pageName
+                        + ". Did you use the FitNesseRunnerMojo to run the tests? FitNesse Report mojo is looking for test history in "
+                        + historyDirectory);
         }
         final Date latestDate = pageHistory.getLatestDate();
         final TestResultRecord testResultRecord = pageHistory.get(latestDate);
@@ -135,10 +136,41 @@ public class ReporterPluginManager implements PluginManager {
         if (report instanceof TestExecutionReport) {
             report.setDate(latestDate);
             html = generateTestExecutionHTML((TestExecutionReport) report);
+            html = formatImageLocations(html);
+            html = removeHtmlTags(html);
+            html = removeBodyTags(html);
+            html = removeHeadSections(html);
         } else if (report instanceof SuiteExecutionReport) {
             html = generateSuiteExecutionHTML((SuiteExecutionReport) report);
         }
         return new MafiaTestResult(pageType, pageName, testResultRecord, html);
+    }
+
+    private String removeBodyTags(String html) {
+        html = html.replaceAll("<body>", "");
+        html = html.replaceAll("</body>", "");
+        return html;
+    }
+
+    private String removeHtmlTags(String html) {
+        html = html.replaceAll("<html>", "");
+        html = html.replaceAll("</html>", "");
+        return html;
+    }
+
+    private String removeHeadSections(String html) {
+        int start = html.indexOf("<head>");
+        int stop = html.indexOf("</head>");
+        while (start > 0 && stop > 0) {
+            html = html.substring(0, start) + html.substring(stop + "</head>".length(), html.length());
+            start = html.indexOf("<head>");
+            stop = html.indexOf("</head>");
+        }
+        return html;
+    }
+
+    private String formatImageLocations(final String html) {
+        return html.replaceAll("/files/images/", "images/");
     }
 
     private String generateSuiteExecutionHTML(final SuiteExecutionReport report) throws MojoFailureException {
