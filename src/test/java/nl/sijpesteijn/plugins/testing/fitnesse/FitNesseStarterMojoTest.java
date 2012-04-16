@@ -37,8 +37,12 @@ public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
             starterMojo.execute();
         } catch (final MojoFailureException mfe) {
             final String message = mfe.getMessage();
-            assertTrue("Could not start FitNesse: FitNesse cannot be started...\r\nPort 9090 is already in use.\r\nUse the -p <port#> command line argument to use a different port.\r\n"
-                .equals(message));
+            final String expected = "Could not start FitNesse: FitNesse cannot be started..."
+                    + System.getProperty("line.separator") + "Port 9090 is already in use."
+                    + System.getProperty("line.separator")
+                    + "Use the -p <port#> command line argument to use a different port."
+                    + System.getProperty("line.separator");
+            assertTrue(expected.equals(message));
             stopperMojo.execute();
         }
     }

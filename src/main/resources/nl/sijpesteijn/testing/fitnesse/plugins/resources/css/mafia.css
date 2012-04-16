@@ -1,0 +1,19 @@
+.hidden {
+  display: none;
+}
+
+.pass {
+  background-color: #AAFFAA;
+}
+
+.fail {
+  background-color: #FEAAAA;
+}
+
+.error {
+  background-color: #FFFFAA;
+}
+
+.ignore {
+  background-color: #CCCCCC;
+}
