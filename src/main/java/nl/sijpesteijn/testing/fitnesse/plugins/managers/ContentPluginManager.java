@@ -148,7 +148,7 @@ public class ContentPluginManager implements PluginManager {
         if (contentPluginConfig.getExcludeDependencies() != null) {
             for (final Dependency excludeDependency : contentPluginConfig.getExcludeDependencies()) {
                 final String dependencyPath =
-                        resolver.resolveDependencyPath(excludeDependency, contentPluginConfig.getBasedir());
+                        resolver.resolveDependencyPath(excludeDependency, contentPluginConfig.getRepositoryDirectory());
                 if (dependencyPath.equals(classpathElement)) {
                     return true;
                 }

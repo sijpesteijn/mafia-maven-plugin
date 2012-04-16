@@ -10,16 +10,16 @@ import java.io.IOException;
  */
 public class FirstTimeWriter {
 
-    private final String nameRootPage;
+    private final String fitnesseLocation;
 
     /**
      * 
-     * @param nameRootPage
+     * @param fitnesseLocation
      *            {@link java.lang.String}
      * @throws IOException
      */
-    public FirstTimeWriter(final String nameRootPage) throws IOException {
-        this.nameRootPage = nameRootPage;
+    public FirstTimeWriter(final String fitnesseLocation) throws IOException {
+        this.fitnesseLocation = fitnesseLocation;
         updateFrontPageContent();
         createSpecialPages();
     }
@@ -30,7 +30,7 @@ public class FirstTimeWriter {
      * @throws IOException
      */
     private void updateFrontPageContent() throws IOException {
-        final File frontPageContent = new File(nameRootPage + "/FrontPage/content.txt");
+        final File frontPageContent = new File(fitnesseLocation + "/FrontPage/content.txt");
         final FileWriter frontPageWriter = new FileWriter(frontPageContent);
         frontPageWriter.write("!contents");
         frontPageWriter.close();
@@ -61,13 +61,13 @@ public class FirstTimeWriter {
      */
     private void createWikiPage(final String pageName, final String contentTxt, final String propertiesXml)
             throws IOException {
-        final File setupDir = new File(nameRootPage + "/FrontPage/" + pageName + "/");
+        final File setupDir = new File(fitnesseLocation + "/FrontPage/" + pageName + "/");
         setupDir.mkdirs();
-        final File contentTxtFile = new File(nameRootPage + "/FrontPage/" + pageName + "/" + "content.txt");
+        final File contentTxtFile = new File(fitnesseLocation + "/FrontPage/" + pageName + "/" + "content.txt");
         final FileWriter contentFileWriter = new FileWriter(contentTxtFile);
         contentFileWriter.write(contentTxt);
         contentFileWriter.close();
-        final File propertiesXmlFile = new File(nameRootPage + "/FrontPage/" + pageName + "/" + "properties.xml");
+        final File propertiesXmlFile = new File(fitnesseLocation + "/FrontPage/" + pageName + "/" + "properties.xml");
         final FileWriter propertiesFileWriter = new FileWriter(propertiesXmlFile);
         propertiesFileWriter.write(propertiesXml);
         propertiesFileWriter.close();

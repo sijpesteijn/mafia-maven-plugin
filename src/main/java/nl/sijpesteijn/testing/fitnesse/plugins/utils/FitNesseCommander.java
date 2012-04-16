@@ -37,23 +37,30 @@ import fitnesse.wiki.PageVersionPruner;
 public class FitNesseCommander {
 
     private final FitNesseComanderConfig fitNesseCommanderConfig;
-    private FitNesse fitnesse;
+    private final FitNesse fitnesse;
     private final TestSummary summary = new TestSummary();
 
-    public FitNesseCommander(final FitNesseComanderConfig fitNesseCommanderConfig) {
+    public FitNesseCommander(final FitNesseComanderConfig fitNesseCommanderConfig) throws MojoFailureException {
         this.fitNesseCommanderConfig = fitNesseCommanderConfig;
-    }
-
-    public boolean start() throws MojoFailureException {
         final FitNesseContext context = loadContext();
         VelocityFactory.makeVelocityFactory(context);
         PageVersionPruner.daysTillVersionsExpire = fitNesseCommanderConfig.getRetainDays();
         fitnesse = new FitNesse(context);
-        return fitnesse.start();
     }
 
-    public void stop() throws Exception {
-        fitnesse.stop();
+    public void start() throws MojoFailureException {
+        fitnesse.start();
+        if (!fitnesse.isRunning()) {
+            throw new MojoFailureException("Could not start fitnesse.");
+        }
+    }
+
+    public void stop() throws MojoFailureException {
+        try {
+            fitnesse.stop();
+        } catch (final Exception e) {
+            throw new MojoFailureException("Could not stop fitnesse.", e);
+        }
     }
 
     private FitNesseContext loadContext() throws MojoFailureException {
@@ -115,8 +122,9 @@ public class FitNesseCommander {
     }
 
     private void callUrl(final String testUrl) throws MojoExecutionException {
+        String ipAddress = "";
         try {
-            final String ipAddress = getIpAddress();
+            ipAddress = getIpAddress();
             final URL url = new URL("http", ipAddress, fitNesseCommanderConfig.getFitNessePort(), testUrl);
             final URLConnection yc = url.openConnection();
             final BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
@@ -129,11 +137,11 @@ public class FitNesseCommander {
             }
             in.close();
         } catch (final UnknownHostException e) {
-            throw new MojoExecutionException("Could not make url call", e);
+            throw new MojoExecutionException("Host " + ipAddress + " not found", e);
         } catch (final MalformedURLException e) {
             throw new MojoExecutionException("Could not make url call", e);
         } catch (final FileNotFoundException e) {
-            throw new MojoExecutionException("Could not make url call", e);
+            throw new MojoExecutionException("Url not available", e);
         } catch (final IOException e) {
             throw new MojoExecutionException("Could not make url call", e);
         }

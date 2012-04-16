@@ -21,7 +21,7 @@ public class ContentPluginConfig implements PluginConfig {
     private final List<Dependency> excludeDependencies;
     private final List<String> targets;
     private final List<String> compileClasspathElements;
-    private final String baseDir;
+    private final String repositoryDirectory;
     private final Map<String, Artifact> artifactMap;
 
     /**
@@ -53,7 +53,7 @@ public class ContentPluginConfig implements PluginConfig {
         this.excludeDependencies = excludeDependencies;
         this.targets = targets;
         this.compileClasspathElements = compileClasspathElements;
-        this.baseDir = baseDir;
+        this.repositoryDirectory = baseDir;
         this.artifactMap = artifactMap;
     }
 
@@ -85,8 +85,8 @@ public class ContentPluginConfig implements PluginConfig {
         return compileClasspathElements;
     }
 
-    public String getBasedir() {
-        return baseDir;
+    public String getRepositoryDirectory() {
+        return repositoryDirectory;
     }
 
     public Map<String, Artifact> getArtifactMap() {
@@ -106,7 +106,7 @@ public class ContentPluginConfig implements PluginConfig {
         private List<Dependency> dependencies;
         private List<String> targets;
         private List<String> compileClasspathElements;
-        private String baseDir;
+        private String repositoryDirectory;
         private Map<String, Artifact> artifactMap;
 
         public void setWikiRoot(final String wikiRoot) {
@@ -137,8 +137,8 @@ public class ContentPluginConfig implements PluginConfig {
             this.compileClasspathElements = compileClasspathElements;
         }
 
-        public void setBaseDir(final String baseDir) {
-            this.baseDir = baseDir;
+        public void setRepositoryDirectory(final String repositoryDirectory) {
+            this.repositoryDirectory = repositoryDirectory;
         }
 
         public void setArtifactMap(final Map<String, Artifact> artifactMap) {
@@ -147,7 +147,7 @@ public class ContentPluginConfig implements PluginConfig {
 
         public ContentPluginConfig build() {
             return new ContentPluginConfig(wikiRoot, nameRootPage, statics, resources, dependencies, targets,
-                    compileClasspathElements, baseDir, artifactMap);
+                    compileClasspathElements, repositoryDirectory, artifactMap);
         }
     }
 
@@ -156,8 +156,8 @@ public class ContentPluginConfig implements PluginConfig {
      */
     @Override
     public String toString() {
-        return "Base directory: " + this.baseDir + ", Name root page: " + this.nameRootPage + ", Wiki root: "
-                + this.wikiRoot + ", Statics: " + LogUtils.getString(this.statics) + ", Resources: "
+        return "Repository directory: " + this.repositoryDirectory + ", Name root page: " + this.nameRootPage
+                + ", Wiki root: " + this.wikiRoot + ", Statics: " + LogUtils.getString(this.statics) + ", Resources: "
                 + LogUtils.getString(this.resources) + ", Targets: " + LogUtils.getString(this.targets)
                 + ", Exclude dependencies: " + LogUtils.getStringFromDependencies(this.excludeDependencies)
                 + ", Compile classpath elements: " + LogUtils.getString(this.compileClasspathElements);

@@ -43,7 +43,7 @@ public class ReporterPluginManager implements PluginManager {
     /**
      * 
      * @param reporterPluginConfig
-     *        {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig}
+     *            {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig}
      */
     public ReporterPluginManager(final ReporterPluginConfig reporterPluginConfig) {
         this.reporterPluginConfig = reporterPluginConfig;
@@ -59,14 +59,14 @@ public class ReporterPluginManager implements PluginManager {
     public void run() throws MojoFailureException, MojoExecutionException {
         try {
             final List<MafiaTestResult> mafiaTestResults = getMafiaTestResults();
-            final MafiaReportGenerator generator =
-                    new MafiaReportGenerator(reporterPluginConfig.getSink(), reporterPluginConfig.getResourceBundle(),
-                        reporterPluginConfig.getOutputDirectory(), mafiaTestResults);
+            final MafiaReportGenerator generator = new MafiaReportGenerator(reporterPluginConfig.getSink(),
+                    reporterPluginConfig.getResourceBundle(), reporterPluginConfig.getOutputDirectory(),
+                    mafiaTestResults);
             generator.generate();
         } catch (final MavenReportException e) {
-            new MojoFailureException("Could not generate mafia report: ", e);
+            throw new MojoFailureException("Could not generate mafia report: ", e);
         } catch (final Exception e) {
-            new MojoFailureException("Could not generate mafia report: ", e);
+            throw new MojoFailureException(e.getMessage());
         }
     }
 
@@ -104,11 +104,17 @@ public class ReporterPluginManager implements PluginManager {
     }
 
     private MafiaTestResult getMafiaTestResult(final String pageName, final PageType pageType)
-            throws MojoFailureException
-    {
+            throws MojoFailureException {
         final TestHistory history = new TestHistory();
         history.readPageHistoryDirectory(historyDirectory, pageName);
         final PageHistory pageHistory = history.getPageHistory(pageName);
+        if (pageHistory == null) {
+            throw new MojoFailureException(
+                    "No test history for "
+                            + pageName
+                            + ". Did you use the FitNesseRunnerMojo to run the tests? FitNesse Report mojo is looking for test history in "
+                            + historyDirectory);
+        }
         final Date latestDate = pageHistory.getLatestDate();
         final TestResultRecord testResultRecord = pageHistory.get(latestDate);
         velocityContext = new VelocityContext();
@@ -132,7 +138,6 @@ public class ReporterPluginManager implements PluginManager {
         } else if (report instanceof SuiteExecutionReport) {
             html = generateSuiteExecutionHTML((SuiteExecutionReport) report);
         }
-        System.out.println(pageName + "*****************" + html);
         return new MafiaTestResult(pageType, pageName, testResultRecord, html);
     }
 

@@ -22,8 +22,9 @@ public class StopperPluginManager implements PluginManager {
      * 
      * @param stopperPluginConfig
      *            {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StopperPluginConfig}
+     * @throws MojoFailureException
      */
-    public StopperPluginManager(final StopperPluginConfig stopperPluginConfig) {
+    public StopperPluginManager(final StopperPluginConfig stopperPluginConfig) throws MojoFailureException {
         this.stopperPluginConfig = stopperPluginConfig;
     }
 
@@ -35,13 +36,13 @@ public class StopperPluginManager implements PluginManager {
         final String jarLocation;
         try {
             jarLocation = resolver.getJarLocation(stopperPluginConfig.getDependencies(), "org/fitnesse/",
-                    stopperPluginConfig.getBasedir());
+                    stopperPluginConfig.getRepositoryDirectory());
         } catch (final MojoExecutionException mee) {
             throw mee;
         }
         final String command = "java -cp " + jarLocation + " fitnesse.Shutdown -p " + stopperPluginConfig.getPort();
-        stopperPluginConfig.getLog().info(command);
-        final CommandRunner runner = new CommandRunner(stopperPluginConfig.getLog());
+        stopperPluginConfig.getMavenLogger().info(command);
+        final CommandRunner runner = new CommandRunner(stopperPluginConfig.getMavenLogger(), null);
         try {
             runner.start(command, true, null);
         } catch (final IOException e) {

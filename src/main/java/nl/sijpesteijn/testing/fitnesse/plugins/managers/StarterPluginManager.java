@@ -39,22 +39,14 @@ public class StarterPluginManager implements PluginManager {
      */
     @Override
     public void run() throws MojoExecutionException, MojoFailureException {
-        String jarLocation;
-        jarLocation = resolver.getJarLocation(starterPluginConfig.getDependencies(), "org/fitnesse",
+        final String jarLocation = resolver.getJarLocation(starterPluginConfig.getDependencies(), "org/fitnesse",
                 starterPluginConfig.getRepositoryDirectory());
         final String jvmArgumentsString = getJVMArguments(starterPluginConfig.getJvmArguments());
         final String dependencyList = getDependencyList();
-        final String command = "java"
-                + jvmArgumentsString
-                + " -cp "
-                + jarLocation
-                + File.pathSeparatorChar
-                + (dependencyList + " fitnesseMain.FitNesseMain -p " + starterPluginConfig.getFitNessePort() + " -d "
-                        + starterPluginConfig.getWikiRoot() + " -r " + starterPluginConfig.getNameRootPage()
-                        + getLogArgument() + " -e " + starterPluginConfig.getRetainDays());
+        final String command = getCommand(jarLocation, jvmArgumentsString, dependencyList);
 
         starterPluginConfig.getLog().info(command);
-        final CommandRunner runner = new CommandRunner(starterPluginConfig.getLog());
+        final CommandRunner runner = new CommandRunner(starterPluginConfig.getLog(), starterPluginConfig.getWikiRoot());
         try {
             runner.start(command, true, " days." + System.getProperty("line.separator"));
             if (runner.errorBufferContains("patient.")) {
@@ -66,10 +58,21 @@ public class StarterPluginManager implements PluginManager {
         } catch (final InterruptedException e) {
             throw new MojoExecutionException("Could not start fitnesse.", e);
         }
-        if (runner.getExitValue() != 0 && runner.errorBufferHasContent()) {
+        if (!runner.errorBufferContains("patient.") && (runner.getExitValue() != 0 || runner.errorBufferHasContent())) {
             throw new MojoFailureException("Could not start FitNesse: " + runner.getErrorBufferMessage());
         }
 
+    }
+
+    private String getCommand(final String jarLocation, final String jvmArgumentsString, final String dependencyList) {
+        return "java"
+                + jvmArgumentsString
+                + " -cp "
+                + jarLocation
+                + File.pathSeparatorChar
+                + (dependencyList + " fitnesseMain.FitNesseMain -p " + starterPluginConfig.getFitNessePort() + " -d "
+                        + starterPluginConfig.getWikiRoot() + " -r " + starterPluginConfig.getNameRootPage()
+                        + getLogArgument() + " -e " + starterPluginConfig.getRetainDays());
     }
 
     private String getLogArgument() {
@@ -90,7 +93,8 @@ public class StarterPluginManager implements PluginManager {
         }
         String list = "";
         for (final Dependency dependency : starterPluginConfig.getJvmDependencies()) {
-            final String dependencyPath = resolver.resolveDependencyPath(dependency, starterPluginConfig.getRepositoryDirectory());
+            final String dependencyPath = resolver.resolveDependencyPath(dependency,
+                    starterPluginConfig.getRepositoryDirectory());
             if (!dependencyPath.trim().equals("")) {
                 list += dependencyPath;
             }

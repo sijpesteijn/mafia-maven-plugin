@@ -1,46 +1,49 @@
 package nl.sijpesteijn.plugins.testing.fitnesse;
 
-import java.io.File;
-import java.util.Map;
+import static org.junit.Assert.assertTrue;
+import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseStarterMojo;
+import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseStopperMojo;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseStarterMojo;
-
-import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.apache.maven.plugin.MojoFailureException;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * 
- * Test only covers configuration test. Execution test is done in
- * {@link nl.sijpesteijn.plugins.testing.fitnesse.IntegrationTest}
+ * Test FitNesseStarterMojo
  */
 public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
-	private FitnesseStarterMojo mojo;
+    private FitNesseStarterMojo starterMojo;
+    private FitNesseStopperMojo stopperMojo;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		mojo = new FitnesseStarterMojo();
-		final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "start");
-		setVariableValueToObject(mojo, "dependencies", model.getDependencies());
-		setVariableValueToObject(mojo, "basedir", new File(REPO));
-		setVariableValueToObject(mojo, "jvmArguments", new String[0]);
-		setVariableValueToObject(mojo, "port", getStringValueFromConfiguration(configuration, "port", "9090"));
-		setVariableValueToObject(mojo, "retainDays", getStringValueFromConfiguration(configuration, "retainDays", "14"));
-		setVariableValueToObject(mojo, "wikiRoot",
-				getStringValueFromConfiguration(configuration, "wikiRoot", "${basedir}/target"));
-		setVariableValueToObject(mojo, "nameRootPage",
-				getStringValueFromConfiguration(configuration, "nameRootPage", "FitNesseRoot"));
-	}
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        starterMojo = configureStarterMojo();
+        stopperMojo = configureStopperMojo();
+    }
 
-	@SuppressWarnings("rawtypes")
-	public void testConfiguration() throws Exception {
-		final Map map = getVariablesAndValuesFromObject(mojo);
-		final String port = (String) map.get("port");
-		final String retainDays = (String) map.get("retainDays");
-		final String wikiRoot = (String) map.get("wikiRoot");
-		final String nameRootPage = (String) map.get("nameRootPage");
-		assertTrue(port.equals("9090"));
-		assertTrue(retainDays.equals("14"));
-		assertTrue(wikiRoot.replace("\\", "/").equals(getTestDirectory() + TARGET));
-		assertTrue(nameRootPage.equals("FitNesseRoot"));
-	}
+    @Test
+    public void successfulStart() throws Exception {
+        starterMojo.execute();
+        stopperMojo.execute();
+    }
+
+    @Test
+    public void failureStart() throws Exception {
+        starterMojo.execute();
+        try {
+            starterMojo.execute();
+        } catch (final MojoFailureException mfe) {
+            final String message = mfe.getMessage();
+            assertTrue("Could not start FitNesse: FitNesse cannot be started...\nPort 9090 is already in use.\nUse the -p <port#> command line argument to use a different port.\n"
+                    .equals(message));
+            stopperMojo.execute();
+        }
+    }
+
+    public FitNesseStarterMojo getStarterMojo() {
+        return starterMojo;
+    }
 }

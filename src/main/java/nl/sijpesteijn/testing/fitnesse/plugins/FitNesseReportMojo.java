@@ -25,7 +25,7 @@ import org.apache.maven.reporting.MavenReportException;
  * @execute goal="test"
  * @goal report
  */
-public class FitnesseReportMojo extends AbstractMavenReport {
+public class FitNesseReportMojo extends AbstractMavenReport {
     public static final String OUTPUT_NAME = "fitnesse";
 
     /**
@@ -56,7 +56,7 @@ public class FitnesseReportMojo extends AbstractMavenReport {
      * 
      * @parameter expression="${report.mafiaTestResultsDirectory}"
      *            default-value=
-     *            "${project.build.directory}/FitNesseRoot/files/mafiaTestResults"
+     *            "${basedir}/FitNesseRoot/files/mafiaTestResults"
      * @required
      */
     private String mafiaTestResultsDirectory;
@@ -140,7 +140,7 @@ public class FitnesseReportMojo extends AbstractMavenReport {
     }
 
     private ResourceBundle getBundle(final Locale locale) {
-        return ResourceBundle.getBundle("mafia-report", locale, FitnesseReportMojo.class.getClassLoader());
+        return ResourceBundle.getBundle("mafia-report", locale, FitNesseReportMojo.class.getClassLoader());
     }
 
     /**

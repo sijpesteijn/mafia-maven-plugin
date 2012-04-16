@@ -1,6 +1,5 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,7 +20,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal start
  * 
  */
-public class FitnesseStarterMojo extends AbstractMojo {
+public class FitNesseStarterMojo extends AbstractMojo {
 
     /**
      * The Maven project instance for the executing project.
@@ -45,7 +44,7 @@ public class FitnesseStarterMojo extends AbstractMojo {
      * @readonly
      * @required
      */
-    private File basedir;
+    private String repositoryDirectory;
 
     /**
      * The port number FitNesse is running on.
@@ -125,7 +124,7 @@ public class FitnesseStarterMojo extends AbstractMojo {
         builder.setJvmArguments(Arrays.asList(jvmArguments));
         builder.setJvmDependencies(Arrays.asList(jvmDependencies));
         builder.setDependencies(dependencies);
-        builder.setRepositoryDirectory(basedir.getAbsolutePath());
+        builder.setRepositoryDirectory(repositoryDirectory);
         builder.setLogger(getLog());
         return builder.build();
     }

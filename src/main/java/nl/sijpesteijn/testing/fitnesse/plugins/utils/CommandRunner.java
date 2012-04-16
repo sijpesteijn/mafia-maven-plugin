@@ -1,5 +1,6 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -18,9 +19,12 @@ public class CommandRunner {
     private int exitValue;
     private int errorContent = 0;
     private int inputContent = 0;
+    private File workDirectory = null;
 
-    public CommandRunner(final Log log) {
+    public CommandRunner(final Log log, final String workDirectory) {
         this.log = log;
+        if (workDirectory != null)
+            this.workDirectory = new File(workDirectory);
     }
 
     /**
@@ -33,7 +37,7 @@ public class CommandRunner {
      */
     public void start(final String command, final boolean waitForProcessToFinish, final String endCondition)
             throws IOException, InterruptedException {
-        process = Runtime.getRuntime().exec(command);
+        process = Runtime.getRuntime().exec(command, null, workDirectory);
         if (waitForProcessToFinish) {
             waitForSetupToFinish(endCondition);
         }
@@ -102,9 +106,6 @@ public class CommandRunner {
         new Thread(new InputStreamToBufferMonitor(errorStream, errorBuffer)).start();
         final InputStream inputStream = process.getInputStream();
         new Thread(new InputStreamToBufferMonitor(inputStream, inputBuffer)).start();
-        // final OutputStream outputStream = process.getOutputStream();
-        // new Thread(new OutputStreamToBufferMonitor(outputStream,
-        // outputBuffer)).start();
     }
 
     /**

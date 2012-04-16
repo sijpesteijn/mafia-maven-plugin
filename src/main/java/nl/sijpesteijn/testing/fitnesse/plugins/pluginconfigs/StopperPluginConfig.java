@@ -11,32 +11,33 @@ import org.apache.maven.plugin.logging.Log;
  */
 public class StopperPluginConfig implements PluginConfig {
 
-    private final String port;
-    private final String basedir;
+    private final int port;
+    private final String repositoryDirectory;
     private final List<Dependency> dependencies;
-    private final Log log;
+    private final Log mavenLogger;
 
-    public StopperPluginConfig(final String port, final String basedir, final List<Dependency> dependencies, Log log) {
+    public StopperPluginConfig(final int port, final String basedir, final List<Dependency> dependencies,
+            final Log mavenLogger) {
         this.port = port;
-        this.basedir = basedir;
+        this.repositoryDirectory = basedir;
         this.dependencies = dependencies;
-        this.log = log;
+        this.mavenLogger = mavenLogger;
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 
-    public String getBasedir() {
-        return basedir;
+    public String getRepositoryDirectory() {
+        return repositoryDirectory;
     }
 
     public List<Dependency> getDependencies() {
         return dependencies;
     }
 
-    public Log getLog() {
-        return log;
+    public Log getMavenLogger() {
+        return mavenLogger;
     }
 
     /**
@@ -45,29 +46,29 @@ public class StopperPluginConfig implements PluginConfig {
      */
     public static class Builder implements PluginConfigBuilder {
 
-        private String port;
-        private String basedir;
+        private int port;
+        private String repositoryDirectory;
         private List<Dependency> dependencies;
-        private Log log;
+        private Log mavenLogger;
 
-        public void setPort(final String port) {
+        public void setPort(final int port) {
             this.port = port;
         }
 
         public StopperPluginConfig build() {
-            return new StopperPluginConfig(this.port, this.basedir, this.dependencies, this.log);
+            return new StopperPluginConfig(this.port, this.repositoryDirectory, this.dependencies, this.mavenLogger);
         }
 
-        public void setBaseDir(final String basedir) {
-            this.basedir = basedir;
+        public void setRepositoryDirectory(final String basedir) {
+            this.repositoryDirectory = basedir;
         }
 
         public void setDependencies(final List<Dependency> dependencies) {
             this.dependencies = dependencies;
         }
 
-        public void setLog(Log log) {
-            this.log = log;
+        public void setMavenLogger(final Log mavenLogger) {
+            this.mavenLogger = mavenLogger;
         }
     }
 
@@ -76,7 +77,7 @@ public class StopperPluginConfig implements PluginConfig {
      */
     @Override
     public String toString() {
-        return "FitNesse port: " + this.port + ", base directory: " + this.basedir;
+        return "FitNesse port: " + this.port + ", Repository directory: " + this.repositoryDirectory;
     }
 
 }

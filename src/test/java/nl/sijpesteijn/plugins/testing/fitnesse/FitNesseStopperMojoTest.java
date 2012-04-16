@@ -1,34 +1,47 @@
 package nl.sijpesteijn.plugins.testing.fitnesse;
 
-import java.util.Map;
+import static org.junit.Assert.assertTrue;
+import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseStarterMojo;
+import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseStopperMojo;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.FitnesseStopperMojo;
-
-import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.apache.maven.plugin.MojoFailureException;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * 
- * Test only covers configuration test. Execution test is done in
- * {@link nl.sijpesteijn.plugins.testing.fitnesse.IntegrationTest}
- * 
+ * Test FitNesseStopperMojo.
  */
 public class FitNesseStopperMojoTest extends AbstractFitNesseTestCase {
-    private FitnesseStopperMojo mojo;
+    private FitNesseStopperMojo stopperMojo;
+    private FitNesseStarterMojo starterMojo;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
-        mojo = new FitnesseStopperMojo();
-        final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "stop");
-        setVariableValueToObject(mojo, "port", getStringValueFromConfiguration(configuration, "port", "9090"));
-        setVariableValueToObject(mojo, "dependencies", model.getDependencies());
-        setVariableValueToObject(mojo, "baseDir", REPO);
+        stopperMojo = configureStopperMojo();
+        starterMojo = configureStarterMojo();
     }
 
-    @SuppressWarnings("rawtypes")
-    public void testConfiguration() throws Exception {
-        final Map map = getVariablesAndValuesFromObject(mojo);
-        final String port = (String) map.get("port");
-        assertTrue(port.equals("9090"));
+    @Test
+    public void succesfullStop() throws Exception {
+        starterMojo.execute();
+        stopperMojo.execute();
     }
+
+    @Test
+    public void failureStop() throws Exception {
+        try {
+            stopperMojo.execute();
+        } catch (final MojoFailureException mfe) {
+            final String message = mfe.getMessage();
+            assertTrue(message
+                    .startsWith("Could not stop FitNesse: Exception in thread \"main\" java.net.ConnectException: Connection refused"));
+        }
+    }
+
+    public FitNesseStopperMojo getStopperMojo() {
+        return stopperMojo;
+    }
+
 }

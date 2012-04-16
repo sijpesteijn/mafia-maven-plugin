@@ -154,30 +154,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<reportPlugins>
-						<plugin>
-							<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-							<artifactId>mafia-maven-plugin</artifactId>
-							<configuration>
-								<suites>
-									<suite>FrontPage.BuyMilkSuite</suite>
-								</suites>
-							</configuration>
-						</plugin>
-						<plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-surefire-report-plugin</artifactId> 
-							<version>2.6</version> </plugin> <plugin> <groupId>org.codehaus.mojo</groupId> 
-							<artifactId>cobertura-maven-plugin</artifactId> <version>2.4</version> <configuration> 
-							<formats> <format>html</format> </formats> </configuration> </plugin> <plugin> 
-							<groupId>org.apache.maven.plugins</groupId> <artifactId>maven-checkstyle-plugin</artifactId> 
-							<version>2.6</version> </plugin>
-					</reportPlugins>
-				</configuration>
-			</plugin -->
 		</plugins>
 	</build>
 
@@ -229,11 +205,13 @@
 							</execution>
 						</executions>
 						<configuration>
-							<!-- tests> <test>FrontPage.BuyMilkSuite.BuyMilk</test> <test>FrontPage.BuyMilkSuite.BuyMilk1</test> 
-								</tests -->
-							<suites>
+							<tests>
+								<test>FrontPage.BuyMilkSuite.BuyMilk</test>
+								<test>FrontPage.BuyMilkSuite.BuyMilk1</test>
+							</tests>
+							<!-- suites>
 								<suite>FrontPage.BuyMilkSuite</suite>
-							</suites>
+							</suites-->
 						</configuration>
 					</plugin>
 					<plugin>
@@ -251,9 +229,11 @@
 								<test>FrontPage.BuyMilkSuite.BuyMilk</test>
 								<test>FrontPage.BuyMilkSuite.BuyMilk1</test>
 							</tests>
-							<suites>
+							<!--suites>
 								<suite>FrontPage.BuyMilkSuite</suite>
 							</suites>
+							<suitePageName>FrontPage.BuyMilkSuite</suitePageName>
+							<suiteFilter>regression</suiteFilter-->
 						</configuration>
 					</plugin>
 				</plugins>

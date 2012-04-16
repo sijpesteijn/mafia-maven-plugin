@@ -19,7 +19,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal stop
  * 
  */
-public class FitnesseStopperMojo extends AbstractMojo {
+public class FitNesseStopperMojo extends AbstractMojo {
 
     /**
      * The Maven project instance for the executing project.
@@ -43,14 +43,14 @@ public class FitnesseStopperMojo extends AbstractMojo {
      * @readonly
      * @required
      */
-    private String baseDir;
+    private String repositoryDirectory;
 
     /**
      * The port number FitNesse is running on.
      * 
      * @parameter expression="${stop.port}" default-value="9090"
      */
-    private String port;
+    private int port;
 
     /**
      * 
@@ -73,9 +73,9 @@ public class FitnesseStopperMojo extends AbstractMojo {
     private StopperPluginConfig getPluginConfig() throws MojoExecutionException {
         final Builder builder = PluginManagerFactory.getPluginConfigBuilder(StopperPluginConfig.class);
         builder.setPort(this.port);
-        builder.setBaseDir(baseDir);
+        builder.setRepositoryDirectory(repositoryDirectory);
         builder.setDependencies(dependencies);
-        builder.setLog(getLog());
+        builder.setMavenLogger(getLog());
         return builder.build();
     }
 

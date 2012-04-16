@@ -12,6 +12,7 @@ import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StarterPluginConfig
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StopperPluginConfig;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Factory method approach for getting plugin configs & plugin managers.
@@ -37,9 +38,10 @@ public class PluginManagerFactory {
      *            {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.PluginConfig}
      * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.managers.PluginManager}
      * @throws MojoExecutionException
+     * @throws MojoFailureException
      */
     public static <PC extends PluginConfig> PluginManager getPluginManager(final PC pluginConfig)
-            throws MojoExecutionException {
+            throws MojoExecutionException, MojoFailureException {
         if (pluginConfig instanceof RunnerPluginConfig) {
             return new RunnerPluginManager((RunnerPluginConfig) pluginConfig);
         }
