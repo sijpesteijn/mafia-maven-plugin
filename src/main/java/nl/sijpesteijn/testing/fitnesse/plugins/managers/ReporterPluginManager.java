@@ -6,6 +6,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaReportGenerator;
@@ -140,10 +142,23 @@ public class ReporterPluginManager implements PluginManager {
             html = removeHtmlTags(html);
             html = removeBodyTags(html);
             html = removeHeadSections(html);
+            html = removeEditLinks(html);
         } else if (report instanceof SuiteExecutionReport) {
             html = generateSuiteExecutionHTML((SuiteExecutionReport) report);
         }
         return new MafiaTestResult(pageType, pageName, testResultRecord, html);
+    }
+
+    private String removeEditLinks(String html) {
+        final String regex = "<a href=\".*?edit&amp;redirectToReferer=true&amp;redirectAction=\">\\(edit\\)</a>";
+        final Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(html);
+        while (matcher.find()) {
+            final int start = html.indexOf("</a> <a href=", matcher.start()) + 4;
+            html = html.substring(0, start) + html.substring(matcher.end(), html.length());
+            matcher = pattern.matcher(html);
+        }
+        return html;
     }
 
     private String removeBodyTags(String html) {

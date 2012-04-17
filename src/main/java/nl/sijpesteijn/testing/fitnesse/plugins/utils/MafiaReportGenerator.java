@@ -21,7 +21,8 @@ public class MafiaReportGenerator {
     private final List<MafiaTestResult> mafiaTestResults;
 
     public MafiaReportGenerator(final Sink sink, final ResourceBundle bundle, final String outputDirectory,
-            final List<MafiaTestResult> mafiaTestResults) {
+                                final List<MafiaTestResult> mafiaTestResults)
+    {
         this.sink = sink;
         this.bundle = bundle;
         this.outputDirectory = outputDirectory;
@@ -49,12 +50,18 @@ public class MafiaReportGenerator {
     private void createBody() {
         sink.body();
         addJavaScript();
+        addStyles();
         createIntroduction();
         createSummary();
         createFileList();
         createDetails();
 
         sink.body_();
+    }
+
+    private void addStyles() {
+        final String stylesheet = SpecialPages.stylesheet;
+        sink.rawText("<style type=\"text/css\">" + stylesheet + "</style>");
     }
 
     private void addJavaScript() {
