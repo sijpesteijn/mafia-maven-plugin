@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.managers.ReportResource;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.MavenReportException;

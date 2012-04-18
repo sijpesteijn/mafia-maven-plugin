@@ -1,0 +1,47 @@
+package nl.sijpesteijn.testing.fitnesse.plugins.utils;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class MafiaHtmlConverter {
+
+    public String removeEditLinks(String html) {
+        final String regex = "<a href=\".*?edit&amp;redirectToReferer=true&amp;redirectAction=\">\\(edit\\)</a>";
+        final Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(html);
+        while (matcher.find()) {
+            final int start = html.indexOf("</a> <a href=", matcher.start()) + 4;
+            html = html.substring(0, start) + html.substring(matcher.end(), html.length());
+            matcher = pattern.matcher(html);
+        }
+        return html;
+    }
+
+    public String removeBodyTags(String html) {
+        html = html.replaceAll("<body>", "");
+        html = html.replaceAll("</body>", "");
+        return html;
+    }
+
+    public String removeHtmlTags(String html) {
+        html = html.replaceAll("<html>", "");
+        html = html.replaceAll("</html>", "");
+        return html;
+    }
+
+    public String removeHeadSections(String html) {
+        int start = html.indexOf("<head>");
+        int stop = html.indexOf("</head>");
+        while (start > 0 && stop > 0) {
+            html = html.substring(0, start) + html.substring(stop + "</head>".length(), html.length());
+            start = html.indexOf("<head>");
+            stop = html.indexOf("</head>");
+        }
+        return html;
+    }
+
+    public String formatImageLocations(final String html) {
+        return html.replaceAll("/files/images/", "images/");
+    }
+
+}
