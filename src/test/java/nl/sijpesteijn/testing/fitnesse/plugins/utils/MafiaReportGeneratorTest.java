@@ -52,10 +52,10 @@ public class MafiaReportGeneratorTest {
         summary2.right = 3;
         final MafiaTestResult result1 =
                 new MafiaTestResult(PageType.TEST, "DummyTest1", summary1,
-                    "some html 1<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>end");
+                    "some html 1<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>end", true);
         final MafiaTestResult result2 =
                 new MafiaTestResult(PageType.TEST, "DummyTest2", summary2,
-                    "some html 2<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>end");
+                    "some html 2<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>end", true);
         mafiaTestResults.add(result1);
         mafiaTestResults.add(result2);
         return mafiaTestResults;

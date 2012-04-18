@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -84,7 +86,7 @@ public class ReporterPluginManager implements PluginManager {
         final List<String> suites = reporterPluginConfig.getSuites();
         if (suites != null && !suites.isEmpty()) {
             for (final String suite : suites) {
-                testResultRecords.add(getMafiaTestResult(suite, PageType.SUITE));
+                testResultRecords.addAll(getMafiaTestResults(suite, PageType.SUITE, null, true));
             }
         }
     }
@@ -92,7 +94,7 @@ public class ReporterPluginManager implements PluginManager {
     private void addSuiteFilteredResults(final List<MafiaTestResult> testResultRecords) throws Exception {
         final String suitePageName = reporterPluginConfig.getSuitePageName();
         if (suitePageName != null && !suitePageName.equals("")) {
-            testResultRecords.add(getMafiaTestResult(suitePageName, PageType.SUITE));
+            testResultRecords.addAll(getMafiaTestResults(suitePageName, PageType.SUITE, null, true));
         }
     }
 
@@ -100,14 +102,16 @@ public class ReporterPluginManager implements PluginManager {
         final List<String> tests = reporterPluginConfig.getTests();
         if (tests != null && !tests.isEmpty()) {
             for (final String test : tests) {
-                testResultRecords.add(getMafiaTestResult(test, PageType.TEST));
+                testResultRecords.addAll(getMafiaTestResults(test, PageType.TEST, null, true));
             }
         }
     }
 
-    private MafiaTestResult getMafiaTestResult(final String pageName, final PageType pageType)
+    private List<MafiaTestResult> getMafiaTestResults(final String pageName, final PageType pageType,
+                                                      final String timestamp, final boolean addToOverview)
             throws MojoFailureException
     {
+        final List<MafiaTestResult> testResults = new ArrayList<MafiaTestResult>();
         final TestHistory history = new TestHistory();
         history.readPageHistoryDirectory(historyDirectory, pageName);
         final PageHistory pageHistory = history.getPageHistory(pageName);
@@ -118,8 +122,13 @@ public class ReporterPluginManager implements PluginManager {
                         + ". Did you use the FitNesseRunnerMojo to run the tests? FitNesse Report mojo is looking for test history in "
                         + historyDirectory);
         }
-        final Date latestDate = pageHistory.getLatestDate();
-        final TestResultRecord testResultRecord = pageHistory.get(latestDate);
+        Date selectedDate;
+        if (timestamp == null || timestamp.equals("")) {
+            selectedDate = pageHistory.getLatestDate();
+        } else {
+            selectedDate = new Date(Long.valueOf(timestamp));
+        }
+        final TestResultRecord testResultRecord = pageHistory.get(selectedDate);
         velocityContext = new VelocityContext();
 
         String content;
@@ -136,17 +145,45 @@ public class ReporterPluginManager implements PluginManager {
         }
         String html = "";
         if (report instanceof TestExecutionReport) {
-            report.setDate(latestDate);
+            report.setDate(selectedDate);
             html = generateTestExecutionHTML((TestExecutionReport) report);
-            html = formatImageLocations(html);
-            html = removeHtmlTags(html);
-            html = removeBodyTags(html);
-            html = removeHeadSections(html);
-            html = removeEditLinks(html);
+            testResults.add(new MafiaTestResult(pageType, pageName, testResultRecord, html, addToOverview));
         } else if (report instanceof SuiteExecutionReport) {
             html = generateSuiteExecutionHTML((SuiteExecutionReport) report);
+            testResults.add(new MafiaTestResult(pageType, pageName, testResultRecord, html, addToOverview));
+            final Map<String, String> testPages = getTestPages(html);
+            for (final String testPageName : testPages.keySet()) {
+                testResults
+                    .addAll(getMafiaTestResults(testPageName, PageType.TEST, testPages.get(testPageName), false));
+            }
         }
-        return new MafiaTestResult(pageType, pageName, testResultRecord, html);
+        return testResults;
+    }
+
+    private Map<String, String> getTestPages(final String suiteHtml) {
+        final String regex = "<a href=\".*resultDate=.*\">";
+        final Pattern pattern = Pattern.compile(regex);
+        final Matcher matcher = pattern.matcher(suiteHtml);
+        final Map<String, String> testPages = new HashMap<String, String>();
+        while (matcher.find()) {
+            final String pageName = suiteHtml.substring(matcher.end(), suiteHtml.indexOf("</a>", matcher.start()));
+            final int timestampStart = suiteHtml.indexOf("resultDate=", matcher.start()) + "resultDate=".length();
+            final String timestamp = suiteHtml.substring(timestampStart, suiteHtml.indexOf(">", matcher.start()) - 1);
+            testPages.put(pageName, timestamp);
+        }
+        return testPages;
+    }
+
+    private String removeSetupLinks(String html) {
+        final String regex = "<a href=\".*SetUp.*\">.*</a>";
+        final Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(html);
+        while (matcher.find()) {
+            final int start = html.indexOf("</a> <a href=", matcher.start()) + 4;
+            html = html.substring(0, start) + html.substring(matcher.end(), html.length());
+            matcher = pattern.matcher(html);
+        }
+        return html;
     }
 
     private String removeEditLinks(String html) {
@@ -191,7 +228,12 @@ public class ReporterPluginManager implements PluginManager {
     private String generateSuiteExecutionHTML(final SuiteExecutionReport report) throws MojoFailureException {
         velocityContext.put("suiteExecutionReport", report);
         final Template template = getTemplate("suiteExecutionReport.vm");
-        return makeHTMLFromTemplate(template);
+        String html = makeHTMLFromTemplate(template);
+        html = removeHtmlTags(html);
+        html = removeBodyTags(html);
+        html = removeHeadSections(html);
+        // html = removeSetupLinks(html);
+        return html;
     }
 
     private Template getTemplate(final String templateName) throws MojoFailureException {
@@ -211,7 +253,13 @@ public class ReporterPluginManager implements PluginManager {
     private String generateTestExecutionHTML(final TestExecutionReport report) throws MojoFailureException {
         velocityContext.put("testExecutionReport", report);
         final Template template = getTemplate("testExecutionReport.vm");
-        return makeHTMLFromTemplate(template);
+        String html = makeHTMLFromTemplate(template);
+        html = formatImageLocations(html);
+        html = removeHtmlTags(html);
+        html = removeBodyTags(html);
+        html = removeHeadSections(html);
+        html = removeEditLinks(html);
+        return html;
     }
 
     private String makeHTMLFromTemplate(final Template template) throws MojoFailureException {

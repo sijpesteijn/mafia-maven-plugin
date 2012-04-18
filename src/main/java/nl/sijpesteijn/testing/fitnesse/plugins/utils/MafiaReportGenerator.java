@@ -193,26 +193,27 @@ public class MafiaReportGenerator {
         sink.tableRow_();
 
         for (final MafiaTestResult mafiaTestResult : mafiaTestResults) {
-
-            sink.tableRow();
-            sink.tableCell();
-            sink.link("#" + mafiaTestResult.getPageName());
-            sink.text(mafiaTestResult.getPageName());
-            sink.link_();
-            sink.tableCell_();
-            sink.tableCell();
-            sink.text("" + mafiaTestResult.getTestSummary().getRight());
-            sink.tableCell_();
-            sink.tableCell();
-            sink.text("" + mafiaTestResult.getTestSummary().getWrong());
-            sink.tableCell_();
-            sink.tableCell();
-            sink.text("" + mafiaTestResult.getTestSummary().getExceptions());
-            sink.tableCell_();
-            sink.tableCell();
-            sink.text("" + mafiaTestResult.getTestSummary().getIgnores());
-            sink.tableCell_();
-            sink.tableRow_();
+            if (mafiaTestResult.isAddToOverview()) {
+                sink.tableRow();
+                sink.tableCell();
+                sink.link("#" + mafiaTestResult.getPageName());
+                sink.text(mafiaTestResult.getPageName());
+                sink.link_();
+                sink.tableCell_();
+                sink.tableCell();
+                sink.text("" + mafiaTestResult.getTestSummary().getRight());
+                sink.tableCell_();
+                sink.tableCell();
+                sink.text("" + mafiaTestResult.getTestSummary().getWrong());
+                sink.tableCell_();
+                sink.tableCell();
+                sink.text("" + mafiaTestResult.getTestSummary().getExceptions());
+                sink.tableCell_();
+                sink.tableCell();
+                sink.text("" + mafiaTestResult.getTestSummary().getIgnores());
+                sink.tableCell_();
+                sink.tableRow_();
+            }
         }
         sink.table_();
         sink.section1_();
