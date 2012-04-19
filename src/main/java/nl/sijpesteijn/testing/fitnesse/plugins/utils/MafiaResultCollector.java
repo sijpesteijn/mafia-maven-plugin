@@ -40,17 +40,19 @@ public class MafiaResultCollector {
     }
 
     public Collection<? extends MafiaTestResult> getMafiaTestResults(final String pageName, final PageType pageType,
-            final String timestamp, final boolean addToOverview) throws MojoFailureException {
+                                                                     final String timestamp, final boolean addToOverview)
+            throws MojoFailureException
+    {
         final List<MafiaTestResult> testResults = new ArrayList<MafiaTestResult>();
         final TestHistory history = new TestHistory();
         history.readPageHistoryDirectory(historyDirectory, pageName);
         final PageHistory pageHistory = history.getPageHistory(pageName);
         if (pageHistory == null) {
             throw new MojoFailureException(
-                    "No test history for "
-                            + pageName
-                            + ". Did you use the FitNesseRunnerMojo to run the tests? FitNesse Report mojo is looking for test history in "
-                            + historyDirectory);
+                "No test history for "
+                        + pageName
+                        + ". Did you use the FitNesseRunnerMojo to run the tests? FitNesse Report mojo is looking for test history in "
+                        + historyDirectory);
         }
         Date selectedDate;
         if (timestamp == null || timestamp.equals("")) {
@@ -59,19 +61,25 @@ public class MafiaResultCollector {
             selectedDate = new Date(Long.valueOf(timestamp));
         }
         final TestResultRecord testResultRecord = pageHistory.get(selectedDate);
+        if (testResultRecord == null) {
+            throw new MojoFailureException("Exception: Could not load test result record: " + pageName
+                    + ", timestamp: " + timestamp);
+        }
         velocityContext = new VelocityContext();
 
         String content;
         try {
             content = FileUtil.getFileContent(testResultRecord.getFile());
         } catch (final Exception e) {
-            throw new MojoFailureException("Exception: Could not load test result record: " + pageName, e);
+            throw new MojoFailureException("Exception: Could not load test result record content: " + pageName
+                    + ", timestamp: " + timestamp, e);
         }
         ExecutionReport report;
         try {
             report = ExecutionReport.makeReport(content);
         } catch (final Exception e) {
-            throw new MojoFailureException("Exception: Could not create execution report: " + pageName, e);
+            throw new MojoFailureException("Exception: Could not create execution report: " + pageName
+                    + ", timestamp: " + timestamp, e);
         }
         String html = "";
         if (report instanceof TestExecutionReport) {
@@ -84,7 +92,7 @@ public class MafiaResultCollector {
             final Map<String, String> testPages = getTestPages(html);
             for (final String testPageName : testPages.keySet()) {
                 testResults
-                        .addAll(getMafiaTestResults(testPageName, PageType.TEST, testPages.get(testPageName), false));
+                    .addAll(getMafiaTestResults(testPageName, PageType.TEST, testPages.get(testPageName), false));
             }
         }
         return testResults;
