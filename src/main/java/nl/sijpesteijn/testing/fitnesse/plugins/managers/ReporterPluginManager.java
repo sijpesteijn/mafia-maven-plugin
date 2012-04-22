@@ -42,10 +42,9 @@ public class ReporterPluginManager implements PluginManager {
     @Override
     public void run() throws MojoFailureException, MojoExecutionException {
         try {
-            final List<MafiaTestResult> mafiaTestResults = getMafiaTestResults();
             final MafiaReportGenerator generator = new MafiaReportGenerator(reporterPluginConfig.getSink(),
                     reporterPluginConfig.getResourceBundle(), reporterPluginConfig.getOutputDirectory(),
-                    mafiaTestResults);
+                    getTestResults(), getSuiteResults(), getSuiteFilteredResults());
             generator.generate();
         } catch (final MavenReportException e) {
             throw new MojoFailureException("Could not generate mafia report: ", e);
@@ -54,36 +53,34 @@ public class ReporterPluginManager implements PluginManager {
         }
     }
 
-    public List<MafiaTestResult> getMafiaTestResults() throws Exception {
+    private List<MafiaTestResult> getSuiteResults() throws Exception {
         final List<MafiaTestResult> testResultRecords = new ArrayList<MafiaTestResult>();
-        addSuiteResults(testResultRecords);
-        addSuiteFilteredResults(testResultRecords);
-        addTestResults(testResultRecords);
-        return testResultRecords;
-    }
-
-    private void addSuiteResults(final List<MafiaTestResult> testResultRecords) throws Exception {
         final List<String> suites = reporterPluginConfig.getSuites();
         if (suites != null && !suites.isEmpty()) {
             for (final String suite : suites) {
-                testResultRecords.addAll(collector.getMafiaTestResults(suite, PageType.SUITE, null, true));
+                testResultRecords.add(collector.getMafiaTestResult(suite, PageType.SUITE, null, true));
             }
         }
+        return testResultRecords;
     }
 
-    private void addSuiteFilteredResults(final List<MafiaTestResult> testResultRecords) throws Exception {
+    private List<MafiaTestResult> getSuiteFilteredResults() throws Exception {
+        final List<MafiaTestResult> testResultRecords = new ArrayList<MafiaTestResult>();
         final String suitePageName = reporterPluginConfig.getSuitePageName();
         if (suitePageName != null && !suitePageName.equals("")) {
-            testResultRecords.addAll(collector.getMafiaTestResults(suitePageName, PageType.SUITE, null, true));
+            testResultRecords.add(collector.getMafiaTestResult(suitePageName, PageType.SUITE, null, true));
         }
+        return testResultRecords;
     }
 
-    private void addTestResults(final List<MafiaTestResult> testResultRecords) throws Exception {
+    private List<MafiaTestResult> getTestResults() throws Exception {
+        final List<MafiaTestResult> testResultRecords = new ArrayList<MafiaTestResult>();
         final List<String> tests = reporterPluginConfig.getTests();
         if (tests != null && !tests.isEmpty()) {
             for (final String test : tests) {
-                testResultRecords.addAll(collector.getMafiaTestResults(test, PageType.TEST, null, true));
+                testResultRecords.add(collector.getMafiaTestResult(test, PageType.TEST, null, true));
             }
         }
+        return testResultRecords;
     }
 }

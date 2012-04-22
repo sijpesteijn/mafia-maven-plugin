@@ -24,6 +24,7 @@ import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseRunnerMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseStarterMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseStopperMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.DependencyResolver;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MavenUtils;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.SpecialPages;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
@@ -32,11 +33,9 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.model.PluginExecution;
-import org.apache.maven.model.Profile;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -56,6 +55,7 @@ public abstract class AbstractFitNesseTestCase {
     protected String REPO;
     protected Model model;
     protected Renderer rendererMock;
+    private MavenUtils mavenUtils;
 
     @Before
     public void setUp() throws Exception {
@@ -69,6 +69,7 @@ public abstract class AbstractFitNesseTestCase {
         properties.put("project.build.directory", testDirectory + "/target");
         properties.put("project.build.outputDirectory", testDirectory + "/target");
         properties.put("project.reporting.outputDirectory", testDirectory + "/target/site");
+        mavenUtils = new MavenUtils(new MavenProject(model));
     }
 
     public String getTestDirectory() {
@@ -88,80 +89,88 @@ public abstract class AbstractFitNesseTestCase {
     }
 
     public Xpp3Dom getPluginConfiguration(final String artifactId, final String goal) throws MojoExecutionException {
-        final List<Plugin> plugins = getTestingProfilePlugins();
-        for (final Plugin plugin : plugins) {
-            if (plugin.getArtifactId().equals(artifactId)) {
-                final Xpp3Dom configuration = getConfiguration(plugin, goal);
-                if (configuration != null) {
-                    return configuration;
-                }
-            }
-        }
-        return null;
+        return mavenUtils.getPluginConfiguration("nl.sijpesteijn.testing.fitnesse.plugins", artifactId, goal);
+        // final List<Plugin> plugins = getTestingProfilePlugins();
+        // for (final Plugin plugin : plugins) {
+        // if (plugin.getArtifactId().equals(artifactId)) {
+        // final Xpp3Dom configuration = getConfiguration(plugin, goal);
+        // if (configuration != null) {
+        // return configuration;
+        // }
+        // }
+        // }
+        // return null;
     }
 
-    private List<Plugin> getTestingProfilePlugins() throws MojoExecutionException {
-        final List<Profile> profiles = model.getProfiles();
-        for (final Profile profile : profiles) {
-            if (profile.getId().equals("internal-unit-test"))
-                return profile.getBuild().getPlugins();
-        }
-        throw new MojoExecutionException("Could not find internal-unit-test profile");
-    }
+    // private List<Plugin> getTestingProfilePlugins() throws
+    // MojoExecutionException {
+    // final List<Profile> profiles = model.getProfiles();
+    // for (final Profile profile : profiles) {
+    // if (profile.getId().equals("internal-unit-test"))
+    // return profile.getBuild().getPlugins();
+    // }
+    // throw new
+    // MojoExecutionException("Could not find internal-unit-test profile");
+    // }
+    //
+    // private Xpp3Dom getConfiguration(final Plugin plugin, final String goal)
+    // {
+    // final List<PluginExecution> executions = plugin.getExecutions();
+    // if (executions != null) {
+    // for (final PluginExecution execution : executions) {
+    // if (hasGoal(execution.getGoals(), goal)) {
+    // return (Xpp3Dom) plugin.getConfiguration();
+    // }
+    // }
+    // }
+    // return null;
+    // }
 
-    private Xpp3Dom getConfiguration(final Plugin plugin, final String goal) {
-        final List<PluginExecution> executions = plugin.getExecutions();
-        if (executions != null) {
-            for (final PluginExecution execution : executions) {
-                if (hasGoal(execution.getGoals(), goal)) {
-                    return (Xpp3Dom) plugin.getConfiguration();
-                }
-            }
-        }
-        return null;
-    }
-
-    private boolean hasGoal(final List<String> goals, final String goalToFind) {
-        if (goals != null) {
-            for (final String goal : goals) {
-                if (goal.equals(goalToFind)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    protected String[] getStringArrayFromConfiguration(final Xpp3Dom configuration, final String name) {
-        if (configuration != null) {
-            final Xpp3Dom child = configuration.getChild(name);
-            if (child != null) {
-                final String[] statics = new String[child.getChildCount()];
-                for (int i = 0; i < child.getChildCount(); i++) {
-                    statics[i] = resolvePlaceHolder(child.getChild(i).getValue());
-                }
-                return statics;
-            }
-        }
-        return new String[0];
-    }
-
-    private String resolvePlaceHolder(final String value) {
-        final int start = value.indexOf("${");
-        final int stop = value.indexOf("}");
-        if (start > -1 && stop > -1) {
-            final String propertyName = getPropertyValue(value.substring(start + 2, stop));
-            if (propertyName != null) {
-                return value.substring(0, start) + propertyName + value.substring(stop + 1, value.length());
-            }
-        }
-        return value;
-    }
-
-    private String getPropertyValue(final String propertyName) {
-        final Properties properties = model.getProperties();
-        return properties.getProperty(propertyName);
-    }
+    // private boolean hasGoal(final List<String> goals, final String
+    // goalToFind) {
+    // if (goals != null) {
+    // for (final String goal : goals) {
+    // if (goal.equals(goalToFind)) {
+    // return true;
+    // }
+    // }
+    // }
+    // return false;
+    // }
+    //
+    // protected String[] getStringArrayFromConfiguration(final Xpp3Dom
+    // configuration, final String name) {
+    // if (configuration != null) {
+    // final Xpp3Dom child = configuration.getChild(name);
+    // if (child != null) {
+    // final String[] statics = new String[child.getChildCount()];
+    // for (int i = 0; i < child.getChildCount(); i++) {
+    // statics[i] = resolvePlaceHolder(child.getChild(i).getValue());
+    // }
+    // return statics;
+    // }
+    // }
+    // return new String[0];
+    // }
+    //
+    // private String resolvePlaceHolder(final String value) {
+    // final int start = value.indexOf("${");
+    // final int stop = value.indexOf("}");
+    // if (start > -1 && stop > -1) {
+    // final String propertyName = getPropertyValue(value.substring(start + 2,
+    // stop));
+    // if (propertyName != null) {
+    // return value.substring(0, start) + propertyName + value.substring(stop +
+    // 1, value.length());
+    // }
+    // }
+    // return value;
+    // }
+    //
+    // private String getPropertyValue(final String propertyName) {
+    // final Properties properties = model.getProperties();
+    // return properties.getProperty(propertyName);
+    // }
 
     protected List<String> getClasspathElements(final List<Dependency> dependencies) {
         final DependencyResolver resolver = new DependencyResolver();
@@ -172,49 +181,51 @@ public abstract class AbstractFitNesseTestCase {
         return classpathElements;
     }
 
-    protected Dependency[] getDependencyArrayFromConfiguration(final Xpp3Dom configuration, final String name) {
-        if (configuration != null) {
-            final Xpp3Dom child = configuration.getChild(name);
-            final Dependency[] dependencies = new Dependency[child.getChildCount()];
-            for (int i = 0; i < child.getChildCount(); i++) {
-                final Xpp3Dom excludeDependency = child.getChild(i);
-                final Dependency dependency = new Dependency();
-                for (int j = 0; j < excludeDependency.getChildCount(); j++) {
-                    final Xpp3Dom xpp3Dom = excludeDependency.getChild(j);
-                    if (xpp3Dom.getName().equals("groupId")) {
-                        dependency.setGroupId(xpp3Dom.getValue());
-                    }
-                    if (xpp3Dom.getName().equals("artifactId")) {
-                        dependency.setArtifactId(xpp3Dom.getValue());
-                    }
-                    if (xpp3Dom.getName().equals("version")) {
-                        dependency.setVersion(xpp3Dom.getValue());
-                    }
-                    if (xpp3Dom.getName().equals("classifier")) {
-                        dependency.setClassifier(xpp3Dom.getValue());
-                    }
-                    if (xpp3Dom.getName().equals("type")) {
-                        dependency.setType(xpp3Dom.getValue());
-                    }
-                }
-                dependencies[i] = dependency;
-            }
-            return dependencies;
-        }
-        return new Dependency[0];
-    }
+    // protected Dependency[] getDependencyArrayFromConfiguration(final Xpp3Dom
+    // configuration, final String name) {
+    // if (configuration != null) {
+    // final Xpp3Dom child = configuration.getChild(name);
+    // final Dependency[] dependencies = new Dependency[child.getChildCount()];
+    // for (int i = 0; i < child.getChildCount(); i++) {
+    // final Xpp3Dom excludeDependency = child.getChild(i);
+    // final Dependency dependency = new Dependency();
+    // for (int j = 0; j < excludeDependency.getChildCount(); j++) {
+    // final Xpp3Dom xpp3Dom = excludeDependency.getChild(j);
+    // if (xpp3Dom.getName().equals("groupId")) {
+    // dependency.setGroupId(xpp3Dom.getValue());
+    // }
+    // if (xpp3Dom.getName().equals("artifactId")) {
+    // dependency.setArtifactId(xpp3Dom.getValue());
+    // }
+    // if (xpp3Dom.getName().equals("version")) {
+    // dependency.setVersion(xpp3Dom.getValue());
+    // }
+    // if (xpp3Dom.getName().equals("classifier")) {
+    // dependency.setClassifier(xpp3Dom.getValue());
+    // }
+    // if (xpp3Dom.getName().equals("type")) {
+    // dependency.setType(xpp3Dom.getValue());
+    // }
+    // }
+    // dependencies[i] = dependency;
+    // }
+    // return dependencies;
+    // }
+    // return new Dependency[0];
+    // }
 
-    protected String getStringValueFromConfiguration(final Xpp3Dom configuration, final String name,
-            final String defaultValue) {
-        if (configuration != null) {
-            final Xpp3Dom child = configuration.getChild(name);
-            if (child != null) {
-                return resolvePlaceHolder(child.getValue());
-            }
-        }
-        return defaultValue != null ? resolvePlaceHolder(defaultValue) : null;
-
-    }
+    // protected String getStringValueFromConfiguration(final Xpp3Dom
+    // configuration, final String name,
+    // final String defaultValue) {
+    // if (configuration != null) {
+    // final Xpp3Dom child = configuration.getChild(name);
+    // if (child != null) {
+    // return resolvePlaceHolder(child.getValue());
+    // }
+    // }
+    // return defaultValue != null ? resolvePlaceHolder(defaultValue) : null;
+    //
+    // }
 
     protected Object getVariableValueFromObject(final Object object, final String variable)
             throws MojoExecutionException {
@@ -316,7 +327,7 @@ public abstract class AbstractFitNesseTestCase {
         final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "stop");
         setVariableValueToObject(stopperMojo, "repositoryDirectory", REPO);
         setVariableValueToObject(stopperMojo, "port",
-                Integer.valueOf(getStringValueFromConfiguration(configuration, "port", "9090")));
+                Integer.valueOf(mavenUtils.getStringValueFromConfiguration(configuration, "port", "9090")));
         setVariableValueToObject(stopperMojo, "dependencies", model.getDependencies());
         return stopperMojo;
     }
@@ -328,26 +339,30 @@ public abstract class AbstractFitNesseTestCase {
         setVariableValueToObject(starterMojo, "repositoryDirectory", REPO);
         setVariableValueToObject(starterMojo, "jvmArguments", new String[0]);
         setVariableValueToObject(starterMojo, "jvmDependencies",
-                getDependencyArrayFromConfiguration(configuration, "jvmDependencies"));
+                mavenUtils.getDependencyArrayFromConfiguration(configuration, "jvmDependencies"));
         setVariableValueToObject(starterMojo, "dependencies", model.getDependencies());
-        setVariableValueToObject(starterMojo, "port", getStringValueFromConfiguration(configuration, "port", "9090"));
+        setVariableValueToObject(starterMojo, "port",
+                mavenUtils.getStringValueFromConfiguration(configuration, "port", "9090"));
         setVariableValueToObject(starterMojo, "retainDays",
-                getStringValueFromConfiguration(configuration, "retainDays", "14"));
-        setVariableValueToObject(starterMojo, "wikiRoot",
-                getStringValueFromConfiguration(configuration, "wikiRoot", "${project.build.outputDirectory}"));
+                mavenUtils.getStringValueFromConfiguration(configuration, "retainDays", "14"));
+        setVariableValueToObject(starterMojo, "wikiRoot", mavenUtils.getStringValueFromConfiguration(configuration,
+                "wikiRoot", "${project.build.outputDirectory}"));
         setVariableValueToObject(starterMojo, "nameRootPage",
-                getStringValueFromConfiguration(configuration, "nameRootPage", FITNESSE_ROOT));
+                mavenUtils.getStringValueFromConfiguration(configuration, "nameRootPage", FITNESSE_ROOT));
         return starterMojo;
     }
 
     protected FitNesseContentMojo configureContentMojo() throws MojoExecutionException {
         final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "content");
         final FitNesseContentMojo contentMojo = new FitNesseContentMojo();
-        setVariableValueToObject(contentMojo, "statics", getStringArrayFromConfiguration(configuration, "statics"));
-        setVariableValueToObject(contentMojo, "resources", getStringArrayFromConfiguration(configuration, "resources"));
-        setVariableValueToObject(contentMojo, "targets", getStringArrayFromConfiguration(configuration, "targets"));
+        setVariableValueToObject(contentMojo, "statics",
+                mavenUtils.getStringArrayFromConfiguration(configuration, "statics"));
+        setVariableValueToObject(contentMojo, "resources",
+                mavenUtils.getStringArrayFromConfiguration(configuration, "resources"));
+        setVariableValueToObject(contentMojo, "targets",
+                mavenUtils.getStringArrayFromConfiguration(configuration, "targets"));
         setVariableValueToObject(contentMojo, "excludeDependencies",
-                getDependencyArrayFromConfiguration(configuration, "excludeDependencies"));
+                mavenUtils.getDependencyArrayFromConfiguration(configuration, "excludeDependencies"));
         setVariableValueToObject(contentMojo, "compileClasspathElements", getClasspathElements(model.getDependencies()));
         setVariableValueToObject(contentMojo, "repositoryDirectory", REPO);
         setVariableValueToObject(contentMojo, "wikiRoot", getTestDirectory() + TARGET);
@@ -359,20 +374,22 @@ public abstract class AbstractFitNesseTestCase {
         final FitNesseRunnerMojo runnerMojo = new FitNesseRunnerMojo();
         final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "test");
         setVariableValueToObject(runnerMojo, "port",
-                Integer.valueOf(getStringValueFromConfiguration(configuration, "port", "9091")));
-        setVariableValueToObject(runnerMojo, "wikiRoot",
-                getStringValueFromConfiguration(configuration, "wikiRoot", "${project.build.outputDirectory}"));
+                Integer.valueOf(mavenUtils.getStringValueFromConfiguration(configuration, "port", "9091")));
+        setVariableValueToObject(runnerMojo, "wikiRoot", mavenUtils.getStringValueFromConfiguration(configuration,
+                "wikiRoot", "${project.build.outputDirectory}"));
         setVariableValueToObject(runnerMojo, "nameRootPage",
-                getStringValueFromConfiguration(configuration, "nameRootPage", FITNESSE_ROOT));
-        setVariableValueToObject(runnerMojo, "mafiaTestResultsDirectory",
-                getStringValueFromConfiguration(configuration, "mafiaTestResultsDirectory", MAFIA_TEST_RESULTS));
+                mavenUtils.getStringValueFromConfiguration(configuration, "nameRootPage", FITNESSE_ROOT));
+        setVariableValueToObject(runnerMojo, "mafiaTestResultsDirectory", mavenUtils.getStringValueFromConfiguration(
+                configuration, "mafiaTestResultsDirectory", MAFIA_TEST_RESULTS));
         setVariableValueToObject(runnerMojo, "repositoryDirectory", REPO);
-        setVariableValueToObject(runnerMojo, "tests", getStringArrayFromConfiguration(configuration, "tests"));
-        setVariableValueToObject(runnerMojo, "suites", getStringArrayFromConfiguration(configuration, "suites"));
+        setVariableValueToObject(runnerMojo, "tests",
+                mavenUtils.getStringArrayFromConfiguration(configuration, "tests"));
+        setVariableValueToObject(runnerMojo, "suites",
+                mavenUtils.getStringArrayFromConfiguration(configuration, "suites"));
         setVariableValueToObject(runnerMojo, "suitePageName",
-                getStringValueFromConfiguration(configuration, "suitePageName", null));
+                mavenUtils.getStringValueFromConfiguration(configuration, "suitePageName", null));
         setVariableValueToObject(runnerMojo, "suiteFilter",
-                getStringValueFromConfiguration(configuration, "suiteFilter", null));
+                mavenUtils.getStringValueFromConfiguration(configuration, "suiteFilter", null));
         setVariableValueToObject(runnerMojo, "stopTestsOnFailure", true);
         setVariableValueToObject(runnerMojo, "stopTestsOnIgnore", true);
         setVariableValueToObject(runnerMojo, "stopTestsOnException", true);
@@ -383,6 +400,7 @@ public abstract class AbstractFitNesseTestCase {
     protected FitNesseReportMojo configureReporterMojo() throws MojoExecutionException {
         final FitNesseReportMojo reporterMojo = new FitNesseReportMojo();
         final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "report");
+        final Xpp3Dom testConfiguration = getPluginConfiguration("mafia-maven-plugin", "test");
         rendererMock = createMock(Renderer.class);
         try {
             rendererMock.generateDocument(isA(Writer.class), isA(SiteRendererSink.class),
@@ -395,15 +413,20 @@ public abstract class AbstractFitNesseTestCase {
         setVariableValueToObject(
                 reporterMojo,
                 "outputDirectory",
-                new File(getStringValueFromConfiguration(configuration, "outputDirectory",
+                new File(mavenUtils.getStringValueFromConfiguration(configuration, "outputDirectory",
                         "${project.reporting.outputDirectory}")));
-        setVariableValueToObject(
-                reporterMojo,
-                "mafiaTestResultsDirectory",
-                getStringValueFromConfiguration(configuration, "mafiaTestResultsDirectory",
-                        "${project.build.outputDirectory}/" + FITNESSE_ROOT + "/files/" + MAFIA_TEST_RESULTS));
-        setVariableValueToObject(reporterMojo, "suites", getStringArrayFromConfiguration(configuration, "suites"));
-        setVariableValueToObject(reporterMojo, "tests", getStringArrayFromConfiguration(configuration, "tests"));
+        setVariableValueToObject(reporterMojo, "mafiaTestResultsDirectory", mavenUtils.getStringValueFromConfiguration(
+                configuration, "mafiaTestResultsDirectory", "${project.build.outputDirectory}/" + FITNESSE_ROOT
+                        + "/files/" + MAFIA_TEST_RESULTS));
+        setVariableValueToObject(reporterMojo, "project", new MavenProject());
+        setVariableValueToObject(reporterMojo, "suites",
+                mavenUtils.getStringArrayFromConfiguration(testConfiguration, "suites"));
+        setVariableValueToObject(reporterMojo, "tests",
+                mavenUtils.getStringArrayFromConfiguration(testConfiguration, "tests"));
+        setVariableValueToObject(reporterMojo, "suitePageName",
+                mavenUtils.getStringValueFromConfiguration(testConfiguration, "suitePageName", null));
+        setVariableValueToObject(reporterMojo, "suiteFilter",
+                mavenUtils.getStringValueFromConfiguration(testConfiguration, "suiteFilter", null));
         return reporterMojo;
     }
 

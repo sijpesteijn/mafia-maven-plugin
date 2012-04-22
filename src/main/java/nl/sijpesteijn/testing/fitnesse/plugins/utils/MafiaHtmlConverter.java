@@ -44,4 +44,38 @@ public class MafiaHtmlConverter {
         return html.replaceAll("/files/images/", "images/");
     }
 
+    public String updateSuiteTestLinks(String html) {
+        final String regex = "<a href=\"[^#].*pageHistory&resultDate=.*>";
+        final Pattern pattern = Pattern.compile(regex);
+        final Matcher matcher = pattern.matcher(html);
+        int offset = 9;
+        while (matcher.find()) {
+            html = html.substring(0, matcher.start() + offset) + "#"
+                    + html.substring(matcher.start() + offset++, html.length());
+        }
+        return html;
+    }
+
+    public String updateSubResultLinks(final String testPageName, final String html, final String subHtml) {
+        final String url = getTestPageNameUrl(testPageName, html);
+        final String regex = "<a name=.*\"";
+        final Pattern pattern = Pattern.compile(regex);
+        final Matcher matcher = pattern.matcher(subHtml);
+        if (matcher.find()) {
+            return subHtml.substring(0, matcher.start() + 9) + url + "\""
+                    + subHtml.substring(matcher.end(), subHtml.length());
+        }
+        return subHtml;
+    }
+
+    private String getTestPageNameUrl(final String testPageName, final String html) {
+        final String regex = "<a href=.*" + testPageName.replace(".", ".*") + ".*resultDate=[0-9]*";
+        final Pattern pattern = Pattern.compile(regex);
+        final Matcher matcher = pattern.matcher(html);
+        if (matcher.find()) {
+            return html.substring(matcher.start() + 10, matcher.end());
+        }
+        return null;
+    }
+
 }

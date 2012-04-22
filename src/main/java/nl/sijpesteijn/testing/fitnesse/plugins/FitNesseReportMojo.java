@@ -1,7 +1,6 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -10,6 +9,7 @@ import nl.sijpesteijn.testing.fitnesse.plugins.managers.PluginManager;
 import nl.sijpesteijn.testing.fitnesse.plugins.managers.PluginManagerFactory;
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig;
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ReporterPluginConfig.Builder;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MavenUtils;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -17,12 +17,13 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * This mojo will collect the test results from the run tests.
  * 
- * @phase site
  * @execute goal="test"
+ * @phase site
  * @goal report
  */
 public class FitNesseReportMojo extends AbstractMavenReport {
@@ -89,6 +90,8 @@ public class FitNesseReportMojo extends AbstractMavenReport {
      */
     private String suiteFilter;
 
+    private MavenUtils mavenUtils;
+
     /**
      * 
      * {@inheritDoc}
@@ -116,27 +119,60 @@ public class FitNesseReportMojo extends AbstractMavenReport {
      * @throws MojoExecutionException
      */
     private ReporterPluginConfig getPluginConfig(final Locale locale) throws MojoExecutionException {
+        mavenUtils = new MavenUtils(this.project);
         final Builder builder = PluginManagerFactory.getPluginConfigBuilder(ReporterPluginConfig.class);
         builder.setMafiaTestResultsDirectory(this.mafiaTestResultsDirectory);
         builder.setOutputDirectory(this.outputDirectory.getAbsolutePath());
         builder.setName(OUTPUT_NAME);
-        builder.setTests(createList(tests));
-        builder.setSuites(createList(suites));
-        builder.setSuiteFilter(suiteFilter);
-        builder.setSuitePageName(suitePageName);
+        builder.setTests(getTests());
+        builder.setSuites(getSuites());
+        builder.setSuiteFilter(getSuiteFilter());
+        builder.setSuitePageName(getSuitePageName());
         builder.setSink(this.getSink());
         builder.setResourceBundle(getBundle(locale));
         return builder.build();
     }
 
-    private List<String> createList(final String[] array) {
-        final List<String> list = new ArrayList<String>();
-        if (array != null) {
-            for (final String element : array) {
-                list.add(element);
-            }
+    private String getSuitePageName() {
+        if (this.suitePageName != null && !this.suitePageName.equals("")) {
+            return this.suitePageName;
         }
-        return list;
+        final Xpp3Dom configuration = mavenUtils.getPluginConfiguration("nl.sijpesteijn.testing.fitnesse.plugins",
+                "mafia-maven-plugin", "test");
+        return mavenUtils.getStringValueFromConfiguration(configuration, "suitePageName", null);
+    }
+
+    private String getSuiteFilter() {
+        if (this.suiteFilter != null && !this.suiteFilter.equals("")) {
+            return this.suiteFilter;
+        }
+        final Xpp3Dom configuration = mavenUtils.getPluginConfiguration("nl.sijpesteijn.testing.fitnesse.plugins",
+                "mafia-maven-plugin", "test");
+        return mavenUtils.getStringValueFromConfiguration(configuration, "suiteFilter", null);
+    }
+
+    private List<String> getSuites() {
+        if (this.suites != null && this.suites.length > 0) {
+            return MavenUtils.createList(this.suites);
+        } else {
+            final String[] tests = readFromConfiguration("suites");
+            return MavenUtils.createList(tests);
+        }
+    }
+
+    private List<String> getTests() {
+        if (this.tests != null && this.tests.length > 0) {
+            return MavenUtils.createList(this.tests);
+        } else {
+            final String[] tests = readFromConfiguration("tests");
+            return MavenUtils.createList(tests);
+        }
+    }
+
+    private String[] readFromConfiguration(final String string) {
+        final Xpp3Dom configuration = mavenUtils.getPluginConfiguration("nl.sijpesteijn.testing.fitnesse.plugins",
+                "mafia-maven-plugin", "test");
+        return mavenUtils.getStringArrayFromConfiguration(configuration, string);
     }
 
     private ResourceBundle getBundle(final Locale locale) {

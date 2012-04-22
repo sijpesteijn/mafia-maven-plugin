@@ -2,14 +2,15 @@ package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.MavenReportException;
 
 import fitnesse.responders.run.TestSummary;
+import fitnesse.wiki.PageType;
 
 public class MafiaReportGenerator {
 
@@ -18,14 +19,18 @@ public class MafiaReportGenerator {
     private final ResourceBundle bundle;
     private final String outputDirectory;
     private final List<MafiaTestResult> mafiaTestResults;
+    private final List<MafiaTestResult> mafiaSuiteResults;
+    private final List<MafiaTestResult> mafiaSuiteFilteredResults;
 
     public MafiaReportGenerator(final Sink sink, final ResourceBundle bundle, final String outputDirectory,
-                                final List<MafiaTestResult> mafiaTestResults)
-    {
+            final List<MafiaTestResult> mafiaTestResults, final List<MafiaTestResult> mafiaSuiteResults,
+            final List<MafiaTestResult> mafiaSuiteFilteredResults) {
         this.sink = sink;
         this.bundle = bundle;
         this.outputDirectory = outputDirectory;
         this.mafiaTestResults = mafiaTestResults;
+        this.mafiaSuiteResults = mafiaSuiteResults;
+        this.mafiaSuiteFilteredResults = mafiaSuiteFilteredResults;
     }
 
     public void generate() throws MavenReportException {
@@ -70,7 +75,6 @@ public class MafiaReportGenerator {
 
     private void flushAndCloseSink() {
         sink.flush();
-        // sink.close();
     }
 
     private void createIntroduction() {
@@ -149,7 +153,7 @@ public class MafiaReportGenerator {
 
     private TestSummary getTestSummary() {
         final TestSummary testSummary = new TestSummary();
-        for (final MafiaTestResult mafiaTestResult : mafiaTestResults) {
+        for (final MafiaTestResult mafiaTestResult : getAllTestResults()) {
             testSummary.exceptions += mafiaTestResult.getTestSummary().exceptions;
             testSummary.ignores += mafiaTestResult.getTestSummary().ignores;
             testSummary.right += mafiaTestResult.getTestSummary().right;
@@ -191,7 +195,7 @@ public class MafiaReportGenerator {
         sink.tableHeaderCell_();
         sink.tableRow_();
 
-        for (final MafiaTestResult mafiaTestResult : mafiaTestResults) {
+        for (final MafiaTestResult mafiaTestResult : getAllTestResults()) {
             if (mafiaTestResult.isAddToOverview()) {
                 sink.tableRow();
                 sink.tableCell();
@@ -218,13 +222,21 @@ public class MafiaReportGenerator {
         sink.section1_();
     }
 
+    private List<MafiaTestResult> getAllTestResults() {
+        final List<MafiaTestResult> allResults = new ArrayList<MafiaTestResult>();
+        allResults.addAll(mafiaTestResults);
+        allResults.addAll(mafiaSuiteResults);
+        allResults.addAll(mafiaSuiteFilteredResults);
+        return allResults;
+    }
+
     private void createDetails() {
         sink.section1();
         sink.sectionTitle1();
         sink.text(bundle.getString("report.mafia.resultDetails.summary"));
         sink.sectionTitle1_();
 
-        for (final MafiaTestResult mafiaTestResult : mafiaTestResults) {
+        for (final MafiaTestResult mafiaTestResult : getAllTestResults()) {
             sink.anchor(mafiaTestResult.getPageName());
             sink.table();
             sink.tableRow();
@@ -237,6 +249,20 @@ public class MafiaReportGenerator {
             sink.rawText(mafiaTestResult.getHtmlResult());
             sink.tableCell_();
             sink.tableRow_();
+            if (mafiaTestResult.getPageType() == PageType.SUITE && mafiaTestResult.getSubTestResults() != null) {
+                for (final MafiaTestResult subResult : mafiaTestResult.getSubTestResults()) {
+                    sink.tableRow();
+                    sink.tableHeaderCell();
+                    sink.text(subResult.getPageName());
+                    sink.tableHeaderCell_();
+                    sink.tableRow_();
+                    sink.tableRow();
+                    sink.tableCell();
+                    sink.rawText(subResult.getHtmlResult());
+                    sink.tableCell_();
+                    sink.tableRow_();
+                }
+            }
             sink.table_();
             sink.anchor_();
         }

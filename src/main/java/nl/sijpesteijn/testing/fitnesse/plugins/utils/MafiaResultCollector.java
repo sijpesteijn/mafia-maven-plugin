@@ -3,11 +3,10 @@ package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +30,7 @@ import fitnesse.wiki.PageType;
 
 public class MafiaResultCollector {
 
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat(TestHistory.TEST_RESULT_FILE_DATE_PATTERN);
     private final File historyDirectory;
     private VelocityContext velocityContext;
     MafiaHtmlConverter converter = new MafiaHtmlConverter();
@@ -39,27 +39,20 @@ public class MafiaResultCollector {
         this.historyDirectory = historyDirectory;
     }
 
-    public Collection<? extends MafiaTestResult> getMafiaTestResults(final String pageName, final PageType pageType,
-                                                                     final String timestamp, final boolean addToOverview)
-            throws MojoFailureException
-    {
-        final List<MafiaTestResult> testResults = new ArrayList<MafiaTestResult>();
+    public MafiaTestResult getMafiaTestResult(final String pageName, final PageType pageType, final String timestamp,
+            final boolean addToOverview) throws MojoFailureException {
+        MafiaTestResult mafiaTestResult = null;
         final TestHistory history = new TestHistory();
         history.readPageHistoryDirectory(historyDirectory, pageName);
         final PageHistory pageHistory = history.getPageHistory(pageName);
         if (pageHistory == null) {
             throw new MojoFailureException(
-                "No test history for "
-                        + pageName
-                        + ". Did you use the FitNesseRunnerMojo to run the tests? FitNesse Report mojo is looking for test history in "
-                        + historyDirectory);
+                    "No test history for "
+                            + pageName
+                            + ". Did you use the FitNesseRunnerMojo to run the tests? FitNesse Report mojo is looking for test history in "
+                            + historyDirectory);
         }
-        Date selectedDate;
-        if (timestamp == null || timestamp.equals("")) {
-            selectedDate = pageHistory.getLatestDate();
-        } else {
-            selectedDate = new Date(Long.valueOf(timestamp));
-        }
+        final Date selectedDate = getSelectedDate(pageName, timestamp, pageHistory);
         final TestResultRecord testResultRecord = pageHistory.get(selectedDate);
         if (testResultRecord == null) {
             throw new MojoFailureException("Exception: Could not load test result record: " + pageName
@@ -85,24 +78,43 @@ public class MafiaResultCollector {
         if (report instanceof TestExecutionReport) {
             report.setDate(selectedDate);
             html = generateTestExecutionHTML((TestExecutionReport) report);
-            testResults.add(new MafiaTestResult(pageType, pageName, testResultRecord, html, addToOverview));
+            mafiaTestResult = new MafiaTestResult(pageType, pageName, testResultRecord, html, addToOverview);
         } else if (report instanceof SuiteExecutionReport) {
             html = generateSuiteExecutionHTML((SuiteExecutionReport) report);
-            testResults.add(new MafiaTestResult(pageType, pageName, testResultRecord, html, addToOverview));
+            mafiaTestResult = new MafiaTestResult(pageType, pageName, testResultRecord, html, addToOverview);
             final Map<String, String> testPages = getTestPages(html);
             for (final String testPageName : testPages.keySet()) {
-                testResults
-                    .addAll(getMafiaTestResults(testPageName, PageType.TEST, testPages.get(testPageName), false));
+                final MafiaTestResult subMafiaTestResult = getMafiaTestResult(testPageName, PageType.TEST,
+                        testPages.get(testPageName), false);
+                final String subHtml = subMafiaTestResult.getHtmlResult();
+                final String updatedSubHtml = converter.updateSubResultLinks(testPageName, html, subHtml);
+                subMafiaTestResult.setHtmlResult(updatedSubHtml);
+                mafiaTestResult.addSubResult(subMafiaTestResult);
             }
         }
-        return testResults;
+        return mafiaTestResult;
+    }
+
+    private Date getSelectedDate(final String pageName, final String timestamp, final PageHistory pageHistory)
+            throws MojoFailureException {
+        if (timestamp == null || timestamp.equals("")) {
+            return pageHistory.getLatestDate();
+        } else {
+            try {
+                return dateFormat.parse(timestamp);
+            } catch (final ParseException e) {
+                throw new MojoFailureException("Exception: Could not parse timestamp for test result record: "
+                        + pageName + ", timestamp: " + timestamp + ", dateformat: "
+                        + TestHistory.TEST_RESULT_FILE_DATE_PATTERN);
+            }
+        }
     }
 
     private Map<String, String> getTestPages(final String suiteHtml) {
         final String regex = "<a href=\".*resultDate=.*\">";
         final Pattern pattern = Pattern.compile(regex);
         final Matcher matcher = pattern.matcher(suiteHtml);
-        final Map<String, String> testPages = new HashMap<String, String>();
+        final Map<String, String> testPages = new LinkedHashMap<String, String>();
         while (matcher.find()) {
             final String pageName = suiteHtml.substring(matcher.end(), suiteHtml.indexOf("</a>", matcher.start()));
             final int timestampStart = suiteHtml.indexOf("resultDate=", matcher.start()) + "resultDate=".length();
@@ -119,6 +131,7 @@ public class MafiaResultCollector {
         html = converter.removeHtmlTags(html);
         html = converter.removeBodyTags(html);
         html = converter.removeHeadSections(html);
+        html = converter.updateSuiteTestLinks(html);
         return html;
     }
 

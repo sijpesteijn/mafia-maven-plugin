@@ -3,7 +3,6 @@ package nl.sijpesteijn.plugins.testing.fitnesse;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -56,7 +55,7 @@ public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
         assertTrue(reporterMojo.getDescription(null).equals(
                 "Maven mafia plugin - reporting: Generate a report of the fitnessetests that have run"));
         assertTrue(reporterMojo.getName(null).equals("Mafia Report"));
-        assertNull(reporterMojo.getProject());
+        assertNotNull(reporterMojo.getProject());
     }
 
     @Test(expected = MojoExecutionException.class)

@@ -194,7 +194,7 @@
 							</excludeDependencies>
 						</configuration>
 					</plugin>
-					<plugin>
+ 					<plugin>
 						<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 						<artifactId>mafia-maven-plugin</artifactId>
 						<executions>
@@ -205,16 +205,9 @@
 							</execution>
 						</executions>
 						<configuration>
-							<tests>
-								<test>FrontPage.BuyMilkSuite.BuyMilk</test>
-								<test>FrontPage.BuyMilkSuite.BuyMilk1</test>
-							</tests>
-							<!-- suites>
-								<suite>FrontPage.BuyMilkSuite</suite>
-							</suites-->
 						</configuration>
 					</plugin>
-					<plugin>
+ 					<plugin>
 						<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 						<artifactId>mafia-maven-plugin</artifactId>
 						<executions>
@@ -229,11 +222,11 @@
 								<test>FrontPage.BuyMilkSuite.BuyMilk</test>
 								<test>FrontPage.BuyMilkSuite.BuyMilk1</test>
 							</tests>
-							<!--suites>
+							<suites>
 								<suite>FrontPage.BuyMilkSuite</suite>
 							</suites>
 							<suitePageName>FrontPage.BuyMilkSuite</suitePageName>
-							<suiteFilter>regression</suiteFilter-->
+							<suiteFilter>regression</suiteFilter>
 						</configuration>
 					</plugin>
 				</plugins>
