@@ -67,8 +67,9 @@ public class StarterPluginManager implements PluginManager {
     private String getCommand(final String jarLocation, final String jvmArgumentsString, final String dependencyList) {
         return "java"
                 + jvmArgumentsString
-                + " -cp "
+                + " -cp \""
                 + jarLocation
+                + "\""
                 + File.pathSeparatorChar
                 + (dependencyList + " fitnesseMain.FitNesseMain -p " + starterPluginConfig.getFitNessePort() + " -d "
                         + starterPluginConfig.getWikiRoot() + " -r " + starterPluginConfig.getNameRootPage()
