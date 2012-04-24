@@ -18,7 +18,7 @@ public class FitNesseExtractor {
         dependency.setVersion(FITNESSE_VERSION);
         final String dependencyPath = resolver.resolveDependencyPath(dependency, repositoryDirectory);
         final CommandRunner runner = new CommandRunner(mavenLogger, fitnesseRoot);
-        final String command = "java" + " -jar " + dependencyPath + " -i";
+        final String command = "java" + " -jar \"" + dependencyPath + "\" -i";
         try {
             runner.start(command, true, null);
         } catch (final IOException e) {

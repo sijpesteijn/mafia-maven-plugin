@@ -70,8 +70,8 @@ public class StarterPluginManager implements PluginManager {
                 + " -cp "
                 + jarLocation
                 + File.pathSeparatorChar
-                + (dependencyList + " fitnesseMain.FitNesseMain -p " + starterPluginConfig.getFitNessePort() + " -d "
-                        + starterPluginConfig.getWikiRoot() + " -r " + starterPluginConfig.getNameRootPage()
+                + (dependencyList + " fitnesseMain.FitNesseMain -p " + starterPluginConfig.getFitNessePort() + " -d \""
+                        + starterPluginConfig.getWikiRoot() + "\" -r " + starterPluginConfig.getNameRootPage()
                         + getLogArgument() + " -e " + starterPluginConfig.getRetainDays());
     }
 

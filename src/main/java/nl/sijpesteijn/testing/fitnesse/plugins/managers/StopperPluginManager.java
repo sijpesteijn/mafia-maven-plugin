@@ -40,7 +40,7 @@ public class StopperPluginManager implements PluginManager {
         } catch (final MojoExecutionException mee) {
             throw mee;
         }
-        final String command = "java -cp \"" + jarLocation + "\" fitnesse.Shutdown -p " + stopperPluginConfig.getPort();
+        final String command = "java -cp " + jarLocation + " fitnesse.Shutdown -p " + stopperPluginConfig.getPort();
         stopperPluginConfig.getMavenLogger().info(command);
         final CommandRunner runner = new CommandRunner(stopperPluginConfig.getMavenLogger(), null);
         try {
