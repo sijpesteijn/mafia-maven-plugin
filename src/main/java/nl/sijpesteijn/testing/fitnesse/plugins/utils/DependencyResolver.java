@@ -29,7 +29,7 @@ public class DependencyResolver {
             final Dependency dependency = dependencies.get(i);
             final String resolveDependencyPath = resolveDependencyPath(dependency, baseDir);
             if (resolveDependencyPath.contains(part)) {
-                return resolveDependencyPath;
+                return "\"" + resolveDependencyPath + "\"";
             }
         }
         throw new MojoExecutionException("Could not find jar location.");
