@@ -36,9 +36,9 @@
 	</issueManagement>
 
 	<scm>
-		<connection>scm:git:git://github.com/sijpesteijn/mafia-maven-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:sijpesteijn/mafia-maven-plugin.git</developerConnection>
-		<url>scm:git:http://github.com//sijpesteijn/mafia-maven-plugin</url>
+		<connection>scm:git:git@github.com:sijpesteijn/mafia-maven-plugin.git</connection>
+		<url>git://github.com/sijpesteijn/mafia-maven-plugin.git</url>
 	</scm>
 
 	<properties>
