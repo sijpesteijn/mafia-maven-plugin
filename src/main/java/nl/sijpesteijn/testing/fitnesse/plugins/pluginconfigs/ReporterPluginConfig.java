@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * Reporter plugin configuration.
@@ -20,11 +21,13 @@ public class ReporterPluginConfig implements PluginConfig {
     private final String suiteFilter;
     private final String suitePageName;
     private final String name;
+    private final Log mavenLogger;
 
     public ReporterPluginConfig(final String outputDirectory, final String name,
                                 final String mafiaTestResultsDirectory, final Sink sink,
                                 final ResourceBundle resourceBundle, final List<String> tests,
-                                final List<String> suites, final String suiteFilter, final String suitePageName)
+                                final List<String> suites, final String suiteFilter, final String suitePageName,
+                                final Log mavenLogger)
     {
         this.outputDirectory = outputDirectory;
         this.name = name;
@@ -35,6 +38,7 @@ public class ReporterPluginConfig implements PluginConfig {
         this.suites = suites;
         this.suiteFilter = suiteFilter;
         this.suitePageName = suitePageName;
+        this.mavenLogger = mavenLogger;
     }
 
     /**
@@ -52,6 +56,7 @@ public class ReporterPluginConfig implements PluginConfig {
         private String suiteFilter;
         private String suitePageName;
         private String name;
+        private Log mavenLogger;
 
         public void setMafiaTestResultsDirectory(final String mafiaTestResultsDirectory) {
             this.mafiaTestResultsDirectory = mafiaTestResultsDirectory;
@@ -63,7 +68,7 @@ public class ReporterPluginConfig implements PluginConfig {
 
         public ReporterPluginConfig build() {
             return new ReporterPluginConfig(this.outputDirectory, this.name, this.mafiaTestResultsDirectory, this.sink,
-                this.resourceBundle, this.tests, this.suites, this.suiteFilter, this.suitePageName);
+                this.resourceBundle, this.tests, this.suites, this.suiteFilter, this.suitePageName, this.mavenLogger);
         }
 
         public void setSink(final Sink sink) {
@@ -92,6 +97,10 @@ public class ReporterPluginConfig implements PluginConfig {
 
         public void setName(final String name) {
             this.name = name;
+        }
+
+        public void setMavenLogger(final Log mavenLogger) {
+            this.mavenLogger = mavenLogger;
         }
 
     }
@@ -130,6 +139,10 @@ public class ReporterPluginConfig implements PluginConfig {
 
     public String getName() {
         return name;
+    }
+
+    public Log getMavenLogger() {
+        return mavenLogger;
     }
 
     /**

@@ -111,9 +111,9 @@ mandatory:
 	
 **3 - RUN TEST(S), SUITE(S), OR TAG FILTERED TESTS.**
 
-goal: run-tests  
+goal: test  
 phase: integration-test  
-command: mvn mafia:run-tests  
+command: mvn mafia:test  
 
 This maven goal will run the tests listed in the configuration section. Note that the tests are run on a seperate
 FitNesse server running on port 9091. 
@@ -147,9 +147,9 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 	
 **4 - COLLECT REPORTING.**
 
-goal: collect-report  
+goal: report  
 phase: site  
-command: mvn mafia:collect-report  
+command: mvn mafia:report  
 
 This maven goal will generate a report of the last run tests. 
 

@@ -47,16 +47,14 @@ public class FitNesseRunnerMojo extends AbstractMojo {
     /**
      * The location for FitNesse to place the log files.
      * 
-     * @parameter expression="${test.log}"
-     *            default-value="${basedir}/log/testlog/"
+     * @parameter expression="${test.log}" default-value="${basedir}/log/testlog/"
      */
     private String logDirectory;
 
     /**
      * The directory where the Fitnesse reports have been generated.
      * 
-     * @parameter expression="${test.mafiaTestResultsDirectory}" default-value
-     *            ="mafiaTestResults"
+     * @parameter expression="${test.mafiaTestResultsDirectory}" default-value ="mafiaTestResults"
      */
     private String mafiaTestResultsDirectory;
 
@@ -111,15 +109,13 @@ public class FitNesseRunnerMojo extends AbstractMojo {
     /**
      * If true, the mojo will stop when it encountered an ignored error message.
      * 
-     * @parameter expression="${run-tests.stopTestsOnIgnore}"
-     *            default-value="false"
+     * @parameter expression="${run-tests.stopTestsOnIgnore}" default-value="false"
      * 
      */
     private boolean stopTestsOnIgnore;
 
     /**
-     * If true, the mojo will stop when it encountered an exception error
-     * message.
+     * If true, the mojo will stop when it encountered an exception error message.
      * 
      * @parameter expression="${test.stopTestsOnException}" default-value="true"
      * 
@@ -144,6 +140,7 @@ public class FitNesseRunnerMojo extends AbstractMojo {
         getLog().debug("Runner config: " + runnerPluginConfig.toString());
         final PluginManager pluginManager = PluginManagerFactory.getPluginManager(runnerPluginConfig);
         pluginManager.run();
+        getLog().info("Finished running tests and suites.");
     }
 
     /**

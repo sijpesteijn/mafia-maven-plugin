@@ -17,8 +17,6 @@ import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseExtractor;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.codehaus.plexus.util.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,11 +47,11 @@ public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
         assertTrue(outputDirectory.getAbsolutePath().replace('\\', '/').equals(getTestDirectory() + TARGET + "/site"));
         final String mafiaTestResultsDirectory = (String) map.get("mafiaTestResultsDirectory");
         assertTrue(mafiaTestResultsDirectory.replace('\\', '/').equals(
-                getTestDirectory() + TARGET + "/" + FITNESSE_ROOT + "/files/" + MAFIA_TEST_RESULTS));
+            getTestDirectory() + TARGET + "/" + FITNESSE_ROOT + "/files/" + MAFIA_TEST_RESULTS));
         // final String[] suites = (String[]) map.get("suites");
         // assertTrue(suites[0].equals("FrontPage.BuyMilkSuite"));
         assertTrue(reporterMojo.getDescription(null).equals(
-                "Maven mafia plugin - reporting: Generate a report of the fitnessetests that have run"));
+            "Maven mafia plugin - reporting: Generate a report of the fitnessetests that have run"));
         assertTrue(reporterMojo.getName(null).equals("Mafia Report"));
         assertNotNull(reporterMojo.getProject());
     }
@@ -99,7 +97,6 @@ public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
         final Writer writer = (Writer) this.getVariableValueFromObject(value, "writer");
 
         final String actual = writer.toString();
-        final String expected = FileUtils.fileRead(new File(getTestDirectory() + "/src/test/resources/report.html"));
 
         assertNotNull(actual);
         // assertTrue(actual.equals(expected));

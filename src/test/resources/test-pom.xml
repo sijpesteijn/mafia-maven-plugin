@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
+	<artifactId>mafia-maven-plugin</artifactId>
+	<packaging>maven-plugin</packaging>
+	<name>MAven FItnesse Adaptor</name>
+	<description>A maven plugin for FitNesse</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
+				<artifactId>mafia-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>content</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<statics>
+						<static>!define TEST_SYSTEM {slim}</static>
+						<!-- When you use the default generated fitnesse layout you should 
+							use your own fixture package <static>!define fixturePackage {nl.yourcompany.application.testing.fixtures}</static> -->
+						<static>!define fixturePackage {fitnesse.slim.test}</static>
+					</statics>
+					<resources>
+						<resource>${basedir}/src/main/resources</resource>
+					</resources>
+					<targets>
+						<target>./domain</target>
+					</targets>
+					<excludeDependencies>
+						<dependency>
+							<artifactId>log4j</artifactId>
+							<groupId>log4j</groupId>
+							<version>1.2.15</version>
+						</dependency>
+					</excludeDependencies>
+				</configuration>
+			</plugin>
+				<plugin>
+				<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
+				<artifactId>mafia-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+				</configuration>
+			</plugin>
+				<plugin>
+				<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
+				<artifactId>mafia-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<tests>
+						<test>FrontPage.BuyMilkSuite.BuyMilk</test>
+						<test>FrontPage.BuyMilkSuite.BuyMilk1</test>
+					</tests>
+					<suites>
+						<suite>FrontPage.BuyMilkSuite</suite>
+					</suites>
+					<suitePageName>FrontPage.BuyMilkSuite</suitePageName>
+					<suiteFilter>regression</suiteFilter>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
