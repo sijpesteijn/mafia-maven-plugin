@@ -1,5 +1,6 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -101,9 +102,10 @@ public class FitNesseContentMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final PluginConfig contentPluginConfig = getPluginConfig();
-        getLog().info("Content config: " + contentPluginConfig.toString());
+        getLog().debug("Content config: " + contentPluginConfig.toString());
         final PluginManager pluginManager = PluginManagerFactory.getPluginManager(contentPluginConfig);
         pluginManager.run();
+        getLog().info("Created new content.txt in " + wikiRoot + File.separatorChar + nameRootPage + File.separatorChar);
     }
 
     /**

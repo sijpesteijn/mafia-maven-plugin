@@ -4,12 +4,11 @@ import java.io.IOException;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 
 public class FitNesseExtractor {
 	public static final String FITNESSE_VERSION = "20111025";
 
-	public static void extract(final Log mavenLogger, final String fitnesseRoot, final String repositoryDirectory)
+	public static void extract(final String fitnesseRoot, final String repositoryDirectory)
 			throws MojoExecutionException {
 		final DependencyResolver resolver = new DependencyResolver();
 		final Dependency dependency = new Dependency();
@@ -17,7 +16,7 @@ public class FitNesseExtractor {
 		dependency.setGroupId("org.fitnesse");
 		dependency.setVersion(FITNESSE_VERSION);
 		final String dependencyPath = resolver.resolveDependencyPath(dependency, repositoryDirectory);
-		final CommandRunner runner = new CommandRunner(mavenLogger, fitnesseRoot);
+		final CommandRunner runner = new CommandRunner(fitnesseRoot);
 		final String command = "java" + " -jar " + FileUtils.formatPath(dependencyPath) + " -i";
 		try {
 			runner.start(command, true, null);

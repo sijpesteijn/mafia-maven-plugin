@@ -14,6 +14,8 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
+import sun.util.logging.resources.logging;
+
 /**
  * Plugin manager responsible for starting FitNesse.
  * 
@@ -40,27 +42,32 @@ public class StarterPluginManager implements PluginManager {
 	 */
 	@Override
 	public void run() throws MojoExecutionException, MojoFailureException {
-		final String jarLocation = resolver.getJarLocation(starterPluginConfig.getDependencies(), "org/fitnesse",
+		Dependency fitnesseDependency = new Dependency();
+		fitnesseDependency.setGroupId("org.fitnesse");
+		fitnesseDependency.setArtifactId("fitnesse");
+		final String jarLocation = resolver.getJarLocation(starterPluginConfig.getDependencies(), fitnesseDependency,
 				starterPluginConfig.getRepositoryDirectory());
 		final String jvmArgumentsString = getJVMArguments(starterPluginConfig.getJvmArguments());
 		final String dependencyList = getDependencyList();
 		final String command = getCommand(jarLocation, jvmArgumentsString, dependencyList);
 
 		starterPluginConfig.getLog().info(command);
-		final CommandRunner runner = new CommandRunner(starterPluginConfig.getLog(), starterPluginConfig.getWikiRoot());
+		final CommandRunner runner = new CommandRunner(starterPluginConfig.getWikiRoot());
 		try {
+			starterPluginConfig.getLog().info("Starting FitNesse. This could take some more seconds when first used....");
 			runner.start(command, true, " days." + System.getProperty("line.separator"));
 			if (runner.errorBufferContains("patient.")) {
 				new FirstTimeWriter(starterPluginConfig.getWikiRoot() + File.separatorChar
 						+ starterPluginConfig.getNameRootPage());
 			}
+			starterPluginConfig.getLog().info("FitNesse available on http://localhost:" + starterPluginConfig.getFitNessePort());
 		} catch (final IOException e) {
 			throw new MojoExecutionException("Could not start fitnesse.", e);
 		} catch (final InterruptedException e) {
 			throw new MojoExecutionException("Could not start fitnesse.", e);
 		}
 		if (!runner.errorBufferContains("patient.") && (runner.getExitValue() != 0 || runner.errorBufferHasContent())) {
-			throw new MojoFailureException("Could not start FitNesse: " + runner.getErrorBufferMessage());
+			throw new MojoFailureException("Could not start FitNesse: " + runner.getErrorBuffer());
 		}
 
 	}

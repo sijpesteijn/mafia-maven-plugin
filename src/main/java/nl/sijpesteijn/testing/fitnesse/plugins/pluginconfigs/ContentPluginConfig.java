@@ -7,11 +7,13 @@ import nl.sijpesteijn.testing.fitnesse.plugins.utils.LogUtils;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
+import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * Content plugin configuration.
  * 
  */
+@Component(role=PluginConfig.class, hint = "content-plugin-config")
 public class ContentPluginConfig implements PluginConfig {
 
     private final String wikiRoot;

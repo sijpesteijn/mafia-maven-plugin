@@ -67,7 +67,7 @@ public class FitNesseRunnerMojoTest extends AbstractFitNesseTestCase {
     @Test
     public void runTests() throws Exception {
         deleteTestDirectory();
-        FitNesseExtractor.extract(new SystemStreamLog(), getTestDirectory() + "/target/", REPO);
+        FitNesseExtractor.extract(getTestDirectory() + "/target/", REPO);
 
         contentMojo.execute();
         new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);

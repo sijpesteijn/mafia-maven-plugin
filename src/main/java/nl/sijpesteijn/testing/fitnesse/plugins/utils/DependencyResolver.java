@@ -20,19 +20,29 @@ public class DependencyResolver {
 	 *            {@link java.lang.String}
 	 * @param baseDir
 	 *            {@link java.lang.String}
-	 * @return {@link java.lang.String}
+	 * @return {@link org.apache.maven.model.Dependency}
 	 * @throws MojoExecutionException
 	 */
-	public String getJarLocation(final List<Dependency> dependencies, final String part, final String baseDir)
+	public String getJarLocation(final List<Dependency> dependencies, final Dependency partialDependency, final String baseDir)
 			throws MojoExecutionException {
-		for (int i = 0; i < dependencies.size(); i++) {
-			final Dependency dependency = dependencies.get(i);
-			final String resolveDependencyPath = resolveDependencyPath(dependency, baseDir);
-			if (resolveDependencyPath.contains(part)) {
+		for (Dependency dependency : dependencies) {
+			if (isDependency(dependency, partialDependency)) {
+				final String resolveDependencyPath = resolveDependencyPath(dependency, baseDir);
 				return FileUtils.formatPath(resolveDependencyPath);
 			}
 		}
-		throw new MojoExecutionException("Could not find jar location.");
+		throw new MojoExecutionException("Could not find jar location. Did you include dependency.(groupId=" + partialDependency.getGroupId() + ",artifactId=" + partialDependency.getArtifactId() +")");
+	}
+
+	private boolean isDependency(Dependency dependency,
+			Dependency partialDependency) {
+		if (!dependency.getGroupId().equals(partialDependency.getGroupId())) {
+			return false;
+		}
+		if (!dependency.getArtifactId().equals(partialDependency.getArtifactId())) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

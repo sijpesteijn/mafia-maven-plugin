@@ -141,7 +141,7 @@ public class FitNesseRunnerMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final PluginConfig runnerPluginConfig = getPluginConfig();
-        getLog().info("Runner config: " + runnerPluginConfig.toString());
+        getLog().debug("Runner config: " + runnerPluginConfig.toString());
         final PluginManager pluginManager = PluginManagerFactory.getPluginManager(runnerPluginConfig);
         pluginManager.run();
     }

@@ -15,14 +15,10 @@ public class CommandRunner {
     private final StringBuilder errorBuffer = new StringBuilder();
     private final StringBuilder outputBuffer = new StringBuilder();
     private final StringBuilder inputBuffer = new StringBuilder();
-    private final Log log;
     private int exitValue;
-    private int errorContent = 0;
-    private int inputContent = 0;
     private File workDirectory = null;
 
-    public CommandRunner(final Log log, final String workDirectory) {
-        this.log = log;
+    public CommandRunner(final String workDirectory) {
         if (workDirectory != null)
             this.workDirectory = new File(workDirectory);
     }
@@ -54,14 +50,6 @@ public class CommandRunner {
     private void waitForSetupToFinish(final String endCondition) throws InterruptedException {
         createStreamMonitors(process);
         while (true) {
-            final CharSequence logNewErrorContent = logNewErrorContent();
-            if (!logNewErrorContent.equals("")) {
-                log.error(logNewErrorContent);
-            }
-            final CharSequence logNewOutputContent = logNewOutputContent();
-            if (!logNewOutputContent.equals("")) {
-                log.info(logNewOutputContent);
-            }
             try {
                 exitValue = process.exitValue();
                 return;
@@ -77,23 +65,6 @@ public class CommandRunner {
         }
     }
 
-    private CharSequence logNewErrorContent() {
-        if (errorBuffer.length() > errorContent) {
-            final String substring = errorBuffer.substring(errorContent, errorBuffer.length());
-            errorContent = errorBuffer.length();
-            return substring;
-        }
-        return "";
-    }
-
-    private CharSequence logNewOutputContent() {
-        if (inputBuffer.length() > inputContent) {
-            final String substring = inputBuffer.substring(inputContent, inputBuffer.length());
-            inputContent = inputBuffer.length();
-            return substring;
-        }
-        return "";
-    }
 
     /**
      * Create the stream monitors.
@@ -144,10 +115,10 @@ public class CommandRunner {
     /**
      * Get the error buffer contents.
      * 
-     * @return {@link java.lang.String}
+     * @return {@link java.lang.CharSequence}
      */
-    public String getErrorBufferMessage() {
-        return errorBuffer.toString();
+    public CharSequence getErrorBuffer() {
+        return errorBuffer;
     }
 
     /**

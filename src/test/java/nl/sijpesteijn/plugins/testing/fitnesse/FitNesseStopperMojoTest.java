@@ -36,7 +36,7 @@ public class FitNesseStopperMojoTest extends AbstractFitNesseTestCase {
         } catch (final MojoFailureException mfe) {
             final String message = mfe.getMessage();
             assertTrue(message
-                    .startsWith("Could not stop FitNesse: Exception in thread \"main\" java.net.ConnectException: Connection refused"));
+                    .equals("Could not stop FitNesse. It might not be running?"));
         }
     }
 

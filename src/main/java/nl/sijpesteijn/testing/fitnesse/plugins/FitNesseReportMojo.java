@@ -100,7 +100,7 @@ public class FitNesseReportMojo extends AbstractMavenReport {
     protected void executeReport(final Locale locale) throws MavenReportException {
         try {
             final ReporterPluginConfig reporterPluginConfig = getPluginConfig(locale);
-            getLog().info("Report config: " + reporterPluginConfig.toString());
+            getLog().debug("Report config: " + reporterPluginConfig.toString());
             final PluginManager pluginManager = PluginManagerFactory.getPluginManager(reporterPluginConfig);
             pluginManager.run();
         } catch (final MojoExecutionException e) {

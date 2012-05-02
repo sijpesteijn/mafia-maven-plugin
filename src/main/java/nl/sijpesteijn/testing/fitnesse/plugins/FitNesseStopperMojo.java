@@ -59,7 +59,7 @@ public class FitNesseStopperMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final PluginConfig stopperPluginConfig = getPluginConfig();
-        getLog().info("Stopper config: " + stopperPluginConfig.toString());
+        getLog().debug("Stopper config: " + stopperPluginConfig.toString());
         final PluginManager pluginManager = PluginManagerFactory.getPluginManager(stopperPluginConfig);
         pluginManager.run();
     }

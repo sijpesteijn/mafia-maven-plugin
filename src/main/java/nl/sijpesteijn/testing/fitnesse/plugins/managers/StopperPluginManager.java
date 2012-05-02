@@ -6,6 +6,7 @@ import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StopperPluginConfig
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.CommandRunner;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.DependencyResolver;
 
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -35,14 +36,17 @@ public class StopperPluginManager implements PluginManager {
     public void run() throws MojoFailureException, MojoExecutionException {
         final String jarLocation;
         try {
-            jarLocation = resolver.getJarLocation(stopperPluginConfig.getDependencies(), "org/fitnesse/",
+    		Dependency fitnesseDependency = new Dependency();
+    		fitnesseDependency.setGroupId("org.fitnesse");
+    		fitnesseDependency.setArtifactId("fitnesse");
+            jarLocation = resolver.getJarLocation(stopperPluginConfig.getDependencies(), fitnesseDependency,
                     stopperPluginConfig.getRepositoryDirectory());
         } catch (final MojoExecutionException mee) {
             throw mee;
         }
         final String command = "java -cp " + jarLocation + " fitnesse.Shutdown -p " + stopperPluginConfig.getPort();
         stopperPluginConfig.getMavenLogger().info(command);
-        final CommandRunner runner = new CommandRunner(stopperPluginConfig.getMavenLogger(), null);
+        final CommandRunner runner = new CommandRunner(null);
         try {
             runner.start(command, true, null);
         } catch (final IOException e) {
@@ -51,8 +55,9 @@ public class StopperPluginManager implements PluginManager {
             throw new MojoFailureException("Could not stop FitNesse", e);
         }
         if (runner.errorBufferHasContent()) {
-            throw new MojoFailureException("Could not stop FitNesse: " + runner.getErrorBufferMessage());
+            throw new MojoFailureException("Could not stop FitNesse. It might not be running?");
         }
+        stopperPluginConfig.getMavenLogger().info("FitNesse stopped.");
     }
 
 }

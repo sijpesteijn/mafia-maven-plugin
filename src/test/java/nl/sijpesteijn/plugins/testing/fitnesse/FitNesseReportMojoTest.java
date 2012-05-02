@@ -68,7 +68,7 @@ public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
     public void checkNoReportsGenerated() throws Exception {
         deleteTestDirectory();
 
-        FitNesseExtractor.extract(new SystemStreamLog(), getTestDirectory() + "/target/", REPO);
+        FitNesseExtractor.extract(getTestDirectory() + "/target/", REPO);
 
         contentMojo.execute();
         new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);
@@ -80,7 +80,7 @@ public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
     public void checkSingleTestReport() throws Exception {
         deleteTestDirectory();
 
-        FitNesseExtractor.extract(new SystemStreamLog(), getTestDirectory() + "/target/", REPO);
+        FitNesseExtractor.extract(getTestDirectory() + "/target/", REPO);
 
         contentMojo.execute();
         new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);

@@ -54,7 +54,7 @@ public class RunnerPluginManager implements PluginManager {
      */
     @Override
     public void run() throws MojoFailureException, MojoExecutionException {
-        FitNesseExtractor.extract(runnerPluginConfig.getMavenLogger(), runnerPluginConfig.getWikiRoot(),
+        FitNesseExtractor.extract(runnerPluginConfig.getWikiRoot(),
                 runnerPluginConfig.getRepositoryDirectory());
         fitNesseCommander.clearTestResultsDirectory();
         fitNesseCommander.start();
@@ -102,7 +102,9 @@ public class RunnerPluginManager implements PluginManager {
     public void runTests(final List<String> tests) throws MojoFailureException, MojoExecutionException {
         if (tests != null) {
             for (final String testName : tests) {
+            	// TODO log running test: testName
                 testSummaries.put(testName, fitNesseCommander.runTest(testName));
+                
             }
         }
 

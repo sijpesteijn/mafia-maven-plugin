@@ -103,7 +103,7 @@ public class FitNesseStarterMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final PluginConfig starterPluginConfig = getPluginConfig();
-        getLog().info("Starter config: " + starterPluginConfig.toString());
+        getLog().debug("Starter config: " + starterPluginConfig.toString());
         final PluginManager pluginManager = PluginManagerFactory.getPluginManager(starterPluginConfig);
         pluginManager.run();
     }
