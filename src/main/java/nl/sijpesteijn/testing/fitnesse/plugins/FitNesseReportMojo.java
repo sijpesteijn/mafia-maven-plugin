@@ -22,7 +22,6 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 /**
  * This mojo will collect the test results from the run tests.
  * 
- * @execute goal="test"
  * @phase site
  * @goal report
  */

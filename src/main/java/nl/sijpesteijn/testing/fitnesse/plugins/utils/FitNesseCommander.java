@@ -38,7 +38,7 @@ public class FitNesseCommander {
 
     private final FitNesseComanderConfig fitNesseCommanderConfig;
     private final FitNesse fitnesse;
-    private final TestSummary summary = new TestSummary();
+    private TestSummary summary;
 
     public FitNesseCommander(final FitNesseComanderConfig fitNesseCommanderConfig) throws MojoFailureException {
         this.fitNesseCommanderConfig = fitNesseCommanderConfig;
@@ -176,6 +176,7 @@ public class FitNesseCommander {
         start = stop + "ignored".length() + 1;
         stop = inputLine.indexOf("exceptions", start);
         final String exceptionsStr = inputLine.substring(start, stop);
+        summary = new TestSummary();
         summary.right += Integer.parseInt(rightStr.trim());
         summary.wrong += Integer.parseInt(wrongStr.trim());
         summary.ignores += Integer.parseInt(ignoreStr.trim());

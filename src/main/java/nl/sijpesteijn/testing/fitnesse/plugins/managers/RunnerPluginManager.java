@@ -72,7 +72,7 @@ public class RunnerPluginManager implements PluginManager {
         }
     }
 
-    private void testSummaryCheck() throws MojoExecutionException {
+    private void testSummaryCheck() throws MojoExecutionException, MojoFailureException {
         boolean stop = false;
         for (final String key : testSummaries.keySet()) {
             final TestSummary testSummary = testSummaries.get(key);
@@ -90,7 +90,7 @@ public class RunnerPluginManager implements PluginManager {
             }
         }
         if (stop) {
-            throw new MojoExecutionException("FitNesse test not executed successfully");
+            throw new MojoFailureException("One or more tests or suites returned unexpected results.");
         }
     }
 
