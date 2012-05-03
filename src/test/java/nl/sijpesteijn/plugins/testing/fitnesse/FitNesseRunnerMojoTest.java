@@ -12,7 +12,6 @@ import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseRunnerMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseExtractor;
 
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.codehaus.plexus.util.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -78,8 +77,8 @@ public class FitNesseRunnerMojoTest extends AbstractFitNesseTestCase {
 
         runnerMojo.execute();
 
-        final File mafiaResultDirectory = new File(getTestDirectory() + "/target/" + FITNESSE_ROOT + "/files/"
-                + MAFIA_TEST_RESULTS);
+        final File mafiaResultDirectory =
+                new File(getTestDirectory() + "/target/" + FITNESSE_ROOT + "/files/" + MAFIA_TEST_RESULTS);
         assertTrue(mafiaResultDirectory.exists());
         final List files = FileUtils.getFiles(mafiaResultDirectory, null, null);
 

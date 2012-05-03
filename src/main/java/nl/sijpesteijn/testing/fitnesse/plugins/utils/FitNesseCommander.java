@@ -38,7 +38,7 @@ public class FitNesseCommander {
 
     private final FitNesseComanderConfig fitNesseCommanderConfig;
     private final FitNesse fitnesse;
-    private TestSummary summary;
+    private final TestSummary summary = new TestSummary();
 
     public FitNesseCommander(final FitNesseComanderConfig fitNesseCommanderConfig) throws MojoFailureException {
         this.fitNesseCommanderConfig = fitNesseCommanderConfig;
@@ -116,22 +116,25 @@ public class FitNesseCommander {
     }
 
     public TestSummary runByTagFilter(final String suiteFilter, final String suitePageName)
-            throws MojoExecutionException {
+            throws MojoExecutionException
+    {
         callUrl(getTestUrl(suitePageName, PageType.SUITE, suiteFilter));
         return summary;
     }
 
     private void callUrl(final String testUrl) throws MojoExecutionException {
         String ipAddress = "";
+        URL url = null;
         try {
             ipAddress = getIpAddress();
-            final URL url = new URL("http", ipAddress, fitNesseCommanderConfig.getFitNessePort(), testUrl);
+            url = new URL("http", ipAddress, fitNesseCommanderConfig.getFitNessePort(), testUrl);
             final URLConnection yc = url.openConnection();
             final BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 if (inputLine.contains("getElementById(\"test-summary\")")
-                        && inputLine.contains("<strong>Assertions:</strong>")) {
+                        && inputLine.contains("<strong>Assertions:</strong>"))
+                {
                     updateSummary(inputLine);
                 }
             }
@@ -141,7 +144,7 @@ public class FitNesseCommander {
         } catch (final MalformedURLException e) {
             throw new MojoExecutionException("Could not make url call", e);
         } catch (final FileNotFoundException e) {
-            throw new MojoExecutionException("Url not available", e);
+            throw new MojoExecutionException("Url not available: " + url.toString(), e);
         } catch (final IOException e) {
             throw new MojoExecutionException("Could not make url call", e);
         }
@@ -176,7 +179,6 @@ public class FitNesseCommander {
         start = stop + "ignored".length() + 1;
         stop = inputLine.indexOf("exceptions", start);
         final String exceptionsStr = inputLine.substring(start, stop);
-        summary = new TestSummary();
         summary.right += Integer.parseInt(rightStr.trim());
         summary.wrong += Integer.parseInt(wrongStr.trim());
         summary.ignores += Integer.parseInt(ignoreStr.trim());
@@ -191,9 +193,10 @@ public class FitNesseCommander {
     }
 
     public void clearTestResultsDirectory() throws MojoExecutionException {
-        final String directoryName = fitNesseCommanderConfig.getRootPath() + File.separatorChar
-                + fitNesseCommanderConfig.getNameRootPage() + File.separatorChar + "files" + File.separatorChar
-                + fitNesseCommanderConfig.getTestResultsDirectoryName();
+        final String directoryName =
+                fitNesseCommanderConfig.getRootPath() + File.separatorChar + fitNesseCommanderConfig.getNameRootPage()
+                        + File.separatorChar + "files" + File.separatorChar
+                        + fitNesseCommanderConfig.getTestResultsDirectoryName();
         try {
             FileUtils.deleteDirectory(directoryName);
         } catch (final IOException e) {

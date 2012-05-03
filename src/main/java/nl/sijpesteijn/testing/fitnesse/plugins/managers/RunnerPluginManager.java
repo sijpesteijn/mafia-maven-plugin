@@ -61,9 +61,14 @@ public class RunnerPluginManager implements PluginManager {
         FitNesseExtractor.extract(runnerPluginConfig.getWikiRoot(), runnerPluginConfig.getRepositoryDirectory());
         fitNesseCommander.clearTestResultsDirectory();
         fitNesseCommander.start();
+        try {
         runTests(runnerPluginConfig.getTests());
         runSuites(runnerPluginConfig.getSuites());
         runBySuiteFilter(runnerPluginConfig.getSuiteFilter(), runnerPluginConfig.getSuitePageName());
+        } catch(MojoExecutionException mee) {
+        	fitNesseCommander.stop();
+        	throw mee;
+        }
         testSummaryCheck();
         try {
             fitNesseCommander.stop();
@@ -72,7 +77,7 @@ public class RunnerPluginManager implements PluginManager {
         }
     }
 
-    private void testSummaryCheck() throws MojoExecutionException, MojoFailureException {
+    private void testSummaryCheck() throws MojoExecutionException {
         boolean stop = false;
         for (final String key : testSummaries.keySet()) {
             final TestSummary testSummary = testSummaries.get(key);
@@ -90,7 +95,7 @@ public class RunnerPluginManager implements PluginManager {
             }
         }
         if (stop) {
-            throw new MojoFailureException("One or more tests or suites returned unexpected results.");
+            throw new MojoExecutionException("FitNesse test not executed successfully");
         }
     }
 

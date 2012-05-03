@@ -50,8 +50,9 @@ public class MafiaHtmlConverter {
         final Matcher matcher = pattern.matcher(html);
         int offset = 9;
         while (matcher.find()) {
-            html = html.substring(0, matcher.start() + offset) + "#"
-                    + html.substring(matcher.start() + offset++, html.length());
+            html =
+                    html.substring(0, matcher.start() + offset) + "#"
+                            + html.substring(matcher.start() + offset++, html.length());
         }
         return html;
     }

@@ -34,7 +34,10 @@ public class ReporterPluginManager implements PluginManager {
     public ReporterPluginManager(final ReporterPluginConfig reporterPluginConfig) {
         this.reporterPluginConfig = reporterPluginConfig;
         mavenLogger = reporterPluginConfig.getMavenLogger();
-        collector = new MafiaResultCollector(new File(reporterPluginConfig.getMafiaTestResultsDirectory()));
+        collector =
+                new MafiaResultCollector(new File(reporterPluginConfig.getWikiRoot() + File.separatorChar
+                        + reporterPluginConfig.getNameRootPage() + File.separatorChar + "files" + File.separatorChar
+                        + reporterPluginConfig.getMafiaTestResultsDirectory()));
     }
 
     /**

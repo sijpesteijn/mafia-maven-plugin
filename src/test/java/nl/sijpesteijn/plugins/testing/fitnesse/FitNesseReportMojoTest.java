@@ -11,7 +11,6 @@ import java.util.Map;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseContentMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseReportMojo;
-import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseRunnerMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseExtractor;
 
@@ -27,14 +26,12 @@ import org.junit.Test;
  */
 public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
     private FitNesseReportMojo reporterMojo;
-    private FitNesseRunnerMojo runnerMojo;
     private FitNesseContentMojo contentMojo;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        runnerMojo = configureRunnerMojo();
         reporterMojo = configureReporterMojo();
         contentMojo = configureContentMojo();
     }
@@ -46,8 +43,7 @@ public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
         final File outputDirectory = (File) map.get("outputDirectory");
         assertTrue(outputDirectory.getAbsolutePath().replace('\\', '/').equals(getTestDirectory() + TARGET + "/site"));
         final String mafiaTestResultsDirectory = (String) map.get("mafiaTestResultsDirectory");
-        assertTrue(mafiaTestResultsDirectory.replace('\\', '/').equals(
-            getTestDirectory() + TARGET + "/" + FITNESSE_ROOT + "/files/" + MAFIA_TEST_RESULTS));
+        assertTrue(mafiaTestResultsDirectory.replace('\\', '/').equals(MAFIA_TEST_RESULTS));
         // final String[] suites = (String[]) map.get("suites");
         // assertTrue(suites[0].equals("FrontPage.BuyMilkSuite"));
         assertTrue(reporterMojo.getDescription(null).equals(
@@ -80,15 +76,12 @@ public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
 
         FitNesseExtractor.extract(getTestDirectory() + "/target/", REPO);
 
-        contentMojo.execute();
         new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);
 
         contentMojo.execute();
         createDummySuite();
         createDummyTest("");
         createDummyTest("1");
-
-        runnerMojo.execute();
 
         replay(rendererMock);
         reporterMojo.execute();

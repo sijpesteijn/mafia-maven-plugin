@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.maven.plugin.logging.Log;
-
 /**
  * Start a process and monitor the std out and std error.
  * 
@@ -27,12 +25,13 @@ public class CommandRunner {
      * Run the command.
      * 
      * @param command
-     *            {@link java.lang.String}
+     *        {@link java.lang.String}
      * @throws IOException
      * @throws InterruptedException
      */
     public void start(final String command, final boolean waitForProcessToFinish, final String endCondition)
-            throws IOException, InterruptedException {
+            throws IOException, InterruptedException
+    {
         process = Runtime.getRuntime().exec(command, null, workDirectory);
         if (waitForProcessToFinish) {
             waitForSetupToFinish(endCondition);
@@ -65,12 +64,11 @@ public class CommandRunner {
         }
     }
 
-
     /**
      * Create the stream monitors.
      * 
      * @param process
-     *            {@link java.lang.Process}
+     *        {@link java.lang.Process}
      */
     private void createStreamMonitors(final Process process) {
         final InputStream errorStream = process.getErrorStream();
@@ -83,9 +81,9 @@ public class CommandRunner {
      * Check if the buffer contains the specified string.
      * 
      * @param buffer
-     *            {@link java.lang.StringBuilder}
+     *        {@link java.lang.StringBuilder}
      * @param string
-     *            {@link java.lang.String}
+     *        {@link java.lang.String}
      * @return {@link boolean}
      */
     private boolean bufferContains(final StringBuilder buffer, final String string) {
@@ -105,7 +103,7 @@ public class CommandRunner {
      * Check if the error buffer contains the specified string.
      * 
      * @param string
-     *            {@link java.lang.String}
+     *        {@link java.lang.String}
      * @return {@link boolean}
      */
     public boolean errorBufferContains(final String string) {

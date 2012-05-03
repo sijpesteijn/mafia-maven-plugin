@@ -22,16 +22,20 @@ public class ReporterPluginConfig implements PluginConfig {
     private final String suitePageName;
     private final String name;
     private final Log mavenLogger;
+    private final String wikiRoot;
+    private final String nameRootPage;
 
     public ReporterPluginConfig(final String outputDirectory, final String name,
-                                final String mafiaTestResultsDirectory, final Sink sink,
-                                final ResourceBundle resourceBundle, final List<String> tests,
-                                final List<String> suites, final String suiteFilter, final String suitePageName,
-                                final Log mavenLogger)
+                                final String mafiaTestResultsDirectory, final String wikiRoot,
+                                final String nameRootPage, final Sink sink, final ResourceBundle resourceBundle,
+                                final List<String> tests, final List<String> suites, final String suiteFilter,
+                                final String suitePageName, final Log mavenLogger)
     {
         this.outputDirectory = outputDirectory;
         this.name = name;
         this.mafiaTestResultsDirectory = mafiaTestResultsDirectory;
+        this.wikiRoot = wikiRoot;
+        this.nameRootPage = nameRootPage;
         this.sink = sink;
         this.resourceBundle = resourceBundle;
         this.tests = tests;
@@ -57,6 +61,8 @@ public class ReporterPluginConfig implements PluginConfig {
         private String suitePageName;
         private String name;
         private Log mavenLogger;
+        private String wikiRoot;
+        private String nameRootPage;
 
         public void setMafiaTestResultsDirectory(final String mafiaTestResultsDirectory) {
             this.mafiaTestResultsDirectory = mafiaTestResultsDirectory;
@@ -67,8 +73,9 @@ public class ReporterPluginConfig implements PluginConfig {
         }
 
         public ReporterPluginConfig build() {
-            return new ReporterPluginConfig(this.outputDirectory, this.name, this.mafiaTestResultsDirectory, this.sink,
-                this.resourceBundle, this.tests, this.suites, this.suiteFilter, this.suitePageName, this.mavenLogger);
+            return new ReporterPluginConfig(this.outputDirectory, this.name, this.mafiaTestResultsDirectory,
+                this.wikiRoot, this.nameRootPage, this.sink, this.resourceBundle, this.tests, this.suites,
+                this.suiteFilter, this.suitePageName, this.mavenLogger);
         }
 
         public void setSink(final Sink sink) {
@@ -103,6 +110,13 @@ public class ReporterPluginConfig implements PluginConfig {
             this.mavenLogger = mavenLogger;
         }
 
+        public void setWikiRoot(final String wikiRoot) {
+            this.wikiRoot = wikiRoot;
+        }
+
+        public void setNameRootPage(final String nameRootPage) {
+            this.nameRootPage = nameRootPage;
+        }
     }
 
     public String getOutputDirectory() {
@@ -145,16 +159,24 @@ public class ReporterPluginConfig implements PluginConfig {
         return mavenLogger;
     }
 
+    public String getWikiRoot() {
+        return this.wikiRoot;
+    }
+
+    public String getNameRootPage() {
+        return this.nameRootPage;
+    }
+
     /**
      * Return plugin configuration in one big string.
      */
     @Override
     public String toString() {
-        return "Mafia Testresults directory: " + this.mafiaTestResultsDirectory + ",Output directory: "
+        return "Wiki root: " + this.wikiRoot + ", Name of root page: " + this.nameRootPage
+                + ", Mafia Testresults directory: " + this.mafiaTestResultsDirectory + ",Output directory: "
                 + this.outputDirectory + ", Name: " + this.name + ", Sink: " + this.sink.toString()
                 + ", ResourceBundle: " + resourceBundle.toString() + ", Tests: " + this.tests.toString() + ", Suites: "
                 + this.suites.toString() + ", SuiteFilter: " + this.suiteFilter + ", Suite Pagename: "
                 + this.suitePageName;
     }
-
 }

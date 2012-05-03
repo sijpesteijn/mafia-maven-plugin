@@ -54,7 +54,7 @@ public class FitNesseRunnerMojo extends AbstractMojo {
     /**
      * The directory where the Fitnesse reports have been generated.
      * 
-     * @parameter expression="${test.mafiaTestResultsDirectory}" default-value ="mafiaTestResults"
+     * @parameter expression="${test.mafiaTestResultsDirectory}" default-value="mafiaTestResults"
      */
     private String mafiaTestResultsDirectory;
 

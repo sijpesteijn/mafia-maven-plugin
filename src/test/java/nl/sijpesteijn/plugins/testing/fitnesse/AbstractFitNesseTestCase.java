@@ -291,9 +291,13 @@ public abstract class AbstractFitNesseTestCase {
             "outputDirectory",
             new File(mavenUtils.getStringValueFromConfiguration(configuration, "outputDirectory",
                 "${project.reporting.outputDirectory}")));
-        setVariableValueToObject(reporterMojo, "mafiaTestResultsDirectory", mavenUtils.getStringValueFromConfiguration(
-            configuration, "mafiaTestResultsDirectory", "${project.build.outputDirectory}/" + FITNESSE_ROOT + "/files/"
-                    + MAFIA_TEST_RESULTS));
+        setVariableValueToObject(reporterMojo, "mafiaTestResultsDirectory",
+            mavenUtils.getStringValueFromConfiguration(configuration, "mafiaTestResultsDirectory", MAFIA_TEST_RESULTS));
+        setVariableValueToObject(reporterMojo, "repositoryDirectory", REPO);
+        setVariableValueToObject(reporterMojo, "runTests",
+            Boolean.valueOf(mavenUtils.getStringValueFromConfiguration(testConfiguration, "runTests", "true")));
+        setVariableValueToObject(reporterMojo, "wikiRoot",
+                mavenUtils.getStringValueFromConfiguration(configuration, "wikiRoot", "${project.build.outputDirectory}"));
         setVariableValueToObject(reporterMojo, "project", new MavenProject());
         setVariableValueToObject(reporterMojo, "suites",
             mavenUtils.getStringArrayFromConfiguration(testConfiguration, "suites"));

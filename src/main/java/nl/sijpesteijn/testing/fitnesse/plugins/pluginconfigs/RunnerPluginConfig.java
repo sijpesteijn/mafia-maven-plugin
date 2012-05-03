@@ -28,10 +28,12 @@ public class RunnerPluginConfig implements PluginConfig {
     private final String repositoryDirectory;
 
     public RunnerPluginConfig(final String wikiRoot, final String nameRootPage, final String mafiaTestResultsDirectory,
-            final int port, final int retainDays, final String logDirectory, final Log log,
-            final String repositoryDirectory, final boolean stopTestsOnFailure, final boolean stopTestsOnIgnore,
-            final boolean stopTestsOnException, final boolean stopTestsOnWrong, final List<String> tests,
-            final List<String> suites, final String suiteFilter, final String suitePageName) {
+                              final int port, final int retainDays, final String logDirectory, final Log log,
+                              final String repositoryDirectory, final boolean stopTestsOnFailure,
+                              final boolean stopTestsOnIgnore, final boolean stopTestsOnException,
+                              final boolean stopTestsOnWrong, final List<String> tests, final List<String> suites,
+                              final String suiteFilter, final String suitePageName)
+    {
         this.wikiRoot = wikiRoot;
         this.nameRootPage = nameRootPage;
         this.mafiaTestResultsDirectory = mafiaTestResultsDirectory;
@@ -129,8 +131,8 @@ public class RunnerPluginConfig implements PluginConfig {
 
         public RunnerPluginConfig build() {
             return new RunnerPluginConfig(wikiRoot, nameRootPage, mafiaTestResultsDirectory, port, retainDays,
-                    logDirectory, mavenLogger, repositoryDirectory, stopTestsOnFailure, stopTestsOnIgnore,
-                    stopTestsOnException, stopTestsOnWrong, tests, suites, suiteFilter, suitePageName);
+                logDirectory, mavenLogger, repositoryDirectory, stopTestsOnFailure, stopTestsOnIgnore,
+                stopTestsOnException, stopTestsOnWrong, tests, suites, suiteFilter, suitePageName);
         }
 
         public void setTests(final List<String> tests) {
@@ -226,7 +228,7 @@ public class RunnerPluginConfig implements PluginConfig {
     public String toString() {
         return "Port: " + this.port + ", Wiki Root: " + this.wikiRoot + ", Name Root Page: " + this.nameRootPage
                 + ", Retain days: " + this.retainDays + ", Log path: " + this.logDirectory
-                + ", Mafia Test Results Directory " + this.mafiaTestResultsDirectory + ", Repository directory: "
+                + ", Mafia Test Results Directory: " + this.mafiaTestResultsDirectory + ", Repository directory: "
                 + this.repositoryDirectory + ", Stop Tests On Exception: " + this.stopTestsOnException
                 + ", Stop Tests On Failure: " + this.stopTestsOnFailure + ", Stop Tests On Ignore: "
                 + this.stopTestsOnIgnore + ", Stop Tests On Wrong: " + this.stopTestsOnWrong + ", Tests: "
