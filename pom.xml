@@ -10,7 +10,7 @@
 	<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 	<artifactId>mafia-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
-	<version>1.0.8-SNAPSHOT</version>
+	<version>1.0.8</version>
 	<name>MAven FItnesse Adaptor</name>
 	<description>A maven plugin for FitNesse</description>
 
