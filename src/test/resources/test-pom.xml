@@ -41,7 +41,7 @@
 					</excludeDependencies>
 				</configuration>
 			</plugin>
-				<plugin>
+			<plugin>
 				<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 				<artifactId>mafia-maven-plugin</artifactId>
 				<executions>
@@ -54,7 +54,35 @@
 				<configuration>
 				</configuration>
 			</plugin>
-				<plugin>
+               <plugin>
+                <groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
+                <artifactId>mafia-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmArguments>
+                        <jvmArgument>CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem</jvmArgument>
+                    </jvmArguments>
+                    <jvmDependencies>
+				        <dependency>
+				            <groupId>org.fitnesse</groupId>
+				            <artifactId>fitnesse</artifactId>
+				            <version>20111025</version>
+				        </dependency>                        
+                        <dependency>
+                            <artifactId>log4j</artifactId>
+                            <groupId>log4j</groupId>
+                            <version>1.2.15</version>
+                        </dependency>
+                    </jvmDependencies>
+                </configuration>
+            </plugin>
+			<plugin>
 				<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 				<artifactId>mafia-maven-plugin</artifactId>
 				<executions>

@@ -43,67 +43,49 @@ public class StarterPluginManager implements PluginManager {
 		final Dependency fitnesseDependency = new Dependency();
 		fitnesseDependency.setGroupId("org.fitnesse");
 		fitnesseDependency.setArtifactId("fitnesse");
-		final String jarLocation = resolver.getJarLocation(
-				starterPluginConfig.getDependencies(), fitnesseDependency,
+		final String jarLocation = resolver.getJarLocation(starterPluginConfig.getDependencies(), fitnesseDependency,
 				starterPluginConfig.getRepositoryDirectory());
-		final String jvmArgumentsString = getJVMArguments(starterPluginConfig
-				.getJvmArguments());
+		final String jvmArgumentsString = getJVMArguments(starterPluginConfig.getJvmArguments());
 		final String dependencyList = getDependencyList();
-		final String command = getCommand(jarLocation, jvmArgumentsString,
-				dependencyList);
+		final String command = getCommand(jarLocation, jvmArgumentsString, dependencyList);
 
 		starterPluginConfig.getLog().info(command);
-		final CommandRunner runner = new CommandRunner(
-				starterPluginConfig.getWikiRoot());
+		final CommandRunner runner = new CommandRunner(starterPluginConfig.getWikiRoot());
 		try {
-			starterPluginConfig
-					.getLog()
-					.info("Starting FitNesse. This could take some more seconds when first used....");
-			runner.start(command, true,
-					" days." + System.getProperty("line.separator"));
+			starterPluginConfig.getLog().info(
+					"Starting FitNesse. This could take some more seconds when first used....");
+			runner.start(command, true, " days." + System.getProperty("line.separator"));
 			if (runner.errorBufferContains("patient.")) {
-				new FirstTimeWriter(starterPluginConfig.getWikiRoot()
-						+ File.separatorChar
+				new FirstTimeWriter(starterPluginConfig.getWikiRoot() + File.separatorChar
 						+ starterPluginConfig.getNameRootPage());
 			}
 			starterPluginConfig.getLog().info(
-					"FitNesse available on http://localhost:"
-							+ starterPluginConfig.getFitNessePort());
+					"FitNesse available on http://localhost:" + starterPluginConfig.getFitNessePort());
 		} catch (final IOException e) {
 			throw new MojoExecutionException("Could not start fitnesse.", e);
 		} catch (final InterruptedException e) {
 			throw new MojoExecutionException("Could not start fitnesse.", e);
 		}
-		if (!runner.errorBufferContains("patient.")
-				&& (runner.getExitValue() != 0 || runner
-						.errorBufferHasContent())) {
-			throw new MojoFailureException("Could not start FitNesse: "
-					+ runner.getErrorBuffer());
+		if (!runner.errorBufferContains("patient.") && (runner.getExitValue() != 0 || runner.errorBufferHasContent())) {
+			throw new MojoFailureException("Could not start FitNesse: " + runner.getErrorBuffer());
 		}
 
 	}
 
-	private String getCommand(final String jarLocation,
-			final String jvmArgumentsString, final String dependencyList) {
+	private String getCommand(final String jarLocation, final String jvmArgumentsString, final String dependencyList) {
 		return "java"
 				+ jvmArgumentsString
 				+ " -cp "
 				+ jarLocation
 				+ File.pathSeparatorChar
-				+ (dependencyList
-						+ " fitnesseMain.FitNesseMain -p "
-						+ starterPluginConfig.getFitNessePort()
-						+ " -d "
-						+ FileUtils.formatPath(starterPluginConfig
-								.getWikiRoot()) + " -r "
-						+ starterPluginConfig.getNameRootPage()
-						+ getLogArgument() + " -e " + starterPluginConfig
-							.getRetainDays());
+				+ (dependencyList + " fitnesseMain.FitNesseMain -p " + starterPluginConfig.getFitNessePort() + " -d "
+						+ FileUtils.formatPath(starterPluginConfig.getWikiRoot()) + " -r "
+						+ starterPluginConfig.getNameRootPage() + getLogArgument() + " -e " + starterPluginConfig
+						.getRetainDays());
 	}
 
 	private String getLogArgument() {
-		if (starterPluginConfig.getLogPath() != null
-				&& !starterPluginConfig.getLogPath().equals("")) {
+		if (starterPluginConfig.getLogPath() != null && !starterPluginConfig.getLogPath().equals("")) {
 			return " -l " + starterPluginConfig.getLogPath();
 		}
 		return "";
@@ -119,12 +101,11 @@ public class StarterPluginManager implements PluginManager {
 			return "";
 		}
 		String list = "";
-		for (final Dependency dependency : starterPluginConfig
-				.getJvmDependencies()) {
-			final String dependencyPath = resolver.resolveDependencyPath(
-					dependency, starterPluginConfig.getRepositoryDirectory());
+		for (final Dependency dependency : starterPluginConfig.getJvmDependencies()) {
+			final String dependencyPath = resolver.resolveDependencyPath(dependency,
+					starterPluginConfig.getRepositoryDirectory());
 			if (!dependencyPath.trim().equals("")) {
-				list += dependencyPath;
+				list += dependencyPath + File.pathSeparatorChar;
 			}
 		}
 		return list;
