@@ -111,7 +111,7 @@ public class RunnerPluginManager implements PluginManager {
         if (tests != null && !tests.isEmpty()) {
             mavenLogger.info("Running tests...");
             for (final String testName : tests) {
-                final TestSummary summary = fitNesseCommander.runTest(testName);
+                final TestSummary summary = fitNesseCommander.runTest(testName, mavenLogger);
                 mavenLogger.info("Test: " + testName + " (" + summary.toString() + ")");
                 testSummaries.put(testName, summary);
 
@@ -132,7 +132,7 @@ public class RunnerPluginManager implements PluginManager {
         if (suites != null && !suites.isEmpty()) {
             mavenLogger.info("Running suites...");
             for (final String suiteName : suites) {
-                final TestSummary testSummary = fitNesseCommander.runTestSuite(suiteName);
+                final TestSummary testSummary = fitNesseCommander.runTestSuite(suiteName, mavenLogger);
                 mavenLogger.info("Suite: " + suiteName + " (" + testSummary.toString() + ")");
                 testSummaries.put(suiteName, testSummary);
             }
@@ -158,7 +158,7 @@ public class RunnerPluginManager implements PluginManager {
             if (suiteFilter == null || suitePageName == null) {
                 throw new MojoFailureException("SuiteFilter and/or SuitePageName not set.");
             }
-            testSummaries.put(suitePageName, fitNesseCommander.runByTagFilter(suiteFilter, suitePageName));
+            testSummaries.put(suitePageName, fitNesseCommander.runByTagFilter(suiteFilter, suitePageName, mavenLogger));
         }
     }
 }

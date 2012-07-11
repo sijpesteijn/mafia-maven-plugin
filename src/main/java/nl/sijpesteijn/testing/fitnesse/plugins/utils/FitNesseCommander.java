@@ -15,9 +15,12 @@ import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.FileUtils;
 
 import fitnesse.ComponentFactory;
@@ -40,7 +43,9 @@ public class FitNesseCommander {
     private final FitNesse fitnesse;
     private final TestSummary summary = new TestSummary();
 
-    public FitNesseCommander(final FitNesseComanderConfig fitNesseCommanderConfig) throws MojoFailureException {
+    public FitNesseCommander(final FitNesseComanderConfig fitNesseCommanderConfig)
+        throws MojoFailureException
+    {
         this.fitNesseCommanderConfig = fitNesseCommanderConfig;
         final FitNesseContext context = loadContext();
         VelocityFactory.makeVelocityFactory(context);
@@ -70,9 +75,9 @@ public class FitNesseCommander {
         final ComponentFactory componentFactory = new ComponentFactory(context.rootPath);
         context.rootDirectoryName = fitNesseCommanderConfig.getNameRootPage();
         context.setRootPagePath();
-        final String defaultNewPageContent = componentFactory.getProperty(ComponentFactory.DEFAULT_NEWPAGE_CONTENT);
-        if (defaultNewPageContent != null)
-            context.defaultNewPageContent = defaultNewPageContent;
+        final String defaultNewPageContent =
+            componentFactory.getProperty(ComponentFactory.DEFAULT_NEWPAGE_CONTENT);
+        if (defaultNewPageContent != null) { context.defaultNewPageContent = defaultNewPageContent; }
         final WikiPageFactory wikiPageFactory = new WikiPageFactory();
         context.responderFactory = new ResponderFactory(context.rootPagePath);
         context.logger = getLogger();
@@ -80,7 +85,8 @@ public class FitNesseCommander {
         try {
             context.htmlPageFactory = componentFactory.getHtmlPageFactory(new HtmlPageFactory());
             context.testResultsDirectoryName = fitNesseCommanderConfig.getTestResultsDirectoryName();
-            context.root = wikiPageFactory.makeRootPage(context.rootPath, context.rootDirectoryName, componentFactory);
+            context.root =
+                wikiPageFactory.makeRootPage(context.rootPath, context.rootDirectoryName, componentFactory);
         } catch (final Exception e) {
             throw new MojoFailureException("Could not create fitnesse context", e);
         }
@@ -105,24 +111,26 @@ public class FitNesseCommander {
         }
     }
 
-    public TestSummary runTest(final String testName) throws MojoExecutionException {
-        callUrl(getTestUrl(testName, PageType.TEST, null));
+    public TestSummary runTest(final String testName, final Log mavenLogger) throws MojoExecutionException {
+        callUrl(getTestUrl(testName, PageType.TEST, null), mavenLogger);
         return summary;
     }
 
-    public TestSummary runTestSuite(final String suiteName) throws MojoExecutionException {
-        callUrl(getTestUrl(suiteName, PageType.SUITE, null));
-        return summary;
-    }
-
-    public TestSummary runByTagFilter(final String suiteFilter, final String suitePageName)
-            throws MojoExecutionException
+    public TestSummary runTestSuite(final String suiteName, final Log mavenLogger)
+        throws MojoExecutionException
     {
-        callUrl(getTestUrl(suitePageName, PageType.SUITE, suiteFilter));
+        callUrl(getTestUrl(suiteName, PageType.SUITE, null), mavenLogger);
         return summary;
     }
 
-    private void callUrl(final String testUrl) throws MojoExecutionException {
+    public TestSummary runByTagFilter(final String suiteFilter, final String suitePageName,
+                                      final Log mavenLogger) throws MojoExecutionException
+    {
+        callUrl(getTestUrl(suitePageName, PageType.SUITE, suiteFilter), mavenLogger);
+        return summary;
+    }
+
+    private void callUrl(final String testUrl, final Log mavenLogger) throws MojoExecutionException {
         String ipAddress = "";
         URL url = null;
         try {
@@ -132,8 +140,11 @@ public class FitNesseCommander {
             final BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
-                if (inputLine.contains("getElementById(\"test-summary\")")
-                        && inputLine.contains("<strong>Assertions:</strong>"))
+
+                logProgress(inputLine, mavenLogger);
+
+                if (inputLine.contains("getElementById(\"test-summary\")") && inputLine.contains(
+                    "<strong>Assertions:</strong>"))
                 {
                     updateSummary(inputLine);
                 }
@@ -147,6 +158,16 @@ public class FitNesseCommander {
             throw new MojoExecutionException("Url not available: " + url.toString(), e);
         } catch (final IOException e) {
             throw new MojoExecutionException("Could not make url call", e);
+        }
+    }
+
+    private void logProgress(final String inputLine, final Log mavenLogger) {
+
+        Pattern pattern = Pattern.compile(
+            "^.*test_summaries.*[pass|fail]\\\\\">(.*)</span>.*_link\\\\\">(.*)</a>.*class=\\\\\"\\\\\">\\((.*)\\)</span>.*");
+        Matcher matcher = pattern.matcher(inputLine);
+        if (matcher.matches()) {
+            mavenLogger.info(matcher.group(1) + ": " + matcher.group(2) + " time: " + matcher.group(3));
         }
     }
 
@@ -186,17 +207,16 @@ public class FitNesseCommander {
     }
 
     private String getTestUrl(final String pageName, final PageType pageType, final String suiteFilter) {
-        if (suiteFilter != null)
+        if (suiteFilter != null) {
             return "/" + pageName + "?responder=suite&suiteFilter=" + suiteFilter;
-        else
-            return "/" + pageName + "?" + pageType.name().toString().toLowerCase();
+        } else { return "/" + pageName + "?" + pageType.name().toString().toLowerCase(); }
     }
 
     public void clearTestResultsDirectory() throws MojoExecutionException {
-        final String directoryName =
-                fitNesseCommanderConfig.getRootPath() + File.separatorChar + fitNesseCommanderConfig.getNameRootPage()
-                        + File.separatorChar + "files" + File.separatorChar
-                        + fitNesseCommanderConfig.getTestResultsDirectoryName();
+        final String directoryName = fitNesseCommanderConfig.getRootPath() + File.separatorChar
+                                     + fitNesseCommanderConfig.getNameRootPage() + File.separatorChar
+                                     + "files" + File.separatorChar
+                                     + fitNesseCommanderConfig.getTestResultsDirectoryName();
         try {
             FileUtils.deleteDirectory(directoryName);
         } catch (final IOException e) {

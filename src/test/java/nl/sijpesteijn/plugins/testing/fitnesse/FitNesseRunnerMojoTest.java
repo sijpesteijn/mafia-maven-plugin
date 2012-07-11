@@ -1,21 +1,19 @@
 package nl.sijpesteijn.plugins.testing.fitnesse;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseContentMojo;
+import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseRunnerMojo;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseExtractor;
+import org.codehaus.plexus.util.FileUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseContentMojo;
-import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseRunnerMojo;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseExtractor;
-
-import org.codehaus.plexus.util.FileUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * 
@@ -34,7 +32,7 @@ public class FitNesseRunnerMojoTest extends AbstractFitNesseTestCase {
         contentMojo = configureContentMojo();
     }
 
-    @Ignore
+    //@Ignore
     @Test
     @SuppressWarnings("rawtypes")
     public void testCheckArguments() throws Exception {
