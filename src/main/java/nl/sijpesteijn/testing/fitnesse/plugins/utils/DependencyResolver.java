@@ -11,6 +11,12 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 public class DependencyResolver {
 
+	private final String repositoryDirectory;
+
+	public DependencyResolver(final String repositoryDirectory) {
+		this.repositoryDirectory = repositoryDirectory;
+	}
+
 	/**
 	 * Find the part in the list of dependencies and return the location.
 	 * 
@@ -23,23 +29,28 @@ public class DependencyResolver {
 	 * @return {@link org.apache.maven.model.Dependency}
 	 * @throws MojoExecutionException
 	 */
-	public String getJarLocation(final List<Dependency> dependencies, final Dependency partialDependency, final String baseDir)
-			throws MojoExecutionException {
-		for (Dependency dependency : dependencies) {
+	public String getJarLocation(final List<Dependency> dependencies,
+			final Dependency partialDependency) throws MojoExecutionException {
+		for (final Dependency dependency : dependencies) {
 			if (isDependency(dependency, partialDependency)) {
-				final String resolveDependencyPath = resolveDependencyPath(dependency, baseDir);
+				final String resolveDependencyPath = resolveDependencyPath(dependency);
 				return FileUtils.formatPath(resolveDependencyPath);
 			}
 		}
-		throw new MojoExecutionException("Could not find jar location. Did you include dependency.(groupId=" + partialDependency.getGroupId() + ",artifactId=" + partialDependency.getArtifactId() +")");
+		throw new MojoExecutionException(
+				"Could not find jar location. Did you include dependency in your pom.xml? (groupId="
+						+ partialDependency.getGroupId()
+						+ ",artifactId="
+						+ partialDependency.getArtifactId() + ")");
 	}
 
-	private boolean isDependency(Dependency dependency,
-			Dependency partialDependency) {
+	private boolean isDependency(final Dependency dependency,
+			final Dependency partialDependency) {
 		if (!dependency.getGroupId().equals(partialDependency.getGroupId())) {
 			return false;
 		}
-		if (!dependency.getArtifactId().equals(partialDependency.getArtifactId())) {
+		if (!dependency.getArtifactId().equals(
+				partialDependency.getArtifactId())) {
 			return false;
 		}
 		return true;
@@ -52,11 +63,14 @@ public class DependencyResolver {
 	 * @param baseDir
 	 * @return
 	 */
-	public String resolveDependencyPath(final Dependency dependency, final String baseDir) {
-		String resolved = baseDir.replace("\\", "/") + "/" + dependency.getGroupId().replace(".", "/") + "/";
-		resolved += dependency.getArtifactId() + "/" + dependency.getVersion() + "/";
+	public String resolveDependencyPath(final Dependency dependency) {
+		String resolved = repositoryDirectory.replace("\\", "/") + "/"
+				+ dependency.getGroupId().replace(".", "/") + "/";
+		resolved += dependency.getArtifactId() + "/" + dependency.getVersion()
+				+ "/";
 		resolved += dependency.getArtifactId() + "-" + dependency.getVersion();
-		if (dependency.getClassifier() != null && !dependency.getClassifier().equals("")) {
+		if (dependency.getClassifier() != null
+				&& !dependency.getClassifier().equals("")) {
 			resolved += "-" + dependency.getClassifier();
 		}
 		resolved += "." + dependency.getType();

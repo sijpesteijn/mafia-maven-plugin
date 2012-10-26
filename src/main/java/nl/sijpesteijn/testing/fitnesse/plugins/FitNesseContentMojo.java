@@ -1,14 +1,10 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.managers.PluginManager;
-import nl.sijpesteijn.testing.fitnesse.plugins.managers.PluginManagerFactory;
+import nl.sijpesteijn.testing.fitnesse.plugins.managers.ContentPluginManager;
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ContentPluginConfig;
-import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ContentPluginConfig.Builder;
-import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.PluginConfig;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -54,7 +50,7 @@ public class FitNesseContentMojo extends AbstractMojo {
 	 * 
 	 * @parameter expression="${content.statics}"
 	 */
-	private String[] statics;
+	private List<String> statics;
 
 	/**
 	 * List of target directories to add to content.txt Each target is resolved
@@ -62,21 +58,21 @@ public class FitNesseContentMojo extends AbstractMojo {
 	 * 
 	 * @parameter expression="${content.targets}"
 	 */
-	private String[] targets;
+	private List<String> targets;
 
 	/**
 	 * List of resource entries to add to content.txt
 	 * 
 	 * @parameter expression="${content.resources}"
 	 */
-	private String[] resources;
+	private List<String> resources;
 
 	/**
 	 * List of dependencies to exclude from the content.txt
 	 * 
 	 * @parameter expression="${content.excludeDependencies}"
 	 */
-	private Dependency[] excludeDependencies;
+	private List<Dependency> excludeDependencies;
 
 	/**
 	 * Location of the wiki root of FitNesse.
@@ -96,15 +92,26 @@ public class FitNesseContentMojo extends AbstractMojo {
 	private String nameRootPage;
 
 	/**
+	 * The location for FitNesse to place the log files.
+	 * 
+	 * @parameter expression="${content.logDirectory}"
+	 *            default-value="${basedir}/log/"
+	 */
+	private String logDirectory;
+
+	private final int fitNessePort = 9090;
+	private final int retainDays = 0;
+
+	/**
 	 * 
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		final PluginConfig contentPluginConfig = getPluginConfig();
+		final ContentPluginConfig contentPluginConfig = getPluginConfig();
 		getLog().debug("Content config: " + contentPluginConfig.toString());
-		final PluginManager pluginManager = PluginManagerFactory.getPluginManager(contentPluginConfig);
-		pluginManager.run();
+		final ContentPluginManager manager = new ContentPluginManager(contentPluginConfig);
+		manager.run();
 		getLog().info("Created new content.txt in " + wikiRoot + File.separatorChar + nameRootPage + File.separatorChar);
 	}
 
@@ -115,16 +122,7 @@ public class FitNesseContentMojo extends AbstractMojo {
 	 * @throws MojoExecutionException
 	 */
 	private ContentPluginConfig getPluginConfig() throws MojoExecutionException {
-		final Builder builder = PluginManagerFactory.getPluginConfigBuilder(ContentPluginConfig.class);
-		builder.setWikiRoot(wikiRoot);
-		builder.setNameRootPage(nameRootPage);
-		builder.setStatics(Arrays.asList(statics));
-		builder.setResources(Arrays.asList(resources));
-		builder.setExcludeDependencies(Arrays.asList(excludeDependencies));
-		builder.setTargets(Arrays.asList(targets));
-		builder.setCompileClasspathElements(compileClasspathElements);
-		builder.setRepositoryDirectory(repositoryDirectory);
-		return builder.build();
+		return new ContentPluginConfig(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitNessePort,
+				retainDays, getLog(), statics, resources, excludeDependencies, targets, compileClasspathElements);
 	}
-
 }

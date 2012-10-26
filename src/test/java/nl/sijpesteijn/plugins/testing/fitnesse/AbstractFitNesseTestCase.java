@@ -97,10 +97,10 @@ public abstract class AbstractFitNesseTestCase {
 	}
 
 	protected List<String> getClasspathElements(final List<Dependency> dependencies) {
-		final DependencyResolver resolver = new DependencyResolver();
+		final DependencyResolver resolver = new DependencyResolver(getRepositoryDirectory());
 		final List<String> classpathElements = new ArrayList<String>();
 		for (final Dependency dependency : dependencies) {
-			classpathElements.add(resolver.resolveDependencyPath(dependency, getRepositoryDirectory()));
+			classpathElements.add(resolver.resolveDependencyPath(dependency));
 		}
 		return classpathElements;
 	}
@@ -204,8 +204,8 @@ public abstract class AbstractFitNesseTestCase {
 		final FitNesseStopperMojo stopperMojo = new FitNesseStopperMojo();
 		final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "stop");
 		setVariableValueToObject(stopperMojo, "repositoryDirectory", REPO);
-		setVariableValueToObject(stopperMojo, "port",
-				Integer.valueOf(mavenUtils.getStringValueFromConfiguration(configuration, "port", "9090")));
+		setVariableValueToObject(stopperMojo, "fitNessePort", Integer.valueOf(Integer.valueOf(mavenUtils
+				.getStringValueFromConfiguration(configuration, "port", "9090"))));
 		setVariableValueToObject(stopperMojo, "dependencies", model.getDependencies());
 		return stopperMojo;
 	}
@@ -218,12 +218,12 @@ public abstract class AbstractFitNesseTestCase {
 		setVariableValueToObject(starterMojo, "jvmArguments",
 				mavenUtils.getStringArrayFromConfiguration(configuration, "jvmArguments"));
 		setVariableValueToObject(starterMojo, "jvmDependencies",
-				mavenUtils.getDependencyArrayFromConfiguration(configuration, "jvmDependencies"));
+				mavenUtils.getDependencyListFromConfiguration(configuration, "jvmDependencies"));
 		setVariableValueToObject(starterMojo, "dependencies", model.getDependencies());
-		setVariableValueToObject(starterMojo, "port",
-				mavenUtils.getStringValueFromConfiguration(configuration, "port", "9090"));
+		setVariableValueToObject(starterMojo, "fitNessePort",
+				Integer.valueOf(mavenUtils.getStringValueFromConfiguration(configuration, "fitNessePort", "9090")));
 		setVariableValueToObject(starterMojo, "retainDays",
-				mavenUtils.getStringValueFromConfiguration(configuration, "retainDays", "14"));
+				Integer.valueOf(mavenUtils.getStringValueFromConfiguration(configuration, "retainDays", "14")));
 		setVariableValueToObject(starterMojo, "wikiRoot", mavenUtils.getStringValueFromConfiguration(configuration,
 				"wikiRoot", "${project.build.outputDirectory}"));
 		setVariableValueToObject(starterMojo, "nameRootPage",
@@ -241,7 +241,7 @@ public abstract class AbstractFitNesseTestCase {
 		setVariableValueToObject(contentMojo, "targets",
 				mavenUtils.getStringArrayFromConfiguration(configuration, "targets"));
 		setVariableValueToObject(contentMojo, "excludeDependencies",
-				mavenUtils.getDependencyArrayFromConfiguration(configuration, "excludeDependencies"));
+				mavenUtils.getDependencyListFromConfiguration(configuration, "excludeDependencies"));
 		setVariableValueToObject(contentMojo, "compileClasspathElements", getClasspathElements(model.getDependencies()));
 		setVariableValueToObject(contentMojo, "repositoryDirectory", REPO);
 		setVariableValueToObject(contentMojo, "wikiRoot", getTestDirectory() + TARGET);
@@ -289,11 +289,8 @@ public abstract class AbstractFitNesseTestCase {
 		}
 		expectLastCall();
 		setVariableValueToObject(reporterMojo, "siteRenderer", rendererMock);
-		setVariableValueToObject(
-				reporterMojo,
-				"outputDirectory",
-				new File(mavenUtils.getStringValueFromConfiguration(configuration, "outputDirectory",
-						"${project.reporting.outputDirectory}")));
+		setVariableValueToObject(reporterMojo, "outputDirectory", mavenUtils.getStringValueFromConfiguration(
+				configuration, "outputDirectory", "${project.reporting.outputDirectory}"));
 		setVariableValueToObject(reporterMojo, "mafiaTestResultsDirectory", mavenUtils.getStringValueFromConfiguration(
 				configuration, "mafiaTestResultsDirectory", MAFIA_TEST_RESULTS));
 		setVariableValueToObject(reporterMojo, "repositoryDirectory", REPO);

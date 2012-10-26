@@ -9,11 +9,11 @@ import org.apache.maven.plugin.MojoFailureException;
  */
 public interface PluginManager {
 
-    /**
-     * Do whatever the mojo should do.
-     * 
-     * @throws MojoFailureException
-     * @throws MojoExecutionException
-     */
-    public void run() throws MojoFailureException, MojoExecutionException;
+	/**
+	 * Do whatever the mojo should do.
+	 * 
+	 * @throws MojoFailureException
+	 * @throws MojoExecutionException
+	 */
+	public void run() throws MojoFailureException, MojoExecutionException;
 }

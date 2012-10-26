@@ -9,75 +9,28 @@ import org.apache.maven.plugin.logging.Log;
  * Stopper plugin configuration.
  * 
  */
-public class StopperPluginConfig implements PluginConfig {
+public class StopperPluginConfig extends BasePluginConfig {
 
-    private final int port;
-    private final String repositoryDirectory;
-    private final List<Dependency> dependencies;
-    private final Log mavenLogger;
+	private final List<Dependency> dependencies;
 
-    public StopperPluginConfig(final int port, final String basedir, final List<Dependency> dependencies,
-            final Log mavenLogger) {
-        this.port = port;
-        this.repositoryDirectory = basedir;
-        this.dependencies = dependencies;
-        this.mavenLogger = mavenLogger;
-    }
+	public StopperPluginConfig(final String wikiRoot, final String nameRootPage, final String repositoryDirectory,
+			final String logDirectory, final int fitnessePort, final int retainDays, final Log mavenLogger,
+			final List<Dependency> dependencies) {
+		super(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitnessePort, retainDays, mavenLogger);
+		this.dependencies = dependencies;
+	}
 
-    public int getPort() {
-        return port;
-    }
+	public List<Dependency> getDependencies() {
+		return dependencies;
+	}
 
-    public String getRepositoryDirectory() {
-        return repositoryDirectory;
-    }
-
-    public List<Dependency> getDependencies() {
-        return dependencies;
-    }
-
-    public Log getMavenLogger() {
-        return mavenLogger;
-    }
-
-    /**
-     * The builder for this configuration.
-     * 
-     */
-    public static class Builder implements PluginConfigBuilder {
-
-        private int port;
-        private String repositoryDirectory;
-        private List<Dependency> dependencies;
-        private Log mavenLogger;
-
-        public void setPort(final int port) {
-            this.port = port;
-        }
-
-        public StopperPluginConfig build() {
-            return new StopperPluginConfig(this.port, this.repositoryDirectory, this.dependencies, this.mavenLogger);
-        }
-
-        public void setRepositoryDirectory(final String basedir) {
-            this.repositoryDirectory = basedir;
-        }
-
-        public void setDependencies(final List<Dependency> dependencies) {
-            this.dependencies = dependencies;
-        }
-
-        public void setMavenLogger(final Log mavenLogger) {
-            this.mavenLogger = mavenLogger;
-        }
-    }
-
-    /**
-     * Return the configuration in one big string.
-     */
-    @Override
-    public String toString() {
-        return "FitNesse port: " + this.port + ", Repository directory: " + this.repositoryDirectory;
-    }
+	/**
+	 * Return the configuration in one big string.
+	 */
+	// @Override
+	// public String toString() {
+	// return "FitNesse port: " + this.port + ", Repository directory: " +
+	// this.repositoryDirectory;
+	// }
 
 }

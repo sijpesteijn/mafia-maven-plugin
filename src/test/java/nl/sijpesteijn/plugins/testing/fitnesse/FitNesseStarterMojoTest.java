@@ -13,41 +13,45 @@ import org.junit.Test;
  * Test FitNesseStarterMojo
  */
 public class FitNesseStarterMojoTest extends AbstractFitNesseTestCase {
-    private FitNesseStarterMojo starterMojo;
-    private FitNesseStopperMojo stopperMojo;
+	private FitNesseStarterMojo starterMojo;
+	private FitNesseStopperMojo stopperMojo;
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        starterMojo = configureStarterMojo();
-        stopperMojo = configureStopperMojo();
-    }
+	@Override
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+		starterMojo = configureStarterMojo();
+		stopperMojo = configureStopperMojo();
+		try {
+			stopperMojo.execute();
+		} catch (final Exception e) {
+		}
+	}
 
-    @Test
-    public void successfulStart() throws Exception {
-        starterMojo.execute();
-        stopperMojo.execute();
-    }
+	@Test
+	public void successfulStart() throws Exception {
+		starterMojo.execute();
+		stopperMojo.execute();
+	}
 
-    @Test
-    public void failureStart() throws Exception {
-        starterMojo.execute();
-        try {
-            starterMojo.execute();
-        } catch (final MojoFailureException mfe) {
-            final String message = mfe.getMessage();
-            final String expected = "Could not start FitNesse: FitNesse cannot be started..."
-                    + System.getProperty("line.separator") + "Port 9090 is already in use."
-                    + System.getProperty("line.separator")
-                    + "Use the -p <port#> command line argument to use a different port."
-                    + System.getProperty("line.separator");
-            assertTrue(expected.equals(message));
-            stopperMojo.execute();
-        }
-    }
+	@Test
+	public void failureStart() throws Exception {
+		try {
+			starterMojo.execute();
+			starterMojo.execute();
+		} catch (final MojoFailureException mfe) {
+			final String message = mfe.getMessage();
+			final String expected = "Could not start FitNesse: FitNesse cannot be started..."
+					+ System.getProperty("line.separator")
+					+ "Port 9090 is already in use."
+					+ System.getProperty("line.separator")
+					+ "Use the -p <port#> command line argument to use a different port.";
+			assertTrue(expected.equals(message));
+			stopperMojo.execute();
+		}
+	}
 
-    public FitNesseStarterMojo getStarterMojo() {
-        return starterMojo;
-    }
+	public FitNesseStarterMojo getStarterMojo() {
+		return starterMojo;
+	}
 }
