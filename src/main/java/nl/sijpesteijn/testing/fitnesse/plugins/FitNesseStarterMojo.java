@@ -112,7 +112,7 @@ public class FitNesseStarterMojo extends AbstractMojo {
 	 */
 	private StarterPluginConfig getPluginConfig() throws MojoExecutionException {
 		return new StarterPluginConfig(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitNessePort,
-				retainDays, getLog(), jvmArguments, jvmDependencies, dependencies);
+				retainDays, dependencies, getLog(), jvmArguments, jvmDependencies);
 	}
 
 }

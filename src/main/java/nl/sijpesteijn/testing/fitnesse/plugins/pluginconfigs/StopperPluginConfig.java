@@ -11,17 +11,11 @@ import org.apache.maven.plugin.logging.Log;
  */
 public class StopperPluginConfig extends BasePluginConfig {
 
-	private final List<Dependency> dependencies;
-
 	public StopperPluginConfig(final String wikiRoot, final String nameRootPage, final String repositoryDirectory,
 			final String logDirectory, final int fitnessePort, final int retainDays, final Log mavenLogger,
 			final List<Dependency> dependencies) {
-		super(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitnessePort, retainDays, mavenLogger);
-		this.dependencies = dependencies;
-	}
-
-	public List<Dependency> getDependencies() {
-		return dependencies;
+		super(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitnessePort, retainDays, dependencies,
+				mavenLogger);
 	}
 
 	/**

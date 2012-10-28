@@ -23,7 +23,10 @@ import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseReportMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseRunnerMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseStarterMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseStopperMojo;
+import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.BasePluginConfig;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.DependencyResolver;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.FileUtils;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseCommander;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MavenUtils;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.SpecialPages;
 
@@ -35,8 +38,8 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.junit.Before;
@@ -200,17 +203,19 @@ public abstract class AbstractFitNesseTestCase {
 		return map;
 	}
 
-	protected FitNesseStopperMojo configureStopperMojo() throws MojoExecutionException {
+	protected FitNesseStopperMojo configureStopperMojo(final int fitnessePort) throws MojoExecutionException {
 		final FitNesseStopperMojo stopperMojo = new FitNesseStopperMojo();
 		final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "stop");
 		setVariableValueToObject(stopperMojo, "repositoryDirectory", REPO);
 		setVariableValueToObject(stopperMojo, "fitNessePort", Integer.valueOf(Integer.valueOf(mavenUtils
-				.getStringValueFromConfiguration(configuration, "port", "9090"))));
+				.getStringValueFromConfiguration(configuration, "fitNessePort", "" + fitnessePort))));
 		setVariableValueToObject(stopperMojo, "dependencies", model.getDependencies());
+		setVariableValueToObject(stopperMojo, "wikiRoot", mavenUtils.getStringValueFromConfiguration(configuration,
+				"wikiRoot", "${project.build.outputDirectory}"));
 		return stopperMojo;
 	}
 
-	protected FitNesseStarterMojo configureStarterMojo() throws MojoExecutionException {
+	protected FitNesseStarterMojo configureStarterMojo(final int fitnessePort) throws MojoExecutionException {
 		final FitNesseStarterMojo starterMojo = new FitNesseStarterMojo();
 		final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "start");
 		setVariableValueToObject(starterMojo, "dependencies", model.getDependencies());
@@ -220,8 +225,11 @@ public abstract class AbstractFitNesseTestCase {
 		setVariableValueToObject(starterMojo, "jvmDependencies",
 				mavenUtils.getDependencyListFromConfiguration(configuration, "jvmDependencies"));
 		setVariableValueToObject(starterMojo, "dependencies", model.getDependencies());
-		setVariableValueToObject(starterMojo, "fitNessePort",
-				Integer.valueOf(mavenUtils.getStringValueFromConfiguration(configuration, "fitNessePort", "9090")));
+		setVariableValueToObject(
+				starterMojo,
+				"fitNessePort",
+				Integer.valueOf(mavenUtils.getStringValueFromConfiguration(configuration, "fitNessePort", ""
+						+ fitnessePort)));
 		setVariableValueToObject(starterMojo, "retainDays",
 				Integer.valueOf(mavenUtils.getStringValueFromConfiguration(configuration, "retainDays", "14")));
 		setVariableValueToObject(starterMojo, "wikiRoot", mavenUtils.getStringValueFromConfiguration(configuration,
@@ -234,6 +242,7 @@ public abstract class AbstractFitNesseTestCase {
 	protected FitNesseContentMojo configureContentMojo() throws MojoExecutionException {
 		final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "content");
 		final FitNesseContentMojo contentMojo = new FitNesseContentMojo();
+		setVariableValueToObject(contentMojo, "dependencies", model.getDependencies());
 		setVariableValueToObject(contentMojo, "statics",
 				mavenUtils.getStringArrayFromConfiguration(configuration, "statics"));
 		setVariableValueToObject(contentMojo, "resources",
@@ -252,8 +261,9 @@ public abstract class AbstractFitNesseTestCase {
 	protected FitNesseRunnerMojo configureRunnerMojo() throws MojoExecutionException {
 		final FitNesseRunnerMojo runnerMojo = new FitNesseRunnerMojo();
 		final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "test");
-		setVariableValueToObject(runnerMojo, "port",
-				Integer.valueOf(mavenUtils.getStringValueFromConfiguration(configuration, "port", "9091")));
+		setVariableValueToObject(runnerMojo, "dependencies", model.getDependencies());
+		setVariableValueToObject(runnerMojo, "fitNessePort",
+				Integer.valueOf(mavenUtils.getStringValueFromConfiguration(configuration, "fitNessePort", "9091")));
 		setVariableValueToObject(runnerMojo, "wikiRoot", mavenUtils.getStringValueFromConfiguration(configuration,
 				"wikiRoot", "${project.build.outputDirectory}"));
 		setVariableValueToObject(runnerMojo, "nameRootPage",
@@ -280,6 +290,7 @@ public abstract class AbstractFitNesseTestCase {
 		final FitNesseReportMojo reporterMojo = new FitNesseReportMojo();
 		final Xpp3Dom configuration = getPluginConfiguration("mafia-maven-plugin", "report");
 		final Xpp3Dom testConfiguration = getPluginConfiguration("mafia-maven-plugin", "test");
+		setVariableValueToObject(reporterMojo, "dependencies", model.getDependencies());
 		rendererMock = createMock(Renderer.class);
 		try {
 			rendererMock.generateDocument(isA(Writer.class), isA(SiteRendererSink.class),
@@ -311,7 +322,7 @@ public abstract class AbstractFitNesseTestCase {
 	}
 
 	protected void deleteTestDirectory() throws IOException {
-		FileUtils.deleteDirectory(getTestDirectory() + "/target/" + FITNESSE_ROOT);
+		FileUtils.deleteRecursively(new File(getTestDirectory() + "/target/" + FITNESSE_ROOT));
 	}
 
 	protected void createDummySuite() throws IOException {
@@ -350,4 +361,10 @@ public abstract class AbstractFitNesseTestCase {
 		propertiesFileWriter.close();
 	}
 
+	protected void extractFitNesse() throws MojoExecutionException, InterruptedException, MojoFailureException {
+		final BasePluginConfig config = new BasePluginConfig(getTestDirectory() + TARGET, FITNESSE_ROOT, REPO, "./log",
+				model.getDependencies(), null);
+		final FitNesseCommander commander = new FitNesseCommander(config);
+		commander.update();
+	}
 }

@@ -16,9 +16,11 @@ public class StarterPluginConfig extends BasePluginConfig {
 	private final List<Dependency> dependencies;
 
 	public StarterPluginConfig(final String wikiRoot, final String nameRootPage, final String repositoryDirectory,
-			final String logDirectory, final int fitnessePort, final int retainDays, final Log mavenLogger,
-			final List<String> jvmArguments, final List<Dependency> jvmDependencies, final List<Dependency> dependencies) {
-		super(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitnessePort, retainDays, mavenLogger);
+			final String logDirectory, final int fitnessePort, final int retainDays,
+			final List<Dependency> dependencies, final Log mavenLogger, final List<String> jvmArguments,
+			final List<Dependency> jvmDependencies) {
+		super(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitnessePort, retainDays, dependencies,
+				mavenLogger);
 		this.jvmArguments = jvmArguments;
 		this.jvmDependencies = jvmDependencies;
 		this.dependencies = dependencies;
@@ -32,6 +34,7 @@ public class StarterPluginConfig extends BasePluginConfig {
 		return jvmDependencies;
 	}
 
+	@Override
 	public List<Dependency> getDependencies() {
 		return dependencies;
 	}

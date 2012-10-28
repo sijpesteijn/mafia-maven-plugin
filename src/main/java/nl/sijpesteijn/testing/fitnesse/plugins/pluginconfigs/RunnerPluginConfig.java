@@ -2,6 +2,7 @@ package nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs;
 
 import java.util.List;
 
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -21,11 +22,13 @@ public class RunnerPluginConfig extends BasePluginConfig {
 	private final String suitePageName;
 
 	public RunnerPluginConfig(final String wikiRoot, final String nameRootPage, final String repositoryDirectory,
-			final String logDirectory, final int fitnessePort, final int retainDays, final Log mavenLogger,
-			final String mafiaTestResultsDirectory, final boolean stopTestsOnFailure, final boolean stopTestsOnIgnore,
-			final boolean stopTestsOnException, final boolean stopTestsOnWrong, final List<String> tests,
-			final List<String> suites, final String suiteFilter, final String suitePageName) {
-		super(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitnessePort, retainDays, mavenLogger);
+			final String logDirectory, final int fitnessePort, final int retainDays,
+			final List<Dependency> dependencies, final Log mavenLogger, final String mafiaTestResultsDirectory,
+			final boolean stopTestsOnFailure, final boolean stopTestsOnIgnore, final boolean stopTestsOnException,
+			final boolean stopTestsOnWrong, final List<String> tests, final List<String> suites,
+			final String suiteFilter, final String suitePageName) {
+		super(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitnessePort, retainDays, dependencies,
+				mavenLogger);
 		this.mafiaTestResultsDirectory = mafiaTestResultsDirectory;
 		this.stopTestsOnFailure = stopTestsOnFailure;
 		this.stopTestsOnIgnore = stopTestsOnIgnore;
@@ -37,6 +40,7 @@ public class RunnerPluginConfig extends BasePluginConfig {
 		this.suitePageName = suitePageName;
 	}
 
+	@Override
 	public String getMafiaTestResultsDirectory() {
 		return mafiaTestResultsDirectory;
 	}

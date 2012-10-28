@@ -12,8 +12,7 @@ public class InputStreamToBufferMonitor implements Runnable {
 	private final StringBuilder buffer;
 	private boolean finished;
 
-	public InputStreamToBufferMonitor(final InputStream inputStream,
-			final StringBuilder buffer) {
+	public InputStreamToBufferMonitor(final InputStream inputStream, final StringBuilder buffer) {
 		this.inputStream = inputStream;
 		this.buffer = buffer;
 	}
@@ -22,11 +21,9 @@ public class InputStreamToBufferMonitor implements Runnable {
 	public void run() {
 		try {
 			int c;
-			while ((c = inputStream.read()) != -1
-					&& inputStream.available() > 0) {
+			while ((c = inputStream.read()) != -1 && inputStream.available() > 0) {
 				buffer.append((char) c);
 			}
-			System.out.println(buffer.toString());
 			finished = true;
 		} catch (final Exception e) {
 

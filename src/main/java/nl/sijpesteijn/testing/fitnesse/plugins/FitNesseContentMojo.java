@@ -27,6 +27,18 @@ public class FitNesseContentMojo extends AbstractMojo {
 	 * Note: This is passed by Maven and must not be configured by the user.
 	 * </p>
 	 * 
+	 * @parameter expression="${project.dependencies}"
+	 * @required
+	 * @readonly
+	 */
+	private List<Dependency> dependencies;
+
+	/**
+	 * The Maven project instance for the executing project.
+	 * <p>
+	 * Note: This is passed by Maven and must not be configured by the user.
+	 * </p>
+	 * 
 	 * @parameter expression="${project.compileClasspathElements}"
 	 * @required
 	 * @readonly
@@ -123,6 +135,7 @@ public class FitNesseContentMojo extends AbstractMojo {
 	 */
 	private ContentPluginConfig getPluginConfig() throws MojoExecutionException {
 		return new ContentPluginConfig(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitNessePort,
-				retainDays, getLog(), statics, resources, excludeDependencies, targets, compileClasspathElements);
+				retainDays, dependencies, getLog(), statics, resources, excludeDependencies, targets,
+				compileClasspathElements);
 	}
 }

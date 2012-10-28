@@ -11,8 +11,8 @@ import java.util.Map;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseContentMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseReportMojo;
+import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseStopperMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseExtractor;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -27,6 +27,7 @@ import org.junit.Test;
 public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
 	private FitNesseReportMojo reporterMojo;
 	private FitNesseContentMojo contentMojo;
+	private FitNesseStopperMojo stopperMojo;
 
 	@Override
 	@Before
@@ -34,6 +35,12 @@ public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
 		super.setUp();
 		reporterMojo = configureReporterMojo();
 		contentMojo = configureContentMojo();
+		stopperMojo = configureStopperMojo(9091);
+
+		try {
+			stopperMojo.execute();
+		} catch (final Exception e) {
+		}
 	}
 
 	@Test
@@ -61,7 +68,7 @@ public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
 	public void checkNoReportsGenerated() throws Exception {
 		deleteTestDirectory();
 
-		FitNesseExtractor.extract(getTestDirectory() + "/target/", REPO, model.getDependencies());
+		extractFitNesse();
 
 		contentMojo.execute();
 		new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);
@@ -73,7 +80,7 @@ public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
 	public void checkSingleTestReport() throws Exception {
 		deleteTestDirectory();
 
-		FitNesseExtractor.extract(getTestDirectory() + "/target/", REPO, model.getDependencies());
+		extractFitNesse();
 
 		new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);
 
@@ -93,4 +100,5 @@ public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
 		assertNotNull(actual);
 		// assertTrue(actual.equals(expected));
 	}
+
 }

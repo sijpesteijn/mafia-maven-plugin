@@ -39,10 +39,11 @@ public class ContentPluginConfig extends BasePluginConfig {
 	 *            {@link java.lang.String}
 	 */
 	public ContentPluginConfig(final String wikiRoot, final String nameRootPage, final String repositoryDirectory,
-			final String logDirectory, final int fitnessePort, final int retainDays, final Log mavenLogger,
-			final List<String> statics, final List<String> resources, final List<Dependency> excludeDependencies,
-			final List<String> targets, final List<String> compileClasspathElements) {
-		super(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitnessePort, retainDays, mavenLogger);
+			final String logDirectory, final int fitnessePort, final int retainDays,
+			final List<Dependency> dependencies, final Log mavenLogger, final List<String> statics,
+			final List<String> resources, final List<Dependency> excludeDependencies, final List<String> targets,
+			final List<String> compileClasspathElements) {
+		super(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, dependencies, mavenLogger);
 		this.statics = statics;
 		this.resources = resources;
 		this.excludeDependencies = excludeDependencies;

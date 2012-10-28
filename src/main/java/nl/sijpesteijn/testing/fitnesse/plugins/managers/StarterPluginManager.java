@@ -1,13 +1,12 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.managers;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StarterPluginConfig;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.CommandRunner;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.DependencyResolver;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FileUtils;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseCommander;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -49,20 +48,15 @@ public class StarterPluginManager implements PluginManager {
 		final String command = getCommand(jarLocation, jvmArgumentsString, dependencyList);
 
 		starterPluginConfig.getMavenLogger().info(command);
-		final CommandRunner runner = new CommandRunner(starterPluginConfig.getWikiRoot());
-		try {
-			starterPluginConfig.getMavenLogger().info(
-					"Starting FitNesse. This could take some more seconds when first used....");
-			runner.start(command);
-			starterPluginConfig.getMavenLogger().info(
-					"FitNesse available on http://localhost:" + starterPluginConfig.getFitnessePort());
-		} catch (final IOException e) {
-			throw new MojoExecutionException("Could not start fitnesse.", e);
-		} catch (final InterruptedException e) {
-			throw new MojoExecutionException("Could not start fitnesse.", e);
-		}
-		if (!runner.errorBufferContains("patient.") && (runner.getExitValue() != 0 || runner.errorBufferHasContent())) {
-			throw new MojoFailureException("Could not start FitNesse: " + runner.getErrorBuffer());
+
+		final FitNesseCommander commander = new FitNesseCommander(starterPluginConfig);
+		starterPluginConfig.getMavenLogger().info(
+				"Starting FitNesse. This could take some more seconds when first used....");
+		commander.start(command);
+
+		if (!commander.errorBufferContains("patient.")
+				&& (commander.getExitValue() != 0 || commander.errorBufferHasContent())) {
+			throw new MojoFailureException("Could not start FitNesse: " + commander.getErrorBuffer());
 		}
 
 	}

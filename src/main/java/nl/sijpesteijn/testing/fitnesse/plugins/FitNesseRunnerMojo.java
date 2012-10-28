@@ -5,6 +5,7 @@ import java.util.List;
 import nl.sijpesteijn.testing.fitnesse.plugins.managers.RunnerPluginManager;
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.RunnerPluginConfig;
 
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -19,11 +20,23 @@ import org.apache.maven.plugin.MojoFailureException;
 public class FitNesseRunnerMojo extends AbstractMojo {
 
 	/**
+	 * The Maven project instance for the executing project.
+	 * <p>
+	 * Note: This is passed by Maven and must not be configured by the user.
+	 * </p>
+	 * 
+	 * @parameter expression="${project.dependencies}"
+	 * @required
+	 * @readonly
+	 */
+	private List<Dependency> dependencies;
+
+	/**
 	 * The port number for FitNesse to run the tests.
 	 * 
-	 * @parameter expression="${test.port}" default-value="9091"
+	 * @parameter expression="${test.fitNessePort}" default-value="9091"
 	 */
-	private int port;
+	private int fitNessePort;
 
 	/**
 	 * Location of the wiki root directory.
@@ -149,9 +162,9 @@ public class FitNesseRunnerMojo extends AbstractMojo {
 	 * @throws MojoExecutionException
 	 */
 	private RunnerPluginConfig getPluginConfig() throws MojoExecutionException {
-		return new RunnerPluginConfig(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, port, port, getLog(),
-				mafiaTestResultsDirectory, stopTestsOnFailure, stopTestsOnIgnore, stopTestsOnException,
-				stopTestsOnWrong, tests, suites, suiteFilter, suitePageName);
+		return new RunnerPluginConfig(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitNessePort, 0,
+				dependencies, getLog(), mafiaTestResultsDirectory, stopTestsOnFailure, stopTestsOnIgnore,
+				stopTestsOnException, stopTestsOnWrong, tests, suites, suiteFilter, suitePageName);
 	}
 
 }

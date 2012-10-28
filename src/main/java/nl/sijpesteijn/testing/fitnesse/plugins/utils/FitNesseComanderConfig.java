@@ -9,15 +9,15 @@ public class FitNesseComanderConfig {
     private int fitNessePort;
     private int retainDays;
     private String logDirectory;
-    private String rootPath;
+    private String wikiRoot;
     private Log mavenLogger;
 
     public int getFitNessePort() {
         return fitNessePort;
     }
 
-    public String getRootPath() {
-        return rootPath;
+    public String getWikiRoot() {
+        return wikiRoot;
     }
 
     public String getNameRootPage() {
@@ -52,8 +52,8 @@ public class FitNesseComanderConfig {
         this.retainDays = retainDays;
     }
 
-    public void setWikiRoot(final String rootPath) {
-        this.rootPath = rootPath;
+    public void setWikiRoot(final String wikiRoot) {
+        this.wikiRoot = wikiRoot;
     }
 
     public void setLogDirectory(final String logDirectory) {

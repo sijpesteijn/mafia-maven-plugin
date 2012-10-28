@@ -72,7 +72,7 @@
 				        <dependency>
 				            <groupId>org.fitnesse</groupId>
 				            <artifactId>fitnesse</artifactId>
-				            <version>20111025</version>
+				            <version>20121028</version>
 				        </dependency>                        
                         <dependency>
                             <artifactId>log4j</artifactId>

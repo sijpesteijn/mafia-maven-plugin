@@ -9,8 +9,8 @@ import java.util.Map;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseContentMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseRunnerMojo;
+import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseStopperMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseExtractor;
 
 import org.codehaus.plexus.util.FileUtils;
 import org.junit.Before;
@@ -24,6 +24,7 @@ import org.junit.Test;
 public class FitNesseRunnerMojoTest extends AbstractFitNesseTestCase {
 	private FitNesseRunnerMojo runnerMojo;
 	private FitNesseContentMojo contentMojo;
+	private FitNesseStopperMojo stopperMojo;
 
 	@Override
 	@Before
@@ -31,13 +32,19 @@ public class FitNesseRunnerMojoTest extends AbstractFitNesseTestCase {
 		super.setUp();
 		runnerMojo = configureRunnerMojo();
 		contentMojo = configureContentMojo();
+		stopperMojo = configureStopperMojo(9091);
+
+		try {
+			stopperMojo.execute();
+		} catch (final Exception e) {
+		}
 	}
 
 	@Test
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void testCheckArguments() throws Exception {
 		final Map map = getVariablesAndValuesFromObject(runnerMojo);
-		final int port = (Integer) map.get("port");
+		final int port = (Integer) map.get("fitNessePort");
 		assertTrue(port == 9091);
 		final String wikiRoot = (String) map.get("wikiRoot");
 		assertTrue(wikiRoot.replace("\\", "/").equals(getTestDirectory() + TARGET));
@@ -64,7 +71,7 @@ public class FitNesseRunnerMojoTest extends AbstractFitNesseTestCase {
 	@Test
 	public void runTests() throws Exception {
 		deleteTestDirectory();
-		FitNesseExtractor.extract(getTestDirectory() + "/target/", REPO, model.getDependencies());
+		extractFitNesse();
 
 		contentMojo.execute();
 		new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);

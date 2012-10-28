@@ -1,10 +1,8 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.managers;
 
-import java.io.IOException;
-
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.StopperPluginConfig;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.CommandRunner;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.DependencyResolver;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseCommander;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -47,15 +45,9 @@ public class StopperPluginManager implements PluginManager {
 		final String command = "java -cp " + jarLocation + " fitnesse.Shutdown -p "
 				+ stopperPluginConfig.getFitnessePort();
 		stopperPluginConfig.getMavenLogger().info(command);
-		final CommandRunner runner = new CommandRunner(null);
-		try {
-			runner.start(command);
-		} catch (final IOException e) {
-			throw new MojoFailureException("Could not stop FitNesse", e);
-		} catch (final InterruptedException e) {
-			throw new MojoFailureException("Could not stop FitNesse", e);
-		}
-		if (runner.errorBufferHasContent()) {
+		final FitNesseCommander commander = new FitNesseCommander(stopperPluginConfig);
+		commander.stop(command);
+		if (commander.errorBufferHasContent()) {
 			throw new MojoFailureException("Could not stop FitNesse. It might not be running?");
 		}
 		stopperPluginConfig.getMavenLogger().info("FitNesse stopped.");

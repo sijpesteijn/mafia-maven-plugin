@@ -12,6 +12,7 @@ import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.RunnerPluginConfig;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MavenUtils;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -27,6 +28,18 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  */
 public class FitNesseReportMojo extends AbstractMavenReport {
 	public static final String OUTPUT_NAME = "fitnesse";
+
+	/**
+	 * The Maven project instance for the executing project.
+	 * <p>
+	 * Note: This is passed by Maven and must not be configured by the user.
+	 * </p>
+	 * 
+	 * @parameter expression="${project.dependencies}"
+	 * @required
+	 * @readonly
+	 */
+	private List<Dependency> dependencies;
 
 	/**
 	 * FitNesse output directory.
@@ -156,8 +169,8 @@ public class FitNesseReportMojo extends AbstractMavenReport {
 
 	private void runTestMojo() throws MojoExecutionException, MojoFailureException {
 		final RunnerPluginConfig config = new RunnerPluginConfig(wikiRoot, getNameRootPage(), repositoryDirectory,
-				logDirectory, 9091, 0, getLog(), mafiaTestResultsDirectory, false, false, false, false, tests, suites,
-				suiteFilter, suitePageName);
+				logDirectory, 9091, 0, dependencies, getLog(), mafiaTestResultsDirectory, false, false, false, false,
+				tests, suites, suiteFilter, suitePageName);
 		getLog().debug("Runner config: " + config.toString());
 		new RunnerPluginManager(config).run();
 	}
@@ -181,8 +194,8 @@ public class FitNesseReportMojo extends AbstractMavenReport {
 	 */
 	private ReporterPluginConfig getPluginConfig(final Locale locale) throws MojoExecutionException {
 		return new ReporterPluginConfig(wikiRoot, getNameRootPage(), repositoryDirectory, logDirectory, getPort(), 0,
-				getLog(), outputDirectory, OUTPUT_NAME, mafiaTestResultsDirectory, getSink(), getBundle(locale),
-				getTests(), getSuites(), getSuiteFilter(), getSuitePageName());
+				dependencies, getLog(), outputDirectory, OUTPUT_NAME, mafiaTestResultsDirectory, getSink(),
+				getBundle(locale), getTests(), getSuites(), getSuiteFilter(), getSuitePageName());
 	}
 
 	private String getSuitePageName() {

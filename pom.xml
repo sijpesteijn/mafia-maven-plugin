@@ -55,12 +55,7 @@
 		<dependency>
 			<groupId>org.fitnesse</groupId>
 			<artifactId>fitnesse</artifactId>
-			<version>20111025</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity</artifactId>
-			<version>1.7</version>
+			<version>20121028</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>

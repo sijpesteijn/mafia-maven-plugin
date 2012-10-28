@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.RunnerPluginConfig;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseComanderConfig;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseCommander;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -36,19 +35,7 @@ public class RunnerPluginManager implements PluginManager {
 			MojoFailureException {
 		this.runnerPluginConfig = runnerPluginConfig;
 		mavenLogger = runnerPluginConfig.getMavenLogger();
-		fitNesseCommander = createFitNesseCommander();
-	}
-
-	private FitNesseCommander createFitNesseCommander() throws MojoFailureException {
-		final FitNesseComanderConfig fitNesseCommanderConfig = new FitNesseComanderConfig();
-		fitNesseCommanderConfig.setMavenLogger(runnerPluginConfig.getMavenLogger());
-		fitNesseCommanderConfig.setFitNessePort(runnerPluginConfig.getFitnessePort());
-		fitNesseCommanderConfig.setLogDirectory(runnerPluginConfig.getLogDirectory());
-		fitNesseCommanderConfig.setNameRootPage(runnerPluginConfig.getNameRootPage());
-		fitNesseCommanderConfig.setRetainDays(runnerPluginConfig.getRetainDays());
-		fitNesseCommanderConfig.setWikiRoot(runnerPluginConfig.getWikiRoot());
-		fitNesseCommanderConfig.setTestResultsDirectoryName(runnerPluginConfig.getMafiaTestResultsDirectory());
-		return new FitNesseCommander(fitNesseCommanderConfig);
+		fitNesseCommander = new FitNesseCommander(runnerPluginConfig);
 	}
 
 	/**

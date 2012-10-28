@@ -1,25 +1,55 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs;
 
+import java.util.List;
+
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
 
 public class BasePluginConfig {
-	private final String wikiRoot;
-	private final String nameRootPage;
+	private String wikiRoot = ".";
+	private String nameRootPage = "FitNesseRoot";
 	private final String repositoryDirectory;
 	private final Log mavenLogger;
-	private final String logDirectory;
-	private final int retainDays;
-	private final int fitnessePort;
+	private String logDirectory = "./log";
+	private int retainDays = 0;
+	private int fitnessePort = 9090;
+	private String mafiaTestResultsDirectory = "mafiaTestResults";
+	private final List<Dependency> dependencies;
 
-	public BasePluginConfig(final String wikiRoot, final String nameRootPage,
-			final String repositoryDirectory, final String logDirectory,
-			final int fitnessePort, final int retainDays, final Log mavenLogger) {
+	public BasePluginConfig(final String wikiRoot, final String nameRootPage, final String repositoryDirectory,
+			final String logDirectory, final List<Dependency> dependencies, final Log mavenLogger) {
+		this.wikiRoot = wikiRoot;
+		this.nameRootPage = nameRootPage;
+		this.repositoryDirectory = repositoryDirectory;
+		this.logDirectory = logDirectory;
+		this.dependencies = dependencies;
+		this.mavenLogger = mavenLogger;
+	}
+
+	public BasePluginConfig(final String wikiRoot, final String nameRootPage, final String repositoryDirectory,
+			final String logDirectory, final int fitnessePort, final int retainDays,
+			final List<Dependency> dependencies, final Log mavenLogger) {
 		this.wikiRoot = wikiRoot;
 		this.nameRootPage = nameRootPage;
 		this.repositoryDirectory = repositoryDirectory;
 		this.logDirectory = logDirectory;
 		this.fitnessePort = fitnessePort;
 		this.retainDays = retainDays;
+		this.dependencies = dependencies;
+		this.mavenLogger = mavenLogger;
+	}
+
+	public BasePluginConfig(final String wikiRoot, final String nameRootPage, final String repositoryDirectory,
+			final String logDirectory, final int fitnessePort, final int retainDays,
+			final String mafiaTestResultsDirectory, final List<Dependency> dependencies, final Log mavenLogger) {
+		this.wikiRoot = wikiRoot;
+		this.nameRootPage = nameRootPage;
+		this.repositoryDirectory = repositoryDirectory;
+		this.logDirectory = logDirectory;
+		this.fitnessePort = fitnessePort;
+		this.retainDays = retainDays;
+		this.mafiaTestResultsDirectory = mafiaTestResultsDirectory;
+		this.dependencies = dependencies;
 		this.mavenLogger = mavenLogger;
 	}
 
@@ -49,5 +79,13 @@ public class BasePluginConfig {
 
 	public Log getMavenLogger() {
 		return mavenLogger;
+	}
+
+	public String getMafiaTestResultsDirectory() {
+		return mafiaTestResultsDirectory;
+	}
+
+	public List<Dependency> getDependencies() {
+		return dependencies;
 	}
 }

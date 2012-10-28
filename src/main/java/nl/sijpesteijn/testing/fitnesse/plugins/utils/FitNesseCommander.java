@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -18,19 +19,19 @@ import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.BasePluginConfig;
+
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.FileUtils;
 
 import fitnesse.ComponentFactory;
 import fitnesse.FitNesse;
 import fitnesse.FitNesseContext;
-import fitnesse.VelocityFactory;
 import fitnesse.WikiPageFactory;
 import fitnesse.authentication.PromiscuousAuthenticator;
 import fitnesse.components.Logger;
-import fitnesse.html.HtmlPageFactory;
 import fitnesse.responders.ResponderFactory;
 import fitnesse.responders.WikiImportTestEventListener;
 import fitnesse.responders.run.TestSummary;
@@ -39,19 +40,130 @@ import fitnesse.wiki.PageVersionPruner;
 
 public class FitNesseCommander {
 
-	private final FitNesseComanderConfig fitNesseCommanderConfig;
-	private final FitNesse fitnesse;
+	private final BasePluginConfig config;
+	private FitNesse fitnesse;
 	private final TestSummary summary = new TestSummary();
+	private Process process;
+	private InputStreamToBufferMonitor errorMonitor;
+	private InputStreamToBufferMonitor inputMonitor;
+	private int exitValue;
+	final DependencyResolver resolver;
 
-	public FitNesseCommander(final FitNesseComanderConfig fitNesseCommanderConfig) throws MojoFailureException {
-		this.fitNesseCommanderConfig = fitNesseCommanderConfig;
-		final FitNesseContext context = loadContext();
-		VelocityFactory.makeVelocityFactory(context);
-		PageVersionPruner.daysTillVersionsExpire = fitNesseCommanderConfig.getRetainDays();
-		fitnesse = new FitNesse(context);
+	public FitNesseCommander(final BasePluginConfig config) throws MojoFailureException {
+		this.config = config;
+		resolver = new DependencyResolver(config.getRepositoryDirectory());
+	}
+
+	public void start(final String command) throws MojoExecutionException {
+		run(command);
+	}
+
+	public void stop(final String command) throws MojoExecutionException {
+		run(command);
+	}
+
+	public void run(final String command) throws MojoExecutionException {
+		try {
+			process = Runtime.getRuntime().exec(command, null, new File(config.getWikiRoot()));
+			waitForSetupToFinish();
+		} catch (final IOException e) {
+			throw new MojoExecutionException(e.getMessage());
+		} catch (final InterruptedException e) {
+			throw new MojoExecutionException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Check if the unpacking of FitNesse has finished.
+	 * 
+	 * @param endCondition
+	 * 
+	 * @return {@link boolean}
+	 * @throws InterruptedException
+	 */
+	private void waitForSetupToFinish() throws InterruptedException {
+		createStreamMonitors(process);
+		while (true) {
+			try {
+				exitValue = process.exitValue();
+				return;
+			} catch (final IllegalThreadStateException itse) {
+				// Process has not finished yet
+			}
+			if (inputMonitor.isFinished()) {
+				return;
+			}
+			Thread.sleep(2000);
+		}
+	}
+
+	/**
+	 * Create the stream monitors.
+	 * 
+	 * @param process
+	 *            {@link java.lang.Process}
+	 */
+	private void createStreamMonitors(final Process process) {
+		final InputStream errorStream = process.getErrorStream();
+		errorMonitor = new InputStreamToBufferMonitor(errorStream, new StringBuilder());
+		new Thread(errorMonitor).start();
+		final InputStream inputStream = process.getInputStream();
+		inputMonitor = new InputStreamToBufferMonitor(inputStream, new StringBuilder());
+		new Thread(inputMonitor).start();
+	}
+
+	/**
+	 * Check if the buffer contains the specified string.
+	 * 
+	 * @param buffer
+	 *            {@link java.lang.StringBuilder}
+	 * @param string
+	 *            {@link java.lang.String}
+	 * @return {@link boolean}
+	 */
+	private boolean bufferContains(final StringBuilder buffer, final String string) {
+		return buffer.toString().indexOf(string) > 0;
+	}
+
+	/**
+	 * Is the error buffer empty?
+	 * 
+	 * @return {@link boolean}
+	 */
+	public boolean errorBufferHasContent() {
+		return errorMonitor.getBuffer().length() > 0;
+	}
+
+	/**
+	 * Check if the error buffer contains the specified string.
+	 * 
+	 * @param string
+	 *            {@link java.lang.String}
+	 * @return {@link boolean}
+	 */
+	public boolean errorBufferContains(final String string) {
+		return bufferContains(errorMonitor.getBuffer(), string);
+	}
+
+	/**
+	 * Get the error buffer contents.
+	 * 
+	 * @return {@link java.lang.CharSequence}
+	 */
+	public CharSequence getErrorBuffer() {
+		return errorMonitor.getBuffer();
+	}
+
+	public int getExitValue() {
+		return exitValue;
 	}
 
 	public void start() throws MojoFailureException {
+		final FitNesseContext context = loadContext();
+		// VelocityFactory.makeVelocityFactory(context);
+		PageVersionPruner.daysTillVersionsExpire = config.getRetainDays();
+		fitnesse = new FitNesse(context);
+
 		fitnesse.start();
 		if (!fitnesse.isRunning()) {
 			throw new MojoFailureException("Could not start fitnesse.");
@@ -59,6 +171,11 @@ public class FitNesseCommander {
 	}
 
 	public void stop() throws MojoFailureException {
+		final FitNesseContext context = loadContext();
+		// VelocityFactory.makeVelocityFactory(context);
+		PageVersionPruner.daysTillVersionsExpire = config.getRetainDays();
+		fitnesse = new FitNesse(context);
+
 		try {
 			fitnesse.stop();
 		} catch (final Exception e) {
@@ -66,16 +183,32 @@ public class FitNesseCommander {
 		}
 	}
 
-	public void update() throws MojoFailureException {
+	public void update() throws MojoExecutionException {
+		final Dependency dependency = new Dependency();
+		dependency.setArtifactId("fitnesse");
+		dependency.setGroupId("org.fitnesse");
+
+		String jarLocation;
+		jarLocation = resolver.getJarLocation(config.getDependencies(), dependency);
+		final String command = "java" + " -jar " + FileUtils.formatPath(jarLocation) + " -i";
+		run(command);
+		try {
+			final File controlFile = new File(config.getWikiRoot() + "/FitNesseRoot/PageHeader/properties.xml");
+			while (!controlFile.exists()) {
+				Thread.sleep(1000);
+			}
+			// Thread.sleep(30000);
+		} catch (final InterruptedException e) {
+		}
 
 	}
 
 	private FitNesseContext loadContext() throws MojoFailureException {
 		final FitNesseContext context = new FitNesseContext();
-		context.port = fitNesseCommanderConfig.getFitNessePort();
-		context.rootPath = fitNesseCommanderConfig.getRootPath();
+		context.port = config.getFitnessePort();
+		context.rootPath = config.getWikiRoot();
 		final ComponentFactory componentFactory = new ComponentFactory(context.rootPath);
-		context.rootDirectoryName = fitNesseCommanderConfig.getNameRootPage();
+		context.rootDirectoryName = config.getNameRootPage();
 		context.setRootPagePath();
 		final String defaultNewPageContent = componentFactory.getProperty(ComponentFactory.DEFAULT_NEWPAGE_CONTENT);
 		if (defaultNewPageContent != null) {
@@ -86,8 +219,9 @@ public class FitNesseCommander {
 		context.logger = getLogger();
 		context.authenticator = new PromiscuousAuthenticator();
 		try {
-			context.htmlPageFactory = componentFactory.getHtmlPageFactory(new HtmlPageFactory());
-			context.testResultsDirectoryName = fitNesseCommanderConfig.getTestResultsDirectoryName();
+			// context.htmlPageFactory = componentFactory.getHtmlPageFactory(new
+			// HtmlPageFactory());
+			context.testResultsDirectoryName = config.getMafiaTestResultsDirectory();
 			context.root = wikiPageFactory.makeRootPage(context.rootPath, context.rootDirectoryName, componentFactory);
 		} catch (final Exception e) {
 			throw new MojoFailureException("Could not create fitnesse context", e);
@@ -98,7 +232,7 @@ public class FitNesseCommander {
 	}
 
 	private Logger getLogger() {
-		final String logDirectory = fitNesseCommanderConfig.getLogDirectory();
+		final String logDirectory = config.getLogDirectory();
 		if (logDirectory != null) {
 			createDirIfNotExists(logDirectory);
 			return new Logger(logDirectory);
@@ -134,7 +268,7 @@ public class FitNesseCommander {
 		URL url = null;
 		try {
 			ipAddress = getIpAddress();
-			url = new URL("http", ipAddress, fitNesseCommanderConfig.getFitNessePort(), testUrl);
+			url = new URL("http", ipAddress, config.getFitnessePort(), testUrl);
 			final URLConnection yc = url.openConnection();
 			final BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
 			String inputLine;
@@ -213,18 +347,12 @@ public class FitNesseCommander {
 	}
 
 	public void clearTestResultsDirectory() throws MojoExecutionException {
-		final String directoryName = fitNesseCommanderConfig.getRootPath() + File.separatorChar
-				+ fitNesseCommanderConfig.getNameRootPage() + File.separatorChar + "files" + File.separatorChar
-				+ fitNesseCommanderConfig.getTestResultsDirectoryName();
-		try {
-			FileUtils.deleteDirectory(directoryName);
-		} catch (final IOException e) {
-			throw new MojoExecutionException("Could not delete directory: " + directoryName, e);
-		}
+		final String directoryName = config.getWikiRoot() + File.separatorChar + config.getNameRootPage()
+				+ File.separatorChar + "files" + File.separatorChar + config.getMafiaTestResultsDirectory();
+		FileUtils.deleteRecursively(new File(directoryName));
 	}
 
 	public TestSummary getTestSummary() {
 		return this.summary;
 	}
-
 }
