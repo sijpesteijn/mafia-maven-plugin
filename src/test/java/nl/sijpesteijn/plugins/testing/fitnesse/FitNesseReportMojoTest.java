@@ -11,8 +11,8 @@ import java.util.Map;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseContentMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseReportMojo;
+import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseStopperMojo;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseExtractor;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -25,73 +25,80 @@ import org.junit.Test;
  * 
  */
 public class FitNesseReportMojoTest extends AbstractFitNesseTestCase {
-    private FitNesseReportMojo reporterMojo;
-    private FitNesseContentMojo contentMojo;
+	private FitNesseReportMojo reporterMojo;
+	private FitNesseContentMojo contentMojo;
+	private FitNesseStopperMojo stopperMojo;
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        reporterMojo = configureReporterMojo();
-        contentMojo = configureContentMojo();
-    }
+	@Override
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+		reporterMojo = configureReporterMojo();
+		contentMojo = configureContentMojo();
+		stopperMojo = configureStopperMojo(9091);
 
-    @Test
-    @SuppressWarnings("rawtypes")
-    public void testConfiguration() throws Exception {
-        final Map map = getVariablesAndValuesFromObject(reporterMojo);
-        final File outputDirectory = (File) map.get("outputDirectory");
-        assertTrue(outputDirectory.getAbsolutePath().replace('\\', '/').equals(getTestDirectory() + TARGET + "/site"));
-        final String mafiaTestResultsDirectory = (String) map.get("mafiaTestResultsDirectory");
-        assertTrue(mafiaTestResultsDirectory.replace('\\', '/').equals(MAFIA_TEST_RESULTS));
-        // final String[] suites = (String[]) map.get("suites");
-        // assertTrue(suites[0].equals("FrontPage.BuyMilkSuite"));
-        assertTrue(reporterMojo.getDescription(null).equals(
-            "Maven mafia plugin - reporting: Generate a report of the fitnessetests that have run"));
-        assertTrue(reporterMojo.getName(null).equals("Mafia Report"));
-        assertNotNull(reporterMojo.getProject());
-    }
+		try {
+			stopperMojo.execute();
+		} catch (final Exception e) {
+		}
+	}
 
-    @Test(expected = MojoExecutionException.class)
-    public void checkNoFitNesseNoReports() throws Exception {
-        deleteTestDirectory();
-        reporterMojo.execute();
-    }
+	@Test
+	@SuppressWarnings("rawtypes")
+	public void testConfiguration() throws Exception {
+		final Map map = getVariablesAndValuesFromObject(reporterMojo);
+		final String outputDirectory = (String) map.get("outputDirectory");
+		assertTrue(new File(outputDirectory).getAbsolutePath().replace('\\', '/')
+				.equals(getTestDirectory() + TARGET + "/site"));
+		final String mafiaTestResultsDirectory = (String) map.get("mafiaTestResultsDirectory");
+		assertTrue(mafiaTestResultsDirectory.replace('\\', '/').equals(MAFIA_TEST_RESULTS));
+		assertTrue(reporterMojo.getDescription(null).equals(
+				"Maven mafia plugin - reporting: Generate a report of the fitnessetests that have run"));
+		assertTrue(reporterMojo.getName(null).equals("Mafia Report"));
+		assertNotNull(reporterMojo.getProject());
+	}
 
-    @Test(expected = MojoExecutionException.class)
-    public void checkNoReportsGenerated() throws Exception {
-        deleteTestDirectory();
+	@Test(expected = MojoExecutionException.class)
+	public void checkNoFitNesseNoReports() throws Exception {
+		deleteTestDirectory();
+		reporterMojo.execute();
+	}
 
-        FitNesseExtractor.extract(getTestDirectory() + "/target/", REPO);
+	@Test(expected = MojoExecutionException.class)
+	public void checkNoReportsGenerated() throws Exception {
+		deleteTestDirectory();
 
-        contentMojo.execute();
-        new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);
+		extractFitNesse();
 
-        reporterMojo.execute();
-    }
+		contentMojo.execute();
+		new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);
 
-    @Test
-    public void checkSingleTestReport() throws Exception {
-        deleteTestDirectory();
+		reporterMojo.execute();
+	}
 
-        FitNesseExtractor.extract(getTestDirectory() + "/target/", REPO);
+	@Test
+	public void checkSingleTestReport() throws Exception {
+		deleteTestDirectory();
 
-        new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);
+		extractFitNesse();
 
-        contentMojo.execute();
-        createDummySuite();
-        createDummyTest("");
-        createDummyTest("1");
+		new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);
 
-        replay(rendererMock);
-        reporterMojo.execute();
-        verify(rendererMock);
-        final Sink value = (Sink) this.getVariableValueFromObject(reporterMojo, "sink");
-        final Writer writer = (Writer) this.getVariableValueFromObject(value, "writer");
+		contentMojo.execute();
+		createDummySuite();
+		createDummyTest("");
+		createDummyTest("1");
 
-        final String actual = writer.toString();
+		replay(rendererMock);
+		reporterMojo.execute();
+		verify(rendererMock);
+		final Sink value = (Sink) this.getVariableValueFromObject(reporterMojo, "sink");
+		final Writer writer = (Writer) this.getVariableValueFromObject(value, "writer");
 
-        assertNotNull(actual);
-        // assertTrue(actual.equals(expected));
-    }
+		final String actual = writer.toString();
+
+		assertNotNull(actual);
+		// assertTrue(actual.equals(expected));
+	}
+
 }

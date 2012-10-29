@@ -1,19 +1,20 @@
 package nl.sijpesteijn.plugins.testing.fitnesse;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseContentMojo;
-import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseRunnerMojo;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseExtractor;
-import org.codehaus.plexus.util.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseContentMojo;
+import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseRunnerMojo;
+import nl.sijpesteijn.testing.fitnesse.plugins.FitNesseStopperMojo;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.FirstTimeWriter;
+
+import org.codehaus.plexus.util.FileUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * 
@@ -21,66 +22,72 @@ import static org.junit.Assert.assertTrue;
  * {@link nl.sijpesteijn.plugins.testing.fitnesse.IntegrationTest}
  */
 public class FitNesseRunnerMojoTest extends AbstractFitNesseTestCase {
-    private FitNesseRunnerMojo runnerMojo;
-    private FitNesseContentMojo contentMojo;
+	private FitNesseRunnerMojo runnerMojo;
+	private FitNesseContentMojo contentMojo;
+	private FitNesseStopperMojo stopperMojo;
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        runnerMojo = configureRunnerMojo();
-        contentMojo = configureContentMojo();
-    }
+	@Override
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+		runnerMojo = configureRunnerMojo();
+		contentMojo = configureContentMojo();
+		stopperMojo = configureStopperMojo(9091);
 
-    //@Ignore
-    @Test
-    @SuppressWarnings("rawtypes")
-    public void testCheckArguments() throws Exception {
-        final Map map = getVariablesAndValuesFromObject(runnerMojo);
-        final int port = (Integer) map.get("port");
-        assertTrue(port == 9091);
-        final String wikiRoot = (String) map.get("wikiRoot");
-        assertTrue(wikiRoot.replace("\\", "/").equals(getTestDirectory() + TARGET));
-        final String nameRootPage = (String) map.get("nameRootPage");
-        assertTrue(nameRootPage.equals(FITNESSE_ROOT));
-        final String mafiaTestResultsDirectory = (String) map.get("mafiaTestResultsDirectory");
-        assertTrue(mafiaTestResultsDirectory.equals("mafiaTestResults"));
-        final String[] tests = (String[]) map.get("tests");
-        assertTrue(tests[0].equals("FrontPage.BuyMilkSuite.BuyMilk"));
-        assertTrue(tests[1].equals("FrontPage.BuyMilkSuite.BuyMilk1"));
-        final String[] suites = (String[]) map.get("suites");
-        assertTrue(suites[0].equals("FrontPage.BuyMilkSuite"));
-        final Boolean stopTestsOnFailure = (Boolean) map.get("stopTestsOnFailure");
-        assertTrue(stopTestsOnFailure);
-        final Boolean stopTestsOnIgnore = (Boolean) map.get("stopTestsOnIgnore");
-        assertTrue(stopTestsOnIgnore);
-        final Boolean stopTestsOnException = (Boolean) map.get("stopTestsOnException");
-        assertTrue(stopTestsOnException);
-        final Boolean stopTestsOnWrong = (Boolean) map.get("stopTestsOnWrong");
-        assertTrue(stopTestsOnWrong);
-    }
+		try {
+			stopperMojo.execute();
+		} catch (final Exception e) {
+		}
+	}
 
-    @SuppressWarnings("rawtypes")
-    @Test
-    public void runTests() throws Exception {
-        deleteTestDirectory();
-        FitNesseExtractor.extract(getTestDirectory() + "/target/", REPO);
+	@Test
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void testCheckArguments() throws Exception {
+		final Map map = getVariablesAndValuesFromObject(runnerMojo);
+		final int port = (Integer) map.get("fitNessePort");
+		assertTrue(port == 9091);
+		final String wikiRoot = (String) map.get("wikiRoot");
+		assertTrue(wikiRoot.replace("\\", "/").equals(getTestDirectory() + TARGET));
+		final String nameRootPage = (String) map.get("nameRootPage");
+		assertTrue(nameRootPage.equals(FITNESSE_ROOT));
+		final String mafiaTestResultsDirectory = (String) map.get("mafiaTestResultsDirectory");
+		assertTrue(mafiaTestResultsDirectory.equals("mafiaTestResults"));
+		final List<String> tests = (List<String>) map.get("tests");
+		assertTrue(tests.get(0).equals("FrontPage.BuyMilkSuite.BuyMilk"));
+		assertTrue(tests.get(1).equals("FrontPage.BuyMilkSuite.BuyMilk1"));
+		final List<String> suites = (List<String>) map.get("suites");
+		assertTrue(suites.get(0).equals("FrontPage.BuyMilkSuite"));
+		final Boolean stopTestsOnFailure = (Boolean) map.get("stopTestsOnFailure");
+		assertTrue(stopTestsOnFailure);
+		final Boolean stopTestsOnIgnore = (Boolean) map.get("stopTestsOnIgnore");
+		assertTrue(stopTestsOnIgnore);
+		final Boolean stopTestsOnException = (Boolean) map.get("stopTestsOnException");
+		assertTrue(stopTestsOnException);
+		final Boolean stopTestsOnWrong = (Boolean) map.get("stopTestsOnWrong");
+		assertTrue(stopTestsOnWrong);
+	}
 
-        contentMojo.execute();
-        new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);
+	@SuppressWarnings("rawtypes")
+	@Test
+	public void runTests() throws Exception {
+		deleteTestDirectory();
+		extractFitNesse();
 
-        createDummySuite();
-        createDummyTest("");
-        createDummyTest("1");
+		contentMojo.execute();
+		new FirstTimeWriter(getTestDirectory() + "/target/" + FITNESSE_ROOT);
 
-        runnerMojo.execute();
+		createDummySuite();
+		createDummyTest("");
+		createDummyTest("1");
 
-        final File mafiaResultDirectory =
-                new File(getTestDirectory() + "/target/" + FITNESSE_ROOT + "/files/" + MAFIA_TEST_RESULTS);
-        assertTrue(mafiaResultDirectory.exists());
-        final List files = FileUtils.getFiles(mafiaResultDirectory, null, null);
+		runnerMojo.execute();
 
-        assertNotNull(files);
-        assertTrue(files.size() > 1);
-    }
+		final File mafiaResultDirectory = new File(getTestDirectory() + "/target/" + FITNESSE_ROOT + "/files/"
+				+ MAFIA_TEST_RESULTS);
+		assertTrue(mafiaResultDirectory.exists());
+		final List files = FileUtils.getFiles(mafiaResultDirectory, null, null);
+
+		assertNotNull(files);
+		assertTrue(files.size() > 1);
+	}
 }

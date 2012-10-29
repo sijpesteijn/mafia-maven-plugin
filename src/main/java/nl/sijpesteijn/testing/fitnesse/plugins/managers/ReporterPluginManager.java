@@ -14,8 +14,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReportException;
 
-import fitnesse.FitNesseContext;
-import fitnesse.VelocityFactory;
 import fitnesse.wiki.PageType;
 
 /**
@@ -36,11 +34,9 @@ public class ReporterPluginManager implements PluginManager {
 	public ReporterPluginManager(final ReporterPluginConfig reporterPluginConfig) {
 		this.reporterPluginConfig = reporterPluginConfig;
 		mavenLogger = reporterPluginConfig.getMavenLogger();
-		collector = new MafiaResultCollector(new File(
-				reporterPluginConfig.getWikiRoot() + File.separatorChar
-						+ reporterPluginConfig.getNameRootPage()
-						+ File.separatorChar + "files" + File.separatorChar
-						+ reporterPluginConfig.getMafiaTestResultsDirectory()));
+		collector = new MafiaResultCollector(new File(reporterPluginConfig.getWikiRoot() + File.separatorChar
+				+ reporterPluginConfig.getNameRootPage() + File.separatorChar + "files" + File.separatorChar
+				+ reporterPluginConfig.getMafiaTestResultsDirectory()));
 	}
 
 	/**
@@ -51,20 +47,17 @@ public class ReporterPluginManager implements PluginManager {
 	@Override
 	public void run() throws MojoFailureException, MojoExecutionException {
 		try {
-			final FitNesseContext context = new FitNesseContext();
-			context.rootPath = reporterPluginConfig.getWikiRoot();
-			context.rootDirectoryName = reporterPluginConfig.getNameRootPage();
-			VelocityFactory.makeVelocityFactory(context);
-			final MafiaReportGenerator generator = new MafiaReportGenerator(
-					reporterPluginConfig.getSink(),
-					reporterPluginConfig.getResourceBundle(),
-					reporterPluginConfig.getOutputDirectory(),
-					getTestResults(), getSuiteResults(),
-					getSuiteFilteredResults());
+			// final FitNesseContext context = new FitNesseContext();
+			// context.rootPath = reporterPluginConfig.getWikiRoot();
+			// context.rootDirectoryName =
+			// reporterPluginConfig.getNameRootPage();
+			// VelocityFactory.makeVelocityFactory(context);
+			final MafiaReportGenerator generator = new MafiaReportGenerator(reporterPluginConfig.getSink(),
+					reporterPluginConfig.getResourceBundle(), reporterPluginConfig.getOutputDirectory(),
+					getTestResults(), getSuiteResults(), getSuiteFilteredResults());
 			generator.generate();
 		} catch (final MavenReportException e) {
-			throw new MojoFailureException("Could not generate mafia report: ",
-					e);
+			throw new MojoFailureException("Could not generate mafia report: ", e);
 		} catch (final Exception e) {
 			throw new MojoFailureException(e.getMessage());
 		}
@@ -77,8 +70,7 @@ public class ReporterPluginManager implements PluginManager {
 			mavenLogger.info("Collecting suite reports...");
 			for (final String suite : suites) {
 				mavenLogger.info("Collecting test report for suite: " + suite);
-				testResultRecords.add(collector.getMafiaTestResult(suite,
-						PageType.SUITE, null, true));
+				testResultRecords.add(collector.getMafiaTestResult(suite, PageType.SUITE, null, true));
 			}
 		}
 		return testResultRecords;
@@ -88,10 +80,8 @@ public class ReporterPluginManager implements PluginManager {
 		final List<MafiaTestResult> testResultRecords = new ArrayList<MafiaTestResult>();
 		final String suitePageName = reporterPluginConfig.getSuitePageName();
 		if (suitePageName != null && !suitePageName.equals("")) {
-			mavenLogger.info("Collecting report for suite with suitePageName="
-					+ suitePageName + " ...");
-			testResultRecords.add(collector.getMafiaTestResult(suitePageName,
-					PageType.SUITE, null, true));
+			mavenLogger.info("Collecting report for suite with suitePageName=" + suitePageName + " ...");
+			testResultRecords.add(collector.getMafiaTestResult(suitePageName, PageType.SUITE, null, true));
 		}
 		return testResultRecords;
 	}
@@ -103,8 +93,7 @@ public class ReporterPluginManager implements PluginManager {
 			mavenLogger.info("Collecting test reports...");
 			for (final String test : tests) {
 				mavenLogger.info("Collecting test report for test: " + test);
-				testResultRecords.add(collector.getMafiaTestResult(test,
-						PageType.TEST, null, true));
+				testResultRecords.add(collector.getMafiaTestResult(test, PageType.TEST, null, true));
 			}
 		}
 		return testResultRecords;

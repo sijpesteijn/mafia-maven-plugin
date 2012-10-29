@@ -12,36 +12,35 @@ import org.junit.Test;
  * Test FitNesseStopperMojo.
  */
 public class FitNesseStopperMojoTest extends AbstractFitNesseTestCase {
-    private FitNesseStopperMojo stopperMojo;
-    private FitNesseStarterMojo starterMojo;
+	private FitNesseStopperMojo stopperMojo;
+	private FitNesseStarterMojo starterMojo;
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        stopperMojo = configureStopperMojo();
-        starterMojo = configureStarterMojo();
-    }
+	@Override
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+		stopperMojo = configureStopperMojo(9090);
+		starterMojo = configureStarterMojo(9090);
+	}
 
-    @Test
-    public void succesfullStop() throws Exception {
-        starterMojo.execute();
-        stopperMojo.execute();
-    }
+	@Test
+	public void succesfullStop() throws Exception {
+		starterMojo.execute();
+		stopperMojo.execute();
+	}
 
-    @Test
-    public void failureStop() throws Exception {
-        try {
-            stopperMojo.execute();
-        } catch (final MojoFailureException mfe) {
-            final String message = mfe.getMessage();
-            assertTrue(message
-                    .equals("Could not stop FitNesse. It might not be running?"));
-        }
-    }
+	@Test
+	public void failureStop() throws Exception {
+		try {
+			stopperMojo.execute();
+		} catch (final MojoFailureException mfe) {
+			final String message = mfe.getMessage();
+			assertTrue(message.equals("Could not stop FitNesse. It might not be running?"));
+		}
+	}
 
-    public FitNesseStopperMojo getStopperMojo() {
-        return stopperMojo;
-    }
+	public FitNesseStopperMojo getStopperMojo() {
+		return stopperMojo;
+	}
 
 }

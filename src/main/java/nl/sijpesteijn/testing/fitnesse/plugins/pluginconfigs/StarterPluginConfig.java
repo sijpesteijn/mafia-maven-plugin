@@ -9,117 +9,21 @@ import org.apache.maven.plugin.logging.Log;
  * Starter plugin configuration.
  * 
  */
-public class StarterPluginConfig implements PluginConfig {
+public class StarterPluginConfig extends BasePluginConfig {
 
-	private final String fitNessePort;
-	private final String wikiRoot;
-	private final String retainDays;
-	private final String nameRootPage;
-	private final String logPath;
 	private final List<String> jvmArguments;
 	private final List<Dependency> jvmDependencies;
 	private final List<Dependency> dependencies;
-	private final String repositoryDirectory;
-	private final Log log;
 
-	/**
-	 * The builder for this configuration.
-	 * 
-	 */
-	public static class Builder implements PluginConfigBuilder {
-
-		private String fitNessePort;
-		private String wikiRoot;
-		private String retainDays;
-		private String nameRootPage;
-		private String logPath;
-		private List<String> jvmArguments;
-		private List<Dependency> jvmDependencies;
-		private List<Dependency> dependencies;
-		private String repositoryDirectory;
-		private Log log;
-
-		public void setPort(final String fitNessePort) {
-			this.fitNessePort = fitNessePort;
-		}
-
-		public void setWikiRoot(final String wikiRoot) {
-			this.wikiRoot = wikiRoot;
-		}
-
-		public void setRetainDays(final String retainDays) {
-			this.retainDays = retainDays;
-		}
-
-		public void setNameRootPage(final String nameRootPage) {
-			this.nameRootPage = nameRootPage;
-		}
-
-		public void setLogLocation(final String logPath) {
-			this.logPath = logPath;
-		}
-
-		public void setJvmArguments(final List<String> jvmArguments) {
-			this.jvmArguments = jvmArguments;
-		}
-
-		public void setJvmDependencies(final List<Dependency> jvmDependencies) {
-			this.jvmDependencies = jvmDependencies;
-		}
-
-		public void setDependencies(final List<Dependency> dependencies) {
-			this.dependencies = dependencies;
-		}
-
-		public void setRepositoryDirectory(final String repositoryDirectory) {
-			this.repositoryDirectory = repositoryDirectory;
-		}
-
-		public void setLogger(final Log log) {
-			this.log = log;
-		}
-
-		public StarterPluginConfig build() {
-			return new StarterPluginConfig(fitNessePort, wikiRoot, retainDays, nameRootPage, logPath, jvmArguments,
-					jvmDependencies, dependencies, repositoryDirectory, log);
-		}
-
-	}
-
-	public StarterPluginConfig(final String fitNessePort, final String wikiRoot, final String retainDays,
-			final String nameRootPage, final String logPath, final List<String> jvmArguments,
-			final List<Dependency> jvmDependencies, final List<Dependency> dependencies, final String baseDir,
-			final Log log) {
-		this.fitNessePort = fitNessePort;
-		this.wikiRoot = wikiRoot;
-		this.retainDays = retainDays;
-		this.nameRootPage = nameRootPage;
-		this.logPath = logPath;
+	public StarterPluginConfig(final String wikiRoot, final String nameRootPage, final String repositoryDirectory,
+			final String logDirectory, final int fitnessePort, final int retainDays,
+			final List<Dependency> dependencies, final Log mavenLogger, final List<String> jvmArguments,
+			final List<Dependency> jvmDependencies) {
+		super(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitnessePort, retainDays, dependencies,
+				mavenLogger);
 		this.jvmArguments = jvmArguments;
 		this.jvmDependencies = jvmDependencies;
 		this.dependencies = dependencies;
-		this.repositoryDirectory = baseDir;
-		this.log = log;
-	}
-
-	public String getFitNessePort() {
-		return fitNessePort;
-	}
-
-	public String getWikiRoot() {
-		return wikiRoot;
-	}
-
-	public String getRetainDays() {
-		return retainDays;
-	}
-
-	public String getNameRootPage() {
-		return nameRootPage;
-	}
-
-	public String getLogPath() {
-		return logPath;
 	}
 
 	public List<String> getJvmArguments() {
@@ -130,27 +34,24 @@ public class StarterPluginConfig implements PluginConfig {
 		return jvmDependencies;
 	}
 
+	@Override
 	public List<Dependency> getDependencies() {
 		return dependencies;
-	}
-
-	public String getRepositoryDirectory() {
-		return repositoryDirectory;
-	}
-
-	public Log getLog() {
-		return log;
 	}
 
 	/**
 	 * Return the plugin configuration in one big string.
 	 */
-	@Override
-	public String toString() {
-		return "Port: " + this.fitNessePort + ", Wiki Root: " + this.wikiRoot + ", Name Root Page: "
-				+ this.nameRootPage + ", Retain days: " + this.retainDays + ", Log path: " + this.logPath
-				+ ", JVM Arguments: " + this.jvmArguments.toString() + ", JVM Dependencies: "
-				+ this.jvmDependencies.toString() + ", Repository directory: " + this.repositoryDirectory;
-	}
+	// @Override
+	// public String toString() {
+	// return "Port: " + this.fitNessePort + ", Wiki Root: " + this.wikiRoot +
+	// ", Name Root Page: "
+	// + this.nameRootPage + ", Retain days: " + this.retainDays +
+	// ", Log path: " + this.logPath
+	// + ", JVM Arguments: " + this.jvmArguments.toString() +
+	// ", JVM Dependencies: "
+	// + this.jvmDependencies.toString() + ", Repository directory: " +
+	// this.repositoryDirectory;
+	// }
 
 }

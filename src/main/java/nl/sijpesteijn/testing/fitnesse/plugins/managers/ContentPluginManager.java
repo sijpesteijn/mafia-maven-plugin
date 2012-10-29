@@ -24,7 +24,7 @@ public class ContentPluginManager implements PluginManager {
 	private static final String DEF_RETURN = "\n";
 	private static final String DEF_PATH = "!path ";
 	private final ContentPluginConfig contentPluginConfig;
-	private final DependencyResolver resolver = new DependencyResolver();
+	private final DependencyResolver resolver;
 	private FileWriter w;
 
 	/**
@@ -34,6 +34,8 @@ public class ContentPluginManager implements PluginManager {
 	 */
 	public ContentPluginManager(final ContentPluginConfig contentPluginConfig) {
 		this.contentPluginConfig = contentPluginConfig;
+		resolver = new DependencyResolver(
+				contentPluginConfig.getRepositoryDirectory());
 	}
 
 	/**
@@ -47,12 +49,15 @@ public class ContentPluginManager implements PluginManager {
 
 			addPluginInfo();
 			addLines("Statics", contentPluginConfig.getStatics(), "", "");
-			addLines("Resources", contentPluginConfig.getResources(), DEF_PATH, "");
-			addLines("Targets", contentPluginConfig.getTargets(), DEF_PATH, "/target/classes/");
+			addLines("Resources", contentPluginConfig.getResources(), DEF_PATH,
+					"");
+			addLines("Targets", contentPluginConfig.getTargets(), DEF_PATH,
+					"/target/classes/");
 
 			addCompileClasspathElements();
 		} catch (final IOException e) {
-			throw new MojoExecutionException("Error creating file " + content, e);
+			throw new MojoExecutionException("Error creating file " + content,
+					e);
 		} finally {
 			if (w != null) {
 				try {
@@ -66,8 +71,10 @@ public class ContentPluginManager implements PluginManager {
 	}
 
 	private void addPluginInfo() throws IOException {
-		w.write("# File created by Mafia plugin on " + new Date().toString() + DEF_RETURN);
-		w.write("# More info: https://github.com/sijpesteijn/mafia-maven-plugin" + DEF_RETURN);
+		w.write("# File created by Mafia plugin on " + new Date().toString()
+				+ DEF_RETURN);
+		w.write("# More info: https://github.com/sijpesteijn/mafia-maven-plugin"
+				+ DEF_RETURN);
 		w.write(DEF_RETURN);
 	}
 
@@ -78,8 +85,9 @@ public class ContentPluginManager implements PluginManager {
 	 * @return {@link java.io.File}
 	 */
 	private File createContentFile() {
-		final File contentDirectory = new File(contentPluginConfig.getWikiRoot() + "/"
-				+ contentPluginConfig.getNameRootPage());
+		final File contentDirectory = new File(
+				contentPluginConfig.getWikiRoot() + "/"
+						+ contentPluginConfig.getNameRootPage());
 		if (!contentDirectory.exists()) {
 			contentDirectory.mkdirs();
 		}
@@ -96,12 +104,14 @@ public class ContentPluginManager implements PluginManager {
 	 */
 	@SuppressWarnings("rawtypes")
 	private void addCompileClasspathElements() throws IOException {
-		final List classpathElements = contentPluginConfig.getCompileClasspathElements();
+		final List classpathElements = contentPluginConfig
+				.getCompileClasspathElements();
 		if (classpathElements != null) {
 			w.write("!note Class Dependencies:" + DEF_RETURN);
 			// Collections.sort(classpathElements);
 			for (int i = 0; i < classpathElements.size(); i++) {
-				final String element = classpathElements.get(i).toString().replace('\\', '/');
+				final String element = classpathElements.get(i).toString()
+						.replace('\\', '/');
 				if (!isExcludeDependency(element)) {
 					if (element.endsWith("classes")) {
 						w.write(DEF_PATH + element + "/" + DEF_RETURN);
@@ -126,9 +136,10 @@ public class ContentPluginManager implements PluginManager {
 			return false;
 		}
 		if (contentPluginConfig.getExcludeDependencies() != null) {
-			for (final Dependency excludeDependency : contentPluginConfig.getExcludeDependencies()) {
-				final String dependencyPath = resolver.resolveDependencyPath(excludeDependency,
-						contentPluginConfig.getRepositoryDirectory());
+			for (final Dependency excludeDependency : contentPluginConfig
+					.getExcludeDependencies()) {
+				final String dependencyPath = resolver
+						.resolveDependencyPath(excludeDependency);
 				if (dependencyPath.equals(classpathElement)) {
 					return true;
 				}
@@ -147,8 +158,8 @@ public class ContentPluginManager implements PluginManager {
 	 * @param suffix
 	 * @throws IOException
 	 */
-	private void addLines(final String chapter, final List<String> lines, final String prefix, final String suffix)
-			throws IOException {
+	private void addLines(final String chapter, final List<String> lines,
+			final String prefix, final String suffix) throws IOException {
 		if (lines != null && !lines.isEmpty()) {
 			w.write("!note " + chapter + ":" + DEF_RETURN);
 			for (final String entry : lines) {
