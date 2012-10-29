@@ -34,8 +34,11 @@ Example:
 	<plugin>
 		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 		<artifactId>mafia-maven-plugin</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
 		<configuration>
+		    <logDirectory>${basedir}/log/</logDirectory>
+            <repositoryDirectory>${settings.localRepository}</repositoryDirectory>
+            <compileClasspathElements>${project.compileClasspathElements}</compileClasspathElements>
+            <dependencies>${project.dependencies}</dependencies>
 			<statics>
 				<static>!define TEST_SYSTEM {slim}</static>
 			</statics>
@@ -69,13 +72,14 @@ mandatory:
 	<plugin>
 		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 		<artifactId>mafia-maven-plugin</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
 		<configuration>
-			<port>9090</port>
-			<log>${basedir}/log/</log>
+			<fitNessePort>9090</fitNessePort>
+			<logDirectory>${basedir}/log/</logDirectory>
 			<retainDays>14</retainDays>
 			<wikiRoot>${basedir}</wikiRoot>
 			<nameRootPage>FitNesseRoot</nameRootPage>
+			<repositoryDirectory>${settings.localRepository}</repositoryDirectory>
+			<dependencies>${project.dependencies}</dependencies>
 			<jvmArguments>
 				<jvmArgument>CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem</jvmArgument>
 			</jvmArguments>				
@@ -97,15 +101,18 @@ command: mvn mafia:stop
 This maven goal will stop the FitNesse server. You can create a configuration section in your pom to change
 default behaviour.
 
-Configuration example with defaults, except for the jvmArguments & jvmDependencies sections, which are not
-mandatory:
+Configuration example with defaults:
 
 	<plugin>
 		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 		<artifactId>mafia-maven-plugin</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
 		<configuration>
-			<port>9090</port>
+		    <logDirectory>${basedir}/log/</logDirectory>
+			<fitNessePort>9090</fitNessePort>
+			<wikiRoot>${basedir}</wikiRoot>
+			<nameRootPage>FitNesseRoot</nameRootPage>
+		    <repositoryDirectory>${settings.localRepository}</repositoryDirectory>
+            <dependencies>${project.dependencies}</dependencies>
 		</configuration>
 	</plugin>
 	
@@ -123,9 +130,8 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 	<plugin>
 		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 		<artifactId>mafia-maven-plugin</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
 		<configuration>
-			<port>9091</port>
+			<fitNessePort>9091</fitNessePort>
 			<wikiRoot>${basedir}</wikiRoot>
 			<fitnesseOutputDirectory>${project.build.directory}/fitnesse/</fitnesseOutputDirectory>
 			<stopTestsOnFailure>true</stopTestsOnFailure>
@@ -158,10 +164,15 @@ Configuration with defaults, except reportTemplate (=optional):
 	<plugin>
 		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 		<artifactId>mafia-maven-plugin</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
 		<configuration>
+		    <dependencies>${project.dependencies}</dependencies>
+			<outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+			<repositoryDirectory>${settings.localRepository}</repositoryDirectory>
+			<mafiaTestResultsDirectory>${report.mafiaTestResultsDirectory}</mafiaTestResultsDirectory>
+            <wikiRoot>${basedir}</wikiRoot>
+            <logDirectory>${basedir}/log/</logDirectory>
+            
 			<workDirectory>${project.build.directory}/fitnesse</workDirectory>
-			<fitnesseOutputDirectory>${project.build.directory}/site/fitnesse</fitnesseOutputDirectory>
 			<reportTemplate>/location/report.template</reportTemplate>
 		</configuration>
 	</plugin>
