@@ -60,7 +60,6 @@ public class DependencyResolver {
 	 * Return the location of the jar file.
 	 * 
 	 * @param dependency
-	 * @param baseDir
 	 * @return
 	 */
 	public String resolveDependencyPath(final Dependency dependency) {

@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -138,7 +139,12 @@ public class MafiaResultCollector {
     private Template getTemplate(final String templateName) throws MojoFailureException {
         final Template template;
         try {
-            template = new VelocityEngine().getTemplate(templateName);
+            Properties props = new Properties();
+            props.put("resource.loader", "class");
+            props.put("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+            VelocityEngine ve = new VelocityEngine();
+            ve.init(props);
+            template = ve.getTemplate("/fitnesse/resources/templates/" + templateName);
         } catch (final ResourceNotFoundException e) {
             throw new MojoFailureException("ResourceNotFoundException: Could not load template: " + templateName);
         } catch (final ParseErrorException e) {

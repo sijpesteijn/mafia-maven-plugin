@@ -90,7 +90,7 @@ public class FitNesseCommander {
                 // Process has not finished yet
             }
             if (inputMonitor.isFinished()) {
-                config.getMavenLogger().debug("Any errors: " + errorMonitor.getBuffer());
+//                config.getMavenLogger().debug("Any errors: " + errorMonitor.getBuffer());
                 return;
             }
             Thread.sleep(2000);
@@ -183,16 +183,16 @@ public class FitNesseCommander {
         final Dependency fitnesse = new Dependency();
         fitnesse.setArtifactId("fitnesse");
         fitnesse.setGroupId("org.fitnesse");
-        final Dependency velocity = new Dependency();
-        velocity.setArtifactId("velocity");
-        velocity.setGroupId("org.apache.velocity");
-        velocity.setVersion("1.7");
+        fitnesse.setClassifier("standalone");
+//        final Dependency velocity = new Dependency();
+//        velocity.setArtifactId("velocity");
+//        velocity.setGroupId("org.apache.velocity");
+//        velocity.setVersion("1.7");
 
         final String fitnesseJarLocation = resolver.getJarLocation(config.getDependencies(), fitnesse);
-        final String velocityJarLocation = resolver.getJarLocation(config.getDependencies(), velocity);
+//        final String velocityJarLocation = resolver.getJarLocation(config.getDependencies(), velocity);
         final String command =
-                "java" + " -cp " + FileUtils.formatPath(velocityJarLocation) + ";"
-                        + FileUtils.formatPath(fitnesseJarLocation) + " fitnesseMain.FitNesseMain -i";
+                "java" + " -jar " + FileUtils.formatPath(fitnesseJarLocation) + " -i";
         run(command);
         try {
             final File controlFile =

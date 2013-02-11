@@ -38,6 +38,7 @@ public class StopperPluginManager implements PluginManager {
 			final Dependency fitnesseDependency = new Dependency();
 			fitnesseDependency.setGroupId("org.fitnesse");
 			fitnesseDependency.setArtifactId("fitnesse");
+            fitnesseDependency.setClassifier("standalone");
 			jarLocation = resolver.getJarLocation(stopperPluginConfig.getDependencies(), fitnesseDependency);
 		} catch (final MojoExecutionException mee) {
 			throw mee;

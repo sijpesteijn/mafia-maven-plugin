@@ -72,8 +72,9 @@
 				        <dependency>
 				            <groupId>org.fitnesse</groupId>
 				            <artifactId>fitnesse</artifactId>
-				            <version>20121028</version>
-				        </dependency>                        
+				            <version>20121220</version>
+                            <classifier>standalone</classifier>
+				        </dependency>
                         <dependency>
                             <artifactId>log4j</artifactId>
                             <groupId>log4j</groupId>
