@@ -14,12 +14,12 @@ import java.util.regex.Pattern;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
 import util.FileUtil;
-import fitnesse.VelocityFactory;
 import fitnesse.responders.run.ExecutionReport;
 import fitnesse.responders.run.SuiteExecutionReport;
 import fitnesse.responders.run.TestExecutionReport;
@@ -138,7 +138,7 @@ public class MafiaResultCollector {
     private Template getTemplate(final String templateName) throws MojoFailureException {
         final Template template;
         try {
-            template = VelocityFactory.getVelocityEngine().getTemplate(templateName);
+            template = new VelocityEngine().getTemplate(templateName);
         } catch (final ResourceNotFoundException e) {
             throw new MojoFailureException("ResourceNotFoundException: Could not load template: " + templateName);
         } catch (final ParseErrorException e) {
@@ -176,8 +176,6 @@ public class MafiaResultCollector {
             throw new MojoFailureException("ParseErrorException: Could not parse template: " + template.getName());
         } catch (final MethodInvocationException e) {
             throw new MojoFailureException("MethodInvocationException: Could not merge template: " + template.getName());
-        } catch (final IOException e) {
-            throw new MojoFailureException("IOException: Could not merge template: " + template.getName());
         }
     }
 
