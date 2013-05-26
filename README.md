@@ -23,11 +23,11 @@ Besides the compile and runtime dependencies, it will write the configuration, i
 Configuration:
 
 <table>
-    <th>
+    <tr>
         <td>Property</td>
         <td>Default</td>
         <td>Description</td>
-    </th>
+    </tr>
     <tr>
         <td>wikiRoot</td>
         <td>${basedir}</td>
