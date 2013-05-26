@@ -21,7 +21,25 @@ classpath entries (!path <location>) and definitions (!define <definition>).
 Besides the compile and runtime dependencies, it will write the configuration, if provided, to the same file (content.txt).
 
 Configuration:
- 
+
+<table>
+    <th>
+        <td>Property</td>
+        <td>Default</td>
+        <td>Description</td>
+    </th>
+    <tr>
+        <td>wikiRoot</td>
+        <td>${basedir}</td>
+        <td>Root of FitNesse.</td>
+    </tr>
+    <tr>
+        <td>nameRootPage</td>
+        <td>FitNesseRoot</td>
+        <td>Name of the root page</td>
+    </tr>
+</table>
+
    statics - Values ares copied as is to content.txt (This could also be wiki text)j
    resources - Values are prefixed with !define and copied to content.txt  
    targets - Values are prefixed with !define and postfixed with /target/classes/ and copied to content.txt
@@ -34,8 +52,10 @@ Example:
 	<plugin>
 		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 		<artifactId>mafia-maven-plugin</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>2.0.1</version>
 		<configuration>
+		    <wikiRoot>${basedir}</wikiRoot>
+		    <nameRootPage>FitNesseRoot</nameRootPage>
 			<statics>
 				<static>!define TEST_SYSTEM {slim}</static>
 			</statics>
