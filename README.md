@@ -51,14 +51,14 @@ Configuration:
     <tr>
         <td>targets</td>
         <td></td>
-        <td><pre>Values are prefixed with !define and postfixed with /target/classes/ and copied to content.txt
-               (useful for hot-deployment).</pre></td>
+        <td><Values are prefixed with !define and postfixed with /target/classes/ and copied to content.txt (useful
+        for hot-deployment).</td>
     </tr>
     <tr>
         <td>excludeDependencies</td>
         <td></td>
-        <td><pre>Listed dependencies are excluded from the classpath entries. (Most likely the ones
-                    listed in the targets configuration section).</pre></td>
+        <td>Listed dependencies are excluded from the classpath entries. (Most likely the ones listed in the targets
+        configuration section).</td>
     </tr>
 </table>
 
