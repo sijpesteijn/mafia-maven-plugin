@@ -24,9 +24,9 @@ Configuration:
 
 <table>
     <tr>
-        <td>Property</td>
-        <td>Default</td>
-        <td>Description</td>
+        <td><b>Property</b></td>
+        <td><b>Default</b></td>
+        <td><b>Description</b></td>
     </tr>
     <tr>
         <td>wikiRoot</td>
@@ -38,15 +38,30 @@ Configuration:
         <td>FitNesseRoot</td>
         <td>Name of the root page</td>
     </tr>
+    <tr>
+        <td>statics</td>
+        <td></td>
+        <td>Values ares copied as is to content.txt (This could also be wiki text)</td>
+    </tr>
+    <tr>
+        <td>resources</td>
+        <td></td>
+        <td>Values are prefixed with !define and copied to content.txt</td>
+    </tr>
+    <tr>
+        <td>targets</td>
+        <td></td>
+        <td><pre>Values are prefixed with !define and postfixed with /target/classes/ and copied to content.txt
+               (useful for hot-deployment).</pre></td>
+    </tr>
+    <tr>
+        <td>excludeDependencies</td>
+        <td></td>
+        <td><pre>Listed dependencies are excluded from the classpath entries. (Most likely the ones
+                    listed in the targets configuration section).</pre></td>
+    </tr>
 </table>
 
-   statics - Values ares copied as is to content.txt (This could also be wiki text)j
-   resources - Values are prefixed with !define and copied to content.txt  
-   targets - Values are prefixed with !define and postfixed with /target/classes/ and copied to content.txt
-   (useful for hot-deployment).  
-   excludeDependencies - Listed dependencies are excluded from the classpath entries. (Most likely the ones
-   listed in the targets configuration section).
-   
 Example:
 
 	<plugin>
