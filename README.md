@@ -254,6 +254,7 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 		</configuration>
 	</plugin>
 
+
 **4 CLASSPATH ENTRIES & DEFINITIONS**
 
 goal: content  
@@ -333,9 +334,7 @@ Example:
 		</configuration>
 	</plugin>
 
-
-
-**4 - COLLECT REPORTING.**
+**5 - COLLECT REPORTING.**
 
 goal: report  
 phase: site  
