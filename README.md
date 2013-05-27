@@ -66,26 +66,30 @@ Configuration:
 
 Configuration example with defaults:
 
-	<plugin>
-		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-		<artifactId>mafia-maven-plugin</artifactId>
-		<configuration>
-			<fitNessePort>9090</fitNessePort>
-			<wikiRoot>${basedir}</wikiRoot>
-			<nameRootPage>FitNesseRoot</nameRootPage>
-			<retainDays>14</retainDays>
-			<jvmArguments>
-				<jvmArgument>CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem</jvmArgument>
-			</jvmArguments>
-			<jvmDependencies>
-				<dependency>
-					<groupId>nl.abc.fitnesse</groupId>
-					<artifactId>fitnesse-plugin</artifactId>
-				</dependency>
-			</jvmDependencies>
-			<log>${basedir}/log/</log>
-		</configuration>
-	</plugin>
+<pre>
+  <code>
+	&lt;plugin&gt;
+		&lt;groupId&gt;nl.sijpesteijn.testing.fitnesse.plugins&lt;/groupId&gt;
+		&lt;artifactId&gt;mafia-maven-plugin&lt;/artifactId&gt;
+		&lt;configuration&gt;
+			&lt;fitNessePort&gt;9090&lt;/fitNessePort&gt;
+			&lt;wikiRoot&gt;${basedir}&lt;/wikiRoot&gt;
+			&lt;nameRootPage&gt;FitNesseRoot&lt;/nameRootPage&gt;
+			&lt;retainDays&gt;14&lt;/retainDays&gt;
+			&lt;jvmArguments&gt;
+				&lt;jvmArgument&gt;CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem&lt;/jvmArgument&gt;
+			&lt;/jvmArguments&gt;
+			&lt;jvmDependencies&gt;
+				&lt;dependency&gt;
+					&lt;groupId&gt;nl.abc.fitnesse&lt;/groupId&gt;
+					&lt;artifactId&gt;fitnesse-plugin&lt;/artifactId&gt;
+				&lt;/dependency&gt;
+			&lt;/jvmDependencies&gt;
+			&lt;log>${basedir}/log/&lt;/log&gt;
+		&lt;/configuration&gt;
+	 &lt;/plugin&gt;
+  </code>
+</pre>
 
 
 **2 - STOPPING FitNesse**
@@ -122,25 +126,28 @@ Configuration:
     </tr>
  </table>
 
-Configuration example with defaults, except for the jvmArguments & jvmDependencies sections, which are not
-mandatory:
+Configuration example with defaults:
 
-	<plugin>
-		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-		<artifactId>mafia-maven-plugin</artifactId>
-		<configuration>
-			<fitNessePort>9090</fitNessePort>
-			<jvmArguments>
-				<jvmArgument>CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem</jvmArgument>
-			</jvmArguments>
-			<jvmDependencies>
-				<dependency>
-					<groupId>nl.abc.fitnesse</groupId>
-					<artifactId>fitnesse-plugin</artifactId>
-				</dependency>
-			</jvmDependencies>
-		</configuration>
-	</plugin>
+<pre>
+  <code>
+	&lt;plugin&gt;
+		&lt;groupId&gt;nl.sijpesteijn.testing.fitnesse.plugins&lt;/groupId&gt;
+		&lt;artifactId&gt;mafia-maven-plugin&lt;/artifactId&gt;
+		&lt;configuration&gt;
+			&lt;fitNessePort&gt;9090&lt;/fitNessePort&gt;
+			&lt;jvmArguments&gt;
+				&lt;jvmArgument&gt;CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem&lt;/jvmArgument&gt;
+			&lt;/jvmArguments&gt;
+			&lt;jvmDependencies&gt;
+				&lt;dependency&gt;
+					&lt;groupId&gt;nl.abc.fitnesse&lt;/groupId&gt;
+					&lt;artifactId&gt;fitnesse-plugin&lt;/artifactId&gt;
+				&lt;/dependency&gt;
+			&lt;/jvmDependencies&gt;
+		&lt;/configuration&gt;
+	&lt;/plugin&gt;
+  </code>
+</pre>
 
 
 **3 - RUN TEST(S), SUITE(S), OR TAG FILTERED TESTS.**
@@ -224,38 +231,41 @@ Configuration:
 
 Configuration with defaults. tests, suites and a suiteFilter can be mixed. A suiteFilter needs a suitePageName.
 
-
-	<plugin>
-		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-		<artifactId>mafia-maven-plugin</artifactId>
-		<configuration>
-			<fitNesseRunPort>9091</fitNesseRunPort>
-			<jvmArguments>
-				<jvmArgument>CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem</jvmArgument>
-			</jvmArguments>
-			<jvmDependencies>
-				<dependency>
-					<groupId>nl.abc.fitnesse</groupId>
-					<artifactId>fitnesse-plugin</artifactId>
-				</dependency>
-			</jvmDependencies>
-			<host>localhost</host>
-			<testResultsDirectory>${project.build.directory}/fitnesse/</testResultsDirectory>
-			<stopTestsOnIgnore>false</stopTestsOnIgnore>
-			<stopTestsOnException>true</stopTestsOnException>
-			<stopTestsOnWrong>true</stopTestsOnWrong>
-			<tests>
-				<test>FrontPage.IntegrationTest</test>
-				<test>...</test>
-			</tests>
-			<suites>
-				<suite>FrontPage.IntegrationSuite</suite>
-				<suite>...</suite>
-			</suites>
-			<suitePageName>FrontPage.SomeSuite</suitePageName>
-			<suiteFilter>critical_tests</suiteFilter>
-		</configuration>
-	</plugin>
+<pre>
+  <code>
+	&lt;plugin&gt;
+		&lt;groupId&gt;nl.sijpesteijn.testing.fitnesse.plugins&lt;/groupId&gt;
+		&lt;artifactId&gt;mafia-maven-plugin&lt;/artifactId&gt;
+		&lt;configuration&gt;
+			&lt;fitNesseRunPort&gt;9091&lt;/fitNesseRunPort&gt;
+			&lt;jvmArguments&gt;
+				&lt;jvmArgument&gt;CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem&lt;/jvmArgument&gt;
+			&lt;/jvmArguments&gt;
+			&lt;jvmDependencies&gt;
+				&lt;dependency&gt;
+					&lt;groupId&gt;nl.abc.fitnesse&lt;/groupId&gt;
+					&lt;artifactId&gt;fitnesse-plugin&lt;/artifactId&gt;
+				&lt;/dependency&gt;
+			&lt;/jvmDependencies&gt;
+			&lt;host&gt;localhost&lt;/host&gt;
+			&lt;testResultsDirectory&gt;${project.build.directory}/fitnesse/&lt;/testResultsDirectory&gt;
+			&lt;stopTestsOnIgnore&gt;false&lt;/stopTestsOnIgnore&gt;
+			&lt;stopTestsOnException&gt;true&lt;/stopTestsOnException&gt;
+			&lt;stopTestsOnWrong&gt;true&lt;/stopTestsOnWrong&gt;
+			&lt;tests&gt;
+				&lt;test&gt;FrontPage.IntegrationTest&lt;/test&gt;
+				&lt;test&gt;...&lt;/test&gt;
+			&lt;/tests&gt;
+			&lt;suites&gt;
+				&lt;suite&gt;FrontPage.IntegrationSuite&lt;/suite&gt;
+				&lt;suite&gt;...&lt;/suite&gt;
+			&lt;/suites&gt;
+			&lt;suitePageName&gt;FrontPage.SomeSuite&lt;/suitePageName&gt;
+			&lt;suiteFilter&gt;critical_tests&lt;/suiteFilter&gt;
+		&lt;/configuration&gt;
+	&lt;/plugin&gt;
+  </code>
+</pre>
 
 
 **4 CLASSPATH ENTRIES & DEFINITIONS**
@@ -313,30 +323,34 @@ Configuration:
 
 Example:
 
-	<plugin>
-		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-		<artifactId>mafia-maven-plugin</artifactId>
-		<configuration>
-		    <wikiRoot>${basedir}</wikiRoot>
-		    <nameRootPage>FitNesseRoot</nameRootPage>
-			<statics>
-				<static>!define TEST_SYSTEM {slim}</static>
-			</statics>
-			<resources>
-				<resource>/resource_location/resources/</resource>
-			</resources>
-			<targets>
-				<target>../application-to-test/</target>
-			</targets>
-			<excludeDependencies>
-				<dependency>
-					<groupId>nl.abc.dependency</groupId>
-					<artifactId>some-artifact</artifactId>
-					<version>1.0.0</version>
-				</dependency>
-			</excludeDependencies>
-		</configuration>
-	</plugin>
+<pre>
+  <code>
+	&lt;plugin&gt;
+		&lt;groupId&gt;nl.sijpesteijn.testing.fitnesse.plugins&lt;/groupId&gt;
+		&lt;artifactId&gt;mafia-maven-plugin&lt;/artifactId&gt;
+		&lt;configuration&gt;
+		    &lt;wikiRoot&gt;${basedir}&lt;/wikiRoot&gt;
+		    &lt;nameRootPage&gt;FitNesseRoot&lt;/nameRootPage&gt;
+			&lt;statics&gt;
+				&lt;static&gt;!define TEST_SYSTEM {slim}&lt;/static&gt;
+			&lt;/statics&gt;
+			&lt;resources&gt;
+				&lt;resource&gt;/resource_location/resources/&lt;/resource&gt;
+			&lt;/resources&gt;
+			&lt;targets&gt;
+				&lt;target&gt;../application-to-test/&lt;/target&gt;
+			&lt;/targets&gt;
+			&lt;excludeDependencies&gt;
+				&lt;dependency&gt;
+					&lt;groupId&gt;nl.abc.dependency&lt;/groupId&gt;
+					&lt;artifactId&gt;some-artifact&lt;/artifactId&gt;
+					&lt;version&gt;1.0.0&lt;/version&gt;
+				&lt;/dependency&gt;
+			&lt;/excludeDependencies&gt;
+		&lt;/configuration&gt;
+	&lt;/plugin&gt;
+  </code>
+</pre>
 
 
 **5 - COLLECT REPORTING.**
@@ -369,15 +383,19 @@ Configuration:
 
 Configuration with defaults:
 
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-                <artifactId>mafia-maven-plugin</artifactId>
-                <configuration>
-                    <wikiRoot>${basedir}</wikiRoot>
-                    <nameRootPage>FitNesseRoot</nameRootPage>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
+<pre>
+  <code>
+    &lt;reporting&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;nl.sijpesteijn.testing.fitnesse.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;mafia-maven-plugin&lt;/artifactId&gt;
+                &lt;configuration&gt;
+                    &lt;wikiRoot&gt;${basedir}&lt;/wikiRoot&gt;
+                    &lt;nameRootPage&gt;FitNesseRoot&lt;/nameRootPage&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/reporting&gt;
+ </code>
+</pre>
