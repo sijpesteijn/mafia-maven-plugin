@@ -1,0 +1,9 @@
+<component-set>
+    <components>
+        <component>
+            <role>nl.sijpesteijn.testing.fitnesse.plugins.runner.ResultStore</role>
+            <implementation>nl.sijpesteijn.testing.fitnesse.plugins.runner.DiskResultStore</implementation>
+
+        </component>
+    </components>
+</component-set>
