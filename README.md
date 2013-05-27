@@ -254,7 +254,6 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 		</configuration>
 	</plugin>
 
-
 **4 CLASSPATH ENTRIES & DEFINITIONS**
 
 goal: content  
