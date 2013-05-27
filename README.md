@@ -11,7 +11,7 @@ This plugin let's you control:
 - **COLLECT REPORTING**.
 
 1 - STARTING FitNesse.
-<hr/>
+<br/>
 
 goal: start
 phase: install
@@ -94,7 +94,7 @@ Configuration example with defaults:
 
 
 2 - STOPPING FitNesse.
-<hr/>
+<br/>
 
 goal: stop
 phase: clean
@@ -153,7 +153,7 @@ Configuration example with defaults:
 
 
 3 - RUN TEST(S), SUITE(S), OR TAG FILTERED TESTS.
-<hr/>
+<br/>
 
 goal: test
 phase: integration-test
@@ -272,7 +272,7 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 
 
 4 CLASSPATH ENTRIES & DEFINITIONS.
-<hr/>
+<br/>
 
 goal: content  
 phase: process-resources  
@@ -358,7 +358,7 @@ Example:
 
 
 5 - COLLECT REPORTING.
-<hr/>
+<br/>
 
 goal: report  
 phase: site  
