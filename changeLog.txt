@@ -1,9 +1,0 @@
-# 1.0.12
-    * Fixed issue for ReportMojo: runTests=false fails to initialize Velocity Factory correct. 
-
-# 1.0.13
-    * Fixed plugin loading stop of start goal.
-    * Improved fitness starting and stopping.
-    
-# 1.0.14
-    * Reverted fitnesse version. Custom build from fitnesse@github.

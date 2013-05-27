@@ -1,170 +1,250 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
-import java.util.List;
-
-import nl.sijpesteijn.testing.fitnesse.plugins.managers.RunnerPluginManager;
-import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.RunnerPluginConfig;
-
-import org.apache.maven.model.Dependency;
-import org.apache.maven.plugin.AbstractMojo;
+import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.*;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Goal to run the Fitnesse tests.
- * 
- * @goal test
- * 
- * @phase integration-test
  */
-public class FitNesseRunnerMojo extends AbstractMojo {
+@Mojo(name = "test", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
+public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
 
-	/**
-	 * The Maven project instance for the executing project.
-	 * <p>
-	 * Note: This is passed by Maven and must not be configured by the user.
-	 * </p>
-	 * 
-	 * @parameter expression="${project.dependencies}"
-	 * @required
-	 * @readonly
-	 */
-	private List<Dependency> dependencies;
+    /**
+     * The port number on which FitNesse is running the tests.
+     */
+    @Parameter(property = "fitNesseRunPort", defaultValue = "9091")
+    private int fitNesseRunPort;
 
-	/**
-	 * The port number for FitNesse to run the tests.
-	 * 
-	 * @parameter expression="${test.fitNessePort}" default-value="9091"
-	 */
-	private int fitNessePort;
+    /**
+     * The port number on which FitNesse is running the tests.
+     */
+    @Parameter(property = "host", defaultValue = "localhost")
+    private String host;
 
-	/**
-	 * Location of the wiki root directory.
-	 * 
-	 * @parameter expression="${test.wikiRoot}" default-value="${basedir}"
-	 * @required
-	 */
-	private String wikiRoot;
+    /**
+     * The directory where the Fitnesse reports have been generated.
+     */
+    @Parameter(property = "testResultsDirectory", defaultValue = "mafiaTestResults")
+    private String testResultsDirectory;
 
-	/**
-	 * The name of the wiki root page.
-	 * 
-	 * @parameter expression="${test.nameRootPage}" default-value="FitNesseRoot"
-	 */
-	private String nameRootPage;
+    /**
+     * List of tests to be run.
+     */
+    @Parameter(property = "tests")
+    private List<String> tests;
 
-	/**
-	 * The location for FitNesse to place the log files.
-	 * 
-	 * @parameter expression="${test.log}"
-	 *            default-value="${basedir}/log/testlog/"
-	 */
-	private String logDirectory;
+    /**
+     * List of suites to be run.
+     */
+    @Parameter(property = "suites")
+    private List<String> suites;
 
-	/**
-	 * The directory where the Fitnesse reports have been generated.
-	 * 
-	 * @parameter expression="${test.mafiaTestResultsDirectory}"
-	 *            default-value="mafiaTestResults"
-	 */
-	private String mafiaTestResultsDirectory;
+    /**
+     * Name of the suite page name.
+     */
+    @Parameter(property = "suitePageName")
+    private String suitePageName;
 
-	/**
-	 * Location of the local repository.
-	 * <p>
-	 * Note: This is passed by Maven and must not be configured by the user.
-	 * </p>
-	 * 
-	 * @parameter expression="${settings.localRepository}"
-	 * @readonly
-	 * @required
-	 */
-	private String repositoryDirectory;
+    /**
+     * Suite filter to run in the specified suite (=suitePageName).
+     */
+    @Parameter(property = "suiteFilter")
+    private String suiteFilter;
 
-	/**
-	 * List of test to be run.
-	 * 
-	 * @parameter expression="${test.tests}"
-	 */
-	private List<String> tests;
+    /**
+     * If true, the mojo will stop when it encountered an ignored error message.
+     */
+    @Parameter(property = "stopTestsOnIgnore", defaultValue = "false")
+    private boolean stopTestsOnIgnore;
 
-	/**
-	 * List of suites to be run.
-	 * 
-	 * @parameter expression="${test.suites}"
-	 */
-	private List<String> suites;
+    /**
+     * If true, the mojo will stop when it encountered an exception error
+     * message.
+     */
+    @Parameter(property = "stopTestsOnException", defaultValue = "true")
+    private boolean stopTestsOnException;
 
-	/**
-	 * Name of the suite page name.
-	 * 
-	 * @parameter expression="${test.suitePageName}"
-	 */
-	private String suitePageName;
+    /**
+     * If true, the mojo will stop when it encountered a wrong error message.
+     */
+    @Parameter(property = "stopTestsOnWrong", defaultValue = "true")
+    private boolean stopTestsOnWrong;
 
-	/**
-	 * Suite filter to run in the specified suite (=suitePageName).
-	 * 
-	 * @parameter expression="${test.suiteFilter}"
-	 */
-	private String suiteFilter;
+    /**
+     * The test result output directory.
+     */
+    private String outputDirectory;
 
-	/**
-	 * If true, the mojo will stop when it encountered a failure error message.
-	 * 
-	 * @parameter expression="${test.stopTestsOnFailure}" default-value="true"
-	 * 
-	 */
-	private boolean stopTestsOnFailure;
+    /**
+     * The result store that takes care of persisting the test results.
+     */
+    @Component(role = ResultStore.class)
+    private ResultStore resultStore;
 
-	/**
-	 * If true, the mojo will stop when it encountered an ignored error message.
-	 * 
-	 * @parameter expression="${run-tests.stopTestsOnIgnore}"
-	 *            default-value="false"
-	 * 
-	 */
-	private boolean stopTestsOnIgnore;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void execute() throws MojoExecutionException, MojoFailureException {
+        outputDirectory = getWikiRoot() + File.separator + getNameRootPage() + "/files/mafiaResults/";
+        clearOutputDirectory();
+        getLog().debug(toString());
+        final FitNesseCommander commander =
+                new FitNesseCommander(getCommanderConfig(getJvmDependencies(), getJvmArguments(), 0,
+                        fitNesseRunPort));
+        try {
+            commander.stop();
+            commander.start();
+        } catch (Throwable throwable) {
+            throw new MojoExecutionException(throwable.getMessage());
+        }
+        if (commander.hasError()) {
+            logErrorMessages(commander.getOutput(), commander.getErrorOutput());
+            throw new MojoExecutionException("Could not start FitNesse");
+        } else {
+            getLog().info("FitNesse start on: http://localhost:" + fitNesseRunPort);
+            getLog().info("Starting test run....");
+            try {
 
-	/**
-	 * If true, the mojo will stop when it encountered an exception error
-	 * message.
-	 * 
-	 * @parameter expression="${test.stopTestsOnException}" default-value="true"
-	 * 
-	 */
-	private boolean stopTestsOnException;
+                final TestCaller testCaller = new URLTestCaller(fitNesseRunPort, "http", host,
+                        new File(outputDirectory), resultStore);
 
-	/**
-	 * If true, the mojo will stop when it encountered a wrong error message.
-	 * 
-	 * @parameter expression="${test.stopTestsOnWrong}" default-value="true"
-	 * 
-	 */
-	private boolean stopTestsOnWrong;
+                final Date startDate = new Date();
+                final FitNesseTestRunner runner = new FitNesseTestRunner(testCaller,
+                        stopTestsOnIgnore, stopTestsOnException, stopTestsOnIgnore, getLog());
+                runner.runTests(tests);
+                runner.runSuites(suites);
+                runner.runFilteredSuite(suitePageName, suiteFilter);
+                saveTestSummariesAndWriteProperties(runner.getTestSummaries(), startDate);
+                printTestResults(runner.getTestSummaries());
+                getLog().info("Finished test run. Stopping FitNesse.");
+            } catch (MafiaException e) {
+                throw new MojoFailureException("Failed to run tests.", e);
+            }
+            try {
+                commander.stop();
+            } catch (Throwable throwable) {
+                throw new MojoExecutionException(throwable.getMessage());
+            }
+        }
+    }
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		final RunnerPluginConfig runnerPluginConfig = getPluginConfig();
-		getLog().debug("Runner config: " + runnerPluginConfig.toString());
-		new RunnerPluginManager(runnerPluginConfig).run();
-		getLog().info("Finished running tests and suites.");
-	}
+    /**
+     * Clear the test result output directory.
+     *
+     * @throws MojoFailureException - unable to delete output directory.
+     */
+    private void clearOutputDirectory() throws MojoFailureException {
+        try {
+            FileUtils.deleteDirectory(new File(outputDirectory));
+        } catch (IOException e) {
+            throw new MojoFailureException("Could not clear output directory.", e);
+        }
+    }
 
-	/**
-	 * Collect the plugin configuration settings
-	 * 
-	 * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.RunnerPluginConfig}
-	 * @throws MojoExecutionException
-	 */
-	private RunnerPluginConfig getPluginConfig() throws MojoExecutionException {
-		return new RunnerPluginConfig(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitNessePort, 0,
-				dependencies, getLog(), mafiaTestResultsDirectory, stopTestsOnFailure, stopTestsOnIgnore,
-				stopTestsOnException, stopTestsOnWrong, tests, suites, suiteFilter, suitePageName);
-	}
+    /**
+     * Save the test summaries and write properties file with total test results.
+     *
+     * @param testSummaries - the test summaries to save.
+     * @param runDate       - date the test was run.
+     * @throws MafiaException - unable to save test summaries.
+     */
+    private void saveTestSummariesAndWriteProperties(final Map<String, MafiaTestSummary> testSummaries,
+                                                     final Date runDate) throws MafiaException {
+        final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        if (testSummaries != null) {
+            final MafiaTestSummary summary = new MafiaTestSummary();
+            for (Map.Entry<String, MafiaTestSummary> entry : testSummaries.entrySet()) {
+                final MafiaTestSummary mafiaTestSummary = entry.getValue();
+                summary.exceptions += mafiaTestSummary.exceptions;
+                summary.wrong += mafiaTestSummary.wrong;
+                summary.ignores += mafiaTestSummary.ignores;
+                summary.right += mafiaTestSummary.right;
+                summary.setTestTime(summary.getTestTime() + mafiaTestSummary.getTestTime());
+            }
+            final Properties properties = new Properties();
+            properties.put("exceptions", "" + summary.getExceptions());
+            properties.put("wrong", "" + summary.getWrong());
+            properties.put("ignores", "" + summary.getIgnores());
+            properties.put("right", "" + summary.getRight());
+            properties.put("testTime", "" + summary.getTestTime());
+            properties.put("runDate", format.format(runDate));
+            saveProperties(properties);
+        }
+    }
 
+    /**
+     * Save the properties file with total test results to disk.
+     *
+     * @param properties - properties object.
+     * @throws MafiaException - unable to save properties.
+     */
+    private void saveProperties(final Properties properties) throws MafiaException {
+        FileOutputStream outputStream;
+        try {
+            outputStream = new FileOutputStream(outputDirectory + File.separator + "mafiaresults.properties");
+        } catch (FileNotFoundException e) {
+            throw new MafiaException("Could not open mafiaresults.properties");
+        }
+
+        try {
+            properties.store(outputStream, "Mafia test result properties");
+            outputStream.flush();
+        } catch (IOException e) {
+            throw new MafiaException("Could not save mafia test results.", e);
+        } finally {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                throw new MafiaException("Could not close property file stream.");
+            }
+        }
+
+    }
+
+    /**
+     * Write test results to maven log.
+     *
+     * @param testSummaries - test summaries to log.
+     */
+    private void printTestResults(final Map<String, MafiaTestSummary> testSummaries) {
+        if (testSummaries != null) {
+            for (Map.Entry<String, MafiaTestSummary> entry : testSummaries.entrySet()) {
+                getLog().info("Test: " + entry.getKey() + "(" + entry.getValue().toString() + ")");
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String toString() {
+        return super.toString() + ", Host: " + host + ", Test results directory: " + testResultsDirectory
+                + ", Tests: " + tests
+                + ", Suites: " + suites
+                + ", Suite page name: " + suitePageName
+                + ", Suite filter: " + suiteFilter
+                + ", Stop tests on ignore: " + stopTestsOnIgnore
+                + ", Stop tests on exception: " + stopTestsOnException
+                + ", Stop tests on wrong: " + stopTestsOnWrong;
+    }
 }

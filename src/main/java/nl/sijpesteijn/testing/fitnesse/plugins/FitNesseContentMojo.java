@@ -1,141 +1,93 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
+import nl.sijpesteijn.testing.fitnesse.plugins.context.FitNesseContextWriter;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.Project;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
 import java.io.File;
 import java.util.List;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.managers.ContentPluginManager;
-import nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ContentPluginConfig;
-
-import org.apache.maven.model.Dependency;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-
 /**
- * Goal which creates the content.txt (classpath) file for Fitnesse.
- * 
- * @goal content
- * 
- * @phase process-sources
- * @requiresDependencyResolution compile+runtime
+ * This mojo will generate a new content.txt (classpath) file for FitNesse
+ * The file is default placed in the wiki root of FitNesse.
  */
-public class FitNesseContentMojo extends AbstractMojo {
+@Mojo(name = "content", defaultPhase = LifecyclePhase.POST_CLEAN)
+public class FitNesseContentMojo extends AbstractFitNesseMojo {
 
-	/**
-	 * The Maven project instance for the executing project.
-	 * <p>
-	 * Note: This is passed by Maven and must not be configured by the user.
-	 * </p>
-	 * 
-	 * @parameter expression="${project.dependencies}"
-	 * @required
-	 * @readonly
-	 */
-	private List<Dependency> dependencies;
+    /**
+     * List of static entries to add to content.txt.
+     */
+    @Parameter(property = "statics")
+    private List<String> statics;
 
-	/**
-	 * The Maven project instance for the executing project.
-	 * <p>
-	 * Note: This is passed by Maven and must not be configured by the user.
-	 * </p>
-	 * 
-	 * @parameter expression="${project.compileClasspathElements}"
-	 * @required
-	 * @readonly
-	 */
-	private List<String> compileClasspathElements;
+    /**
+     * List of target directories to add to content.txt Each target is resolved.
+     */
+    @Parameter(property = "targets")
+    private List<String> targets;
 
-	/**
-	 * Location of the local repository.
-	 * <p>
-	 * Note: This is passed by Maven and must not be configured by the user.
-	 * </p>
-	 * 
-	 * @parameter expression="${settings.localRepository}"
-	 * @readonly
-	 * @required
-	 */
-	private String repositoryDirectory;
+    /**
+     * List of resource entries to add to content.txt.
+     */
+    @Parameter(property = "resources")
+    private List<String> resources;
 
-	/**
-	 * List of static entries to add to content.txt
-	 * 
-	 * @parameter expression="${content.statics}"
-	 */
-	private List<String> statics;
+    /**
+     * List of dependencies to exclude from the content.txt.
+     */
+    @Parameter(property = "excludeDependencies")
+    private List<Dependency> excludeDependencies;
 
-	/**
-	 * List of target directories to add to content.txt Each target is resolved
-	 * as <target>\target\classes
-	 * 
-	 * @parameter expression="${content.targets}"
-	 */
-	private List<String> targets;
+    /**
+     * Add plugin dependencies.
+     */
+    @Parameter(property = "addPluginDependencies", defaultValue = "true")
+    private boolean addPluginDependencies;
 
-	/**
-	 * List of resource entries to add to content.txt
-	 * 
-	 * @parameter expression="${content.resources}"
-	 */
-	private List<String> resources;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void execute() throws MojoExecutionException, MojoFailureException {
+        getLog().debug(toString());
+        final File contentPath = new File(getContentPath());
+        final Project project = getMafiaProject();
+        final FitNesseContextWriter fitNesseContentWriter = new FitNesseContextWriter(project, statics,
+                targets, resources, excludeDependencies, contentPath, addPluginDependencies);
+        try {
+            fitNesseContentWriter.writeContent();
+            getLog().info("FitNesse environment written to " + contentPath + "/content.txt");
+        } catch (MafiaException e) {
+            throw new MojoExecutionException("Could not write FitNesse enviroment to " + contentPath, e);
+        }
+    }
 
-	/**
-	 * List of dependencies to exclude from the content.txt
-	 * 
-	 * @parameter expression="${content.excludeDependencies}"
-	 */
-	private List<Dependency> excludeDependencies;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String toString() {
+        return super.toString() + ", Statics: " + statics + ", Targets: " + targets
+                + ", Resources: " + resources + ", Exclude dependencies: " + excludeDependencies;
+    }
 
-	/**
-	 * Location of the wiki root of FitNesse.
-	 * 
-	 * @parameter expression="${content.wikiRoot}" default-value="${basedir}"
-	 * @required
-	 */
-	private String wikiRoot;
-
-	/**
-	 * Name of the wiki root page
-	 * 
-	 * @parameter expression="${content.nameRootPage}"
-	 *            default-value="FitNesseRoot"
-	 * @required
-	 */
-	private String nameRootPage;
-
-	/**
-	 * The location for FitNesse to place the log files.
-	 * 
-	 * @parameter expression="${content.logDirectory}"
-	 *            default-value="${basedir}/log/"
-	 */
-	private String logDirectory;
-
-	private final int fitNessePort = 9090;
-	private final int retainDays = 0;
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		final ContentPluginConfig contentPluginConfig = getPluginConfig();
-		getLog().debug("Content config: " + contentPluginConfig.toString());
-		final ContentPluginManager manager = new ContentPluginManager(contentPluginConfig);
-		manager.run();
-		getLog().info("Created new content.txt in " + wikiRoot + File.separatorChar + nameRootPage + File.separatorChar);
-	}
-
-	/**
-	 * Collect the plugin configuration settings
-	 * 
-	 * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.pluginconfigs.ContentPluginConfig}
-	 * @throws MojoExecutionException
-	 */
-	private ContentPluginConfig getPluginConfig() throws MojoExecutionException {
-		return new ContentPluginConfig(wikiRoot, nameRootPage, repositoryDirectory, logDirectory, fitNessePort,
-				retainDays, dependencies, getLog(), statics, resources, excludeDependencies, targets,
-				compileClasspathElements);
-	}
+    /**
+     * Get the location of the FitNesse content.txt file.
+     *
+     * @return {@link java.lang.String}
+     */
+    public final String getContentPath() {
+        String contentPath = getWikiRoot();
+        if (getWikiRoot().endsWith(File.separator)) {
+            contentPath += File.separator;
+        }
+        contentPath += getNameRootPage() + File.separator;
+        return contentPath;
+    }
 }
