@@ -10,7 +10,8 @@ This plugin let's you control:
 - **CLASSPATH ENTRIES & DEFINITIONS** can be written to root page of FitNesse using the pom configuration.
 - **COLLECT REPORTING**.
 
-###1 - STARTING FitNesse.
+1 - STARTING FitNesse.
+<hr/>
 
 goal: start
 phase: install
@@ -92,7 +93,8 @@ Configuration example with defaults:
 </pre>
 
 
-###2 - STOPPING FitNesse
+2 - STOPPING FitNesse.
+<hr/>
 
 goal: stop
 phase: clean
@@ -150,7 +152,8 @@ Configuration example with defaults:
 </pre>
 
 
-###3 - RUN TEST(S), SUITE(S), OR TAG FILTERED TESTS.
+3 - RUN TEST(S), SUITE(S), OR TAG FILTERED TESTS.
+<hr/>
 
 goal: test
 phase: integration-test
@@ -268,7 +271,8 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 </pre>
 
 
-###4 CLASSPATH ENTRIES & DEFINITIONS
+4 CLASSPATH ENTRIES & DEFINITIONS.
+<hr/>
 
 goal: content  
 phase: process-resources  
@@ -353,7 +357,8 @@ Example:
 </pre>
 
 
-###5 - COLLECT REPORTING.
+5 - COLLECT REPORTING.
+<hr/>
 
 goal: report  
 phase: site  
