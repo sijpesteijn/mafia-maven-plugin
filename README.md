@@ -87,6 +87,7 @@ Configuration example with defaults:
 		</configuration>
 	</plugin>
 
+
 **2 - STOPPING FitNesse**
 
 goal: stop
@@ -140,6 +141,7 @@ mandatory:
 			</jvmDependencies>
 		</configuration>
 	</plugin>
+
 
 **3 - RUN TEST(S), SUITE(S), OR TAG FILTERED TESTS.**
 
@@ -222,6 +224,7 @@ Configuration:
 
 Configuration with defaults. tests, suites and a suiteFilter can be mixed. A suiteFilter needs a suitePageName.
 
+
 	<plugin>
 		<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
 		<artifactId>mafia-maven-plugin</artifactId>
@@ -253,6 +256,7 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 			<suiteFilter>critical_tests</suiteFilter>
 		</configuration>
 	</plugin>
+
 
 **4 CLASSPATH ENTRIES & DEFINITIONS**
 
@@ -306,6 +310,7 @@ Configuration:
     </tr>
 </table>
 
+
 Example:
 
 	<plugin>
@@ -332,6 +337,7 @@ Example:
 			</excludeDependencies>
 		</configuration>
 	</plugin>
+
 
 **5 - COLLECT REPORTING.**
 
