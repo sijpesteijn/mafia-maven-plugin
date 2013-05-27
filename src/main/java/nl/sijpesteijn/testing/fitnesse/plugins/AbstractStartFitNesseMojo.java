@@ -9,6 +9,7 @@ import java.util.List;
  * AbstractStartFitNesseMojo.
  */
 public abstract class AbstractStartFitNesseMojo extends AbstractFitNesseMojo {
+
     /**
      * The number of days of history.
      */

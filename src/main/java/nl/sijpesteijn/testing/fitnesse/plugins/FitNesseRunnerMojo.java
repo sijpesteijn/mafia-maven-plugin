@@ -28,16 +28,16 @@ import java.util.Properties;
 public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
 
     /**
-     * The port number on which FitNesse is running the tests.
+     * Start a separate fitnesse instance for testing or test on a remote server. (Specified by protocol & host).
      */
-    @Parameter(property = "fitNesseRunPort", defaultValue = "9091")
-    private int fitNesseRunPort;
+    @Parameter(property = "startServer", defaultValue = "true")
+    private boolean startServer;
 
     /**
      * The port number on which FitNesse is running the tests.
      */
-    @Parameter(property = "host", defaultValue = "localhost")
-    private String host;
+    @Parameter(property = "fitNesseRunPort", defaultValue = "9091")
+    private int fitNesseRunPort;
 
     /**
      * The directory where the Fitnesse reports have been generated.
@@ -100,18 +100,55 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     private ResultStore resultStore;
 
     /**
+     * Local commander to run tests on.
+     */
+    private FitNesseCommander commander;
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
-        outputDirectory = getWikiRoot() + File.separator + getNameRootPage() + "/files/mafiaResults/";
-        clearOutputDirectory();
         getLog().debug(toString());
-        final FitNesseCommander commander =
+        if (startServer) {
+            startCommander();
+        }
+        getLog().info("Starting test run....");
+        try {
+            outputDirectory = getWikiRoot() + File.separator + getNameRootPage() + "/files/mafiaResults/";
+            clearOutputDirectory();
+
+            final TestCaller testCaller = new URLTestCaller(fitNesseRunPort, "http", "localhost",
+                    new File(outputDirectory), resultStore);
+
+            final Date startDate = new Date();
+            final FitNesseTestRunner runner = new FitNesseTestRunner(testCaller,
+                    stopTestsOnIgnore, stopTestsOnException, stopTestsOnIgnore, getLog());
+            runner.runTests(tests);
+            runner.runSuites(suites);
+            runner.runFilteredSuite(suitePageName, suiteFilter);
+            saveTestSummariesAndWriteProperties(runner.getTestSummaries(), startDate);
+            printTestResults(runner.getTestSummaries());
+            getLog().info("Finished test run.");
+        } catch (MafiaException e) {
+            throw new MojoFailureException("Failed to run tests.", e);
+        }
+        if (startServer) {
+            stopCommander();
+        }
+    }
+
+    /**
+     * Start the fitnesse commander.
+     *
+     * @throws MojoFailureException - unable to create FitNesseCommander.
+     * @throws MojoExecutionException - unable to start commander.
+     */
+    private void startCommander() throws MojoFailureException, MojoExecutionException {
+        commander =
                 new FitNesseCommander(getCommanderConfig(getJvmDependencies(), getJvmArguments(), 0,
                         fitNesseRunPort));
         try {
-            commander.stop();
             commander.start();
         } catch (Throwable throwable) {
             throw new MojoExecutionException(throwable.getMessage());
@@ -119,31 +156,21 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
         if (commander.hasError()) {
             logErrorMessages(commander.getOutput(), commander.getErrorOutput());
             throw new MojoExecutionException("Could not start FitNesse");
-        } else {
-            getLog().info("FitNesse start on: http://localhost:" + fitNesseRunPort);
-            getLog().info("Starting test run....");
-            try {
+        }
+        getLog().info("FitNesse start on: http://localhost:" + fitNesseRunPort);
+    }
 
-                final TestCaller testCaller = new URLTestCaller(fitNesseRunPort, "http", host,
-                        new File(outputDirectory), resultStore);
-
-                final Date startDate = new Date();
-                final FitNesseTestRunner runner = new FitNesseTestRunner(testCaller,
-                        stopTestsOnIgnore, stopTestsOnException, stopTestsOnIgnore, getLog());
-                runner.runTests(tests);
-                runner.runSuites(suites);
-                runner.runFilteredSuite(suitePageName, suiteFilter);
-                saveTestSummariesAndWriteProperties(runner.getTestSummaries(), startDate);
-                printTestResults(runner.getTestSummaries());
-                getLog().info("Finished test run. Stopping FitNesse.");
-            } catch (MafiaException e) {
-                throw new MojoFailureException("Failed to run tests.", e);
-            }
-            try {
-                commander.stop();
-            } catch (Throwable throwable) {
-                throw new MojoExecutionException(throwable.getMessage());
-            }
+    /**
+     * Stop the fitnesse commander.
+     *
+     * @throws MojoExecutionException - unable to stop fitnesse.
+     */
+    private void stopCommander() throws MojoExecutionException {
+        try {
+            commander.stop();
+            getLog().info("FitNesse stopped on: http://localhost:" + fitNesseRunPort);
+        } catch (Throwable throwable) {
+            throw new MojoExecutionException(throwable.getMessage());
         }
     }
 
@@ -238,7 +265,9 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
      */
     @Override
     public final String toString() {
-        return super.toString() + ", Host: " + host + ", Test results directory: " + testResultsDirectory
+        return super.toString()
+                + ", FitNesseRunPort: " + fitNesseRunPort
+                + ", Test results directory: " + testResultsDirectory
                 + ", Tests: " + tests
                 + ", Suites: " + suites
                 + ", Suite page name: " + suitePageName

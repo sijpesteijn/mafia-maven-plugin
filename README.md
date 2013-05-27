@@ -64,7 +64,7 @@ Configuration:
     </tr>
  </table>
 
-Configuration example with defaults:
+Configuration example with defaults and example values:
 
 <pre>
   <code>
@@ -127,7 +127,7 @@ Configuration:
     </tr>
  </table>
 
-Configuration example with defaults:
+Configuration example with defaults and exmaple values:
 
 <pre>
   <code>
@@ -183,11 +183,6 @@ Configuration:
         <td>jvmDependencies</td>
         <td></td>
         <td>Classpath entries for the jvm.</td>
-    </tr>
-    <tr>
-        <td>host</td>
-        <td>localhost</td>
-        <td>host to run the test on.</td>
     </tr>
     <tr>
         <td>testResultsDirectory</td>
@@ -249,7 +244,6 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 					&lt;artifactId&gt;fitnesse-plugin&lt;/artifactId&gt;
 				&lt;/dependency&gt;
 			&lt;/jvmDependencies&gt;
-			&lt;host&gt;localhost&lt;/host&gt;
 			&lt;testResultsDirectory&gt;${project.build.directory}/fitnesse/&lt;/testResultsDirectory&gt;
 			&lt;stopTestsOnIgnore&gt;false&lt;/stopTestsOnIgnore&gt;
 			&lt;stopTestsOnException&gt;true&lt;/stopTestsOnException&gt;
@@ -312,7 +306,7 @@ Configuration:
     <tr>
         <td>targets</td>
         <td></td>
-        <td>Values are prefixed with !define and postfixed with /target/classes/ and copied to content.txt (useful
+        <td>Values are prefixed with !define and postfixed with /target/classes/ and added to content.txt (useful
         for hot-deployment).</td>
     </tr>
     <tr>

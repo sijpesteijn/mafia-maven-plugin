@@ -211,8 +211,10 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
      */
     @Override
     public String toString() {
-        return "FitNesse port: " + fitNessePort + ", Wiki root: " + this.wikiRoot
-                + ", Name of root page: " + this.nameRootPage + ", Log directory: " + logDirectory;
+        return "FitNesse port: " + fitNessePort
+                + ", Wiki root: " + this.wikiRoot
+                + ", Name of root page: " + this.nameRootPage
+                + ", Log directory: " + logDirectory;
     }
 
     /**
@@ -242,4 +244,5 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
     public final int getFitNessePort() {
         return fitNessePort;
     }
+
 }

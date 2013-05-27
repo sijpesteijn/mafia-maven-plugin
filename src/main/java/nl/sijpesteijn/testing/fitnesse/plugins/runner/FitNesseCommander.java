@@ -103,7 +103,7 @@ public class FitNesseCommander {
             if (inputMonitor.isFinished()) {
                 if (errorMonitor.getBuffer().toString()
                         .endsWith("Unpacking new version of FitNesse resources. Please be patient.")) {
-                    Thread.sleep(4000);
+                    Thread.sleep(3000);
                 }
                 return;
             }
@@ -119,7 +119,7 @@ public class FitNesseCommander {
      */
     private String getJVMArguments(final List<String> arguments) {
         if (arguments == null) {
-            return " ";
+            return "";
         }
         StringBuffer list = new StringBuffer(" ");
         for (final String argument : arguments) {
