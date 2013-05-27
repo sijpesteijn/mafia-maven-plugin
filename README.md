@@ -13,15 +13,14 @@ This plugin let's you control:
 1 - STARTING FitNesse.
 <br/>
 
-goal: start
-phase: install
-command: mvn mafia:start
+goal: start<br/>
+phase: install<br/>
+command: mvn mafia:start<br/>
 
 This maven goal will start the FitNesse server. You can create a configuration section in your pom to change
 default behaviour.
-
+<br/>
 Configuration:
-
 <table>
     <tr>
         <td><b>Property</b></td>
@@ -96,13 +95,13 @@ Configuration example with defaults:
 2 - STOPPING FitNesse.
 <br/>
 
-goal: stop
-phase: clean
-command: mvn mafia:stop
+goal: stop<br/>
+phase: clean<br/>
+command: mvn mafia:stop<br/>
 
 This maven goal will stop the FitNesse server. You can create a configuration section in your pom to change
 default behaviour.
-
+<br/>
 Configuration:
 
 <table>
@@ -155,13 +154,13 @@ Configuration example with defaults:
 3 - RUN TEST(S), SUITE(S), OR TAG FILTERED TESTS.
 <br/>
 
-goal: test
-phase: integration-test
-command: mvn mafia:test
+goal: test<br/>
+phase: integration-test<br/>
+command: mvn mafia:test<br/>
 
 This maven goal will run the tests listed in the configuration section. Note that the tests are run on a FitNesse
 server running on separate port, default 9091.
-
+<br/>
 Configuration:
 
 <table>
@@ -274,14 +273,14 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 4 CLASSPATH ENTRIES & DEFINITIONS.
 <br/>
 
-goal: content  
-phase: process-resources  
-command: mvn mafia:content  
+goal: content<br/>
+phase: process-resources<br/>  
+command: mvn mafia:content<br/>  
 
 This maven goal will create the content.txt file, root page, for FitNesse, filling it with 
 classpath entries (!path <location>) and definitions (!define <definition>). Automatically including the compile and
 runtime dependencies, but you can exclude dependencies in the configuration.
-
+<br/>
 Configuration:
 
 <table>
@@ -360,12 +359,12 @@ Example:
 5 - COLLECT REPORTING.
 <br/>
 
-goal: report  
-phase: site  
-command: mvn mafia:report  
+goal: report<br/>
+phase: site<br/>  
+command: mvn mafia:report<br/>  
 
 This maven goal will generate a report of the last run tests. 
-
+<br/>
 Configuration:
 
 <table>
