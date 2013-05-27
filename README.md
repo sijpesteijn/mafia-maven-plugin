@@ -362,7 +362,7 @@ Example:
 goal: report<br/>
 phase: site<br/>  
 command: mvn mafia:report<br/>  
-<br/>
+
 This maven goal will generate a report of the last run tests. 
 <br/>
 Configuration:
