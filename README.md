@@ -98,7 +98,7 @@ Configuration example with defaults:
 goal: stop<br/>
 phase: clean<br/>
 command: mvn mafia:stop<br/>
-
+<br/>
 This maven goal will stop the FitNesse server. You can create a configuration section in your pom to change
 default behaviour.
 <br/>
@@ -157,7 +157,7 @@ Configuration example with defaults:
 goal: test<br/>
 phase: integration-test<br/>
 command: mvn mafia:test<br/>
-
+<br/>
 This maven goal will run the tests listed in the configuration section. Note that the tests are run on a FitNesse
 server running on separate port, default 9091.
 <br/>
@@ -276,7 +276,7 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 goal: content<br/>
 phase: process-resources<br/>  
 command: mvn mafia:content<br/>  
-
+<br/>
 This maven goal will create the content.txt file, root page, for FitNesse, filling it with 
 classpath entries (!path <location>) and definitions (!define <definition>). Automatically including the compile and
 runtime dependencies, but you can exclude dependencies in the configuration.
@@ -362,7 +362,7 @@ Example:
 goal: report<br/>
 phase: site<br/>  
 command: mvn mafia:report<br/>  
-
+<br/>
 This maven goal will generate a report of the last run tests. 
 <br/>
 Configuration:
