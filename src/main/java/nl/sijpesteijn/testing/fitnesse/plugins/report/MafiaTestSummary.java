@@ -60,7 +60,7 @@ public class MafiaTestSummary extends TestSummary {
     /**
      * Set the test duration.
      *
-     * @param testTime {@link long}
+     * @param testTime long
      */
     public final void setTestTime(final long testTime) {
         this.testTime = testTime;
@@ -69,7 +69,7 @@ public class MafiaTestSummary extends TestSummary {
     /**
      * Get the test time.
      *
-     * @return {@link long}
+     * @return long
      */
     public final long getTestTime() {
         return testTime;

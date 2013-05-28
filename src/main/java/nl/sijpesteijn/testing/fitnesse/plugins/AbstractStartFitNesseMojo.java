@@ -31,7 +31,7 @@ public abstract class AbstractStartFitNesseMojo extends AbstractFitNesseMojo {
     /**
      * The number of days to preserve the test history.
      *
-     * @return {@link int}
+     * @return int
      */
     public final int getRetainDays() {
         return retainDays;

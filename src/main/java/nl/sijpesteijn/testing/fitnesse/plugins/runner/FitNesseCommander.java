@@ -153,7 +153,7 @@ public class FitNesseCommander {
     /**
      * Indication if an error occurred.
      *
-     * @return {@link boolean}
+     * @return boolean
      */
     public final boolean hasError() {
         return !StringUtils.isEmpty(errorMonitor.getBuffer().toString().trim())

@@ -51,7 +51,7 @@ public class StreamToBufferMonitor implements Runnable {
     /**
      * Has the process finished.
      *
-     * @return {@link boolean}
+     * @return boolean
      */
     public final boolean isFinished() {
         return finished;

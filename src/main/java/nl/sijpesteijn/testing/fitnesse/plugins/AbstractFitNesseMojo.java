@@ -239,7 +239,7 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
     }
 
     /**
-     * @return {@link int}
+     * @return int
      */
     public final int getFitNessePort() {
         return fitNessePort;
