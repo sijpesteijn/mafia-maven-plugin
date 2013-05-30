@@ -11,7 +11,9 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -40,7 +42,7 @@ public class FitNesseContextWriterTest {
     public void writeContent() throws Throwable {
         List<Dependency> excludeDependencies = getExcludeDependencies();
         fitNesseContextWriter = new FitNesseContextWriter(projectMock, statics, targets, resources, excludeDependencies, contentDir, true);
-        List<Artifact> artifacts = new ArrayList<Artifact>();
+        Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact fitnesseArtifact = new ArtifactStub();
         fitnesseArtifact.setGroupId("org.fitnesse");
         fitnesseArtifact.setArtifactId("fitnesse");
@@ -51,7 +53,7 @@ public class FitNesseContextWriterTest {
         excludeArtifact.setArtifactId("exclude");
         artifacts.add(excludeArtifact);
 
-        when(projectMock.getArtifacts(DefaultArtifact.SCOPE_TEST)).thenReturn(artifacts);
+        when(projectMock.getArtifacts()).thenReturn(artifacts);
         when(projectMock.resolveArtifact(fitnesseArtifact)).thenReturn("fitnessePath");
         List<Dependency> pluginDependencies = new ArrayList<Dependency>();
         Dependency someDependency = new Dependency();

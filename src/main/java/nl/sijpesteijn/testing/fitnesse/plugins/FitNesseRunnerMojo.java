@@ -28,6 +28,12 @@ import java.util.Properties;
 public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
 
     /**
+     * Skip the running of test. Default false.
+     */
+    @Parameter(property = "skip", defaultValue = "false")
+    private boolean skip;
+
+    /**
      * Start a separate fitnesse instance for testing or test on a remote server. (Specified by protocol & host).
      */
     @Parameter(property = "startServer", defaultValue = "true")
@@ -110,38 +116,43 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
         getLog().debug(toString());
-        if (startServer) {
-            startCommander();
-        }
-        getLog().info("Starting test run....");
-        try {
-            outputDirectory = getWikiRoot() + File.separator + getNameRootPage() + "/files/mafiaResults/";
-            clearOutputDirectory();
+        if (!skip) {
+            if (startServer) {
+                startCommander();
+            }
+            getLog().info("Starting test run....");
+            try {
+                outputDirectory = getWikiRoot() + File.separator + getNameRootPage() + "/files/mafiaResults/";
+                clearOutputDirectory();
 
-            final TestCaller testCaller = new URLTestCaller(fitNesseRunPort, "http", "localhost",
-                    new File(outputDirectory), resultStore);
+                final TestCaller testCaller = new URLTestCaller(fitNesseRunPort, "http", "localhost",
+                        new File(outputDirectory), resultStore);
 
-            final Date startDate = new Date();
-            final FitNesseTestRunner runner = new FitNesseTestRunner(testCaller,
-                    stopTestsOnIgnore, stopTestsOnException, stopTestsOnIgnore, getLog());
-            runner.runTests(tests);
-            runner.runSuites(suites);
-            runner.runFilteredSuite(suitePageName, suiteFilter);
-            saveTestSummariesAndWriteProperties(runner.getTestSummaries(), startDate);
-            printTestResults(runner.getTestSummaries());
-            getLog().info("Finished test run.");
-        } catch (MafiaException e) {
-            throw new MojoFailureException("Failed to run tests.", e);
-        }
-        if (startServer) {
-            stopCommander();
+                final Date startDate = new Date();
+                final FitNesseTestRunner runner = new FitNesseTestRunner(testCaller,
+                        stopTestsOnIgnore, stopTestsOnException, stopTestsOnIgnore, getLog());
+                runner.runTests(tests);
+                runner.runSuites(suites);
+                runner.runFilteredSuite(suitePageName, suiteFilter);
+                saveTestSummariesAndWriteProperties(runner.getTestSummaries(), startDate);
+                printTestResults(runner.getTestSummaries());
+                getLog().info("Finished test run.");
+            } catch (MafiaException e) {
+                throw new MojoFailureException("Failed to run tests.", e);
+            } finally {
+                if (startServer) {
+                    stopCommander();
+                }
+            }
+        } else {
+            getLog().info("Skipping mafia reporting.");
         }
     }
 
     /**
      * Start the fitnesse commander.
      *
-     * @throws MojoFailureException - unable to create FitNesseCommander.
+     * @throws MojoFailureException   - unable to create FitNesseCommander.
      * @throws MojoExecutionException - unable to start commander.
      */
     private void startCommander() throws MojoFailureException, MojoExecutionException {

@@ -3,12 +3,12 @@ package nl.sijpesteijn.testing.fitnesse.plugins.context;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.Project;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.model.Dependency;
 
 import java.io.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * FitNesseContextWriter.
@@ -140,7 +140,7 @@ public class FitNesseContextWriter {
      */
     private void addDependencies(final Writer writer) throws IOException, MafiaException {
         writer.write("!note Project Dependencies:" + DEF_RETURN + DEF_RETURN);
-        List<Artifact> artifacts = project.getArtifacts(DefaultArtifact.SCOPE_TEST);
+        Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact artifact : artifacts) {
             if (!isExcludeDependency(createDependency(artifact))) {
                 writer.write("!path " + project.resolveArtifact(artifact) + DEF_RETURN);

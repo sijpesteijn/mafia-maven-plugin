@@ -9,6 +9,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.File;
 import java.util.List;
@@ -17,7 +18,8 @@ import java.util.List;
  * This mojo will generate a new content.txt (classpath) file for FitNesse
  * The file is default placed in the wiki root of FitNesse.
  */
-@Mojo(name = "content", defaultPhase = LifecyclePhase.POST_CLEAN)
+@Mojo(name = "content", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, requiresDependencyResolution = ResolutionScope
+        .COMPILE_PLUS_RUNTIME)
 public class FitNesseContentMojo extends AbstractFitNesseMojo {
 
     /**

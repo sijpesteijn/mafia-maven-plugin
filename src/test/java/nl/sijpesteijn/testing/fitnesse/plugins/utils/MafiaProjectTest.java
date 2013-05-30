@@ -1,7 +1,6 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
@@ -9,7 +8,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.repository.RepositorySystem;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,6 +39,7 @@ public class MafiaProjectTest {
         mavenProject = new MavenProject();
         Set<Artifact> pluginArtifacts = new HashSet<Artifact>();
         pluginArtifacts.add(getDummyArtifact());
+        mavenProject.setArtifacts(pluginArtifacts);
         mavenProject.setPluginArtifacts(pluginArtifacts);
         artifactRepositoryMock = mock(ArtifactRepository.class);
         repositorySystemMock = mock(RepositorySystem.class);
@@ -52,15 +51,9 @@ public class MafiaProjectTest {
 
     @Test
     public void testGetArtifacts() throws Throwable {
-        List<DependencyNode> nodes = new ArrayList<DependencyNode>();
-        DependencyNode nodeMock = mock(DependencyNode.class);
-        nodes.add(nodeMock);
-        when(graphBuilderMock.getDependencyNodes(DefaultArtifact.SCOPE_TEST)).thenReturn(nodes);
-        Artifact artifact = getDummyArtifact();
-        when(nodeMock.getArtifact()).thenReturn(artifact);
-        List<Artifact> artifacts = mafiaProject.getArtifacts(DefaultArtifact.SCOPE_TEST);
+        Set<Artifact> artifacts = mafiaProject.getArtifacts();
         assertNotNull(artifacts);
-        assertEquals("some", artifacts.get(0).getArtifactId());
+        assertEquals("some", artifacts.iterator().next().getArtifactId());
     }
 
     @Test

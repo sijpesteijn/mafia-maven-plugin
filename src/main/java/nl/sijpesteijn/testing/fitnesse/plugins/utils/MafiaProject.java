@@ -8,7 +8,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.repository.RepositorySystem;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -164,13 +163,8 @@ public class MafiaProject implements Project {
     /**
      * {@inheritDoc}
      */
-    public final List<Artifact> getArtifacts(final String scope) throws MafiaException {
-        List<DependencyNode> dependencyNodes = graphBuilder.getDependencyNodes(scope);
-        List<Artifact> artifacts = new ArrayList<Artifact>();
-        for (DependencyNode dependencyNode : dependencyNodes) {
-            artifacts.add(dependencyNode.getArtifact());
-        }
-        return artifacts;
+    public final Set<Artifact> getArtifacts() throws MafiaException {
+        return project.getArtifacts();
     }
 
 }

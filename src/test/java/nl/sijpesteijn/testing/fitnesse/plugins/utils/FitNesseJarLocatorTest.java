@@ -1,7 +1,6 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.junit.Before;
@@ -25,7 +24,6 @@ public class FitNesseJarLocatorTest {
     private FitNesseJarLocator locator;
     private Project mafiaProjectMock;
     private Artifact fitnesseArtifact;
-    private Artifact resolvedFitNesseArtifact = getDummyArtifact();
 
     @Before
     public void setup() throws Throwable {
@@ -76,7 +74,7 @@ public class FitNesseJarLocatorTest {
 
     @Test
     public void testSearchArtifacts() throws Throwable {
-        List<Artifact> artifacts = new ArrayList<Artifact>();
+        Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact someArtifact = new ArtifactStub();
         someArtifact.setArtifactId("some-artifact");
         someArtifact.setGroupId("some-groupid");
@@ -87,16 +85,8 @@ public class FitNesseJarLocatorTest {
         artifacts.add(someArtifact);
         artifacts.add(fitnesseArtifact);
 
-        when(mafiaProjectMock.getArtifacts(DefaultArtifact.SCOPE_COMPILE)).thenReturn(artifacts);
+        when(mafiaProjectMock.getArtifacts()).thenReturn(artifacts);
         locator.getFitNesseJarPath();
     }
 
-    public Artifact getDummyArtifact() {
-        Artifact artifact = new ArtifactStub();
-        artifact.setGroupId("org.sample");
-        artifact.setArtifactId("some");
-        artifact.setVersion("1.0");
-        artifact.setScope("test");
-        return artifact;
-    }
 }

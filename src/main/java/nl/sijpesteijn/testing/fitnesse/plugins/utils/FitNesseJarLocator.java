@@ -100,10 +100,8 @@ public class FitNesseJarLocator {
      * @throws MafiaException - unable to find fitnesse jar in project dependencies.
      */
     private void findInProjectDependencies() throws MafiaException {
-        List<Artifact> compileArtifacts = project.getArtifacts(DefaultArtifact.SCOPE_COMPILE);
+        Set<Artifact> compileArtifacts = project.getArtifacts(); //DefaultArtifact.SCOPE_COMPILE);
         searchArtifacts(compileArtifacts);
-        List<Artifact> runtimeArtifacts = project.getArtifacts(DefaultArtifact.SCOPE_RUNTIME);
-        searchArtifacts(runtimeArtifacts);
     }
 
     /**
@@ -111,7 +109,7 @@ public class FitNesseJarLocator {
      *
      * @param artifacts - list of artifacts.
      */
-    private void searchArtifacts(final List<Artifact> artifacts) {
+    private void searchArtifacts(final Set<Artifact> artifacts) {
         if (artifacts != null) {
             for (Artifact artifact : artifacts) {
                 if (isFitNesseJar(artifact)) {

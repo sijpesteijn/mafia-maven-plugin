@@ -71,11 +71,10 @@ public interface Project {
     String resolveDependency(final Dependency dependency);
 
     /**
-     * Get the artifacts from the maven project given a certain scope.
+     * Get the artifacts from the maven project.
      *
-     * @param scope {@link java.lang.String}
-     * @return @{link java.util.List} of {@link org.apache.maven.artifact.Artifact}'s
+     * @return @{link java.util.Set} of {@link org.apache.maven.artifact.Artifact}'s
      * @throws MafiaException thrown in case of an error
      */
-    List<Artifact> getArtifacts(final String scope) throws MafiaException;
+    Set<Artifact> getArtifacts() throws MafiaException;
 }
