@@ -144,8 +144,7 @@ public class ReportResource {
         String file = url.getFile();
         int bangIndex = file.indexOf('!');
         file = new URL(file.substring(0, bangIndex)).getFile();
-        ZipFile zip = new ZipFile(file);
-        return zip;
+        return new ZipFile(file);
     }
 
     /**
@@ -157,8 +156,7 @@ public class ReportResource {
     private String getJarPath(final URL url) {
         String file = url.getFile();
         int bangIndex = file.indexOf('!');
-        String jarPath = file.substring(bangIndex + 2);
-        return jarPath;
+        return file.substring(bangIndex + 2);
     }
 
     /**

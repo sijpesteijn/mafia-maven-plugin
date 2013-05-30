@@ -1,8 +1,10 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -42,9 +44,9 @@ public class FitNesseCommander {
     /**
      * Start FitNesse.
      *
-     * @throws Throwable thrown in case of an error.
+     * @throws MafiaException thrown in case of an error.
      */
-    public final void start() throws Throwable {
+    public final void start() throws MafiaException {
         String logArgument = "";
         if (commanderConfig.getFitNesseLogDirectory() != null) {
             logArgument = " -l " + commanderConfig.getFitNesseLogDirectory();
@@ -63,9 +65,9 @@ public class FitNesseCommander {
     /**
      * Stop FitNesse.
      *
-     * @throws Throwable thrown in case of an error.
+     * @throws MafiaException thrown in case of an error.
      */
-    public final void stop() throws Throwable {
+    public final void stop() throws MafiaException {
         final String command = "java -cp " + commanderConfig.getClasspathString() + " fitnesse.Shutdown -p "
                 + commanderConfig.getFitNessePort();
         run(command);
@@ -75,16 +77,22 @@ public class FitNesseCommander {
      * Run the command.
      *
      * @param command - command.
-     * @throws Throwable - unable to execute command.
+     * @throws MafiaException - unable to execute command.
      */
-    private void run(final String command) throws Throwable {
-        commanderConfig.getLog().debug("Running command: " + command);
-        process = Runtime.getRuntime().exec(command, null, new File(commanderConfig.getWikiRoot()));
-        errorMonitor = new StreamToBufferMonitor(process.getErrorStream());
-        new Thread(errorMonitor).start();
-        inputMonitor = new StreamToBufferMonitor(process.getInputStream());
-        new Thread(inputMonitor).start();
-        waitForProcess();
+    private void run(final String command) throws MafiaException {
+        try {
+            commanderConfig.getLog().debug("Running command: " + command);
+            process = Runtime.getRuntime().exec(command, null, new File(commanderConfig.getWikiRoot()));
+            errorMonitor = new StreamToBufferMonitor(process.getErrorStream());
+            new Thread(errorMonitor).start();
+            inputMonitor = new StreamToBufferMonitor(process.getInputStream());
+            new Thread(inputMonitor).start();
+            waitForProcess();
+        } catch (IOException e) {
+            throw new MafiaException("Could not run command.", e);
+        } catch (InterruptedException e) {
+            throw new MafiaException("Could not run command.", e);
+        }
     }
 
     /**
@@ -124,9 +132,12 @@ public class FitNesseCommander {
         StringBuffer list = new StringBuffer(" ");
         for (final String argument : arguments) {
             if (argument.startsWith("-")) {
-                list.append(argument + " ");
+                list.append(argument);
+                list.append(" ");
             } else {
-                list.append(" -D" + argument + " ");
+                list.append(" -D");
+                list.append(argument);
+                list.append(" ");
             }
         }
         return list.toString();

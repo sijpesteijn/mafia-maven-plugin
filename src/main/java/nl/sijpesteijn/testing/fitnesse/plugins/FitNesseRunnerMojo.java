@@ -161,8 +161,8 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
                         fitNesseRunPort));
         try {
             commander.start();
-        } catch (Throwable throwable) {
-            throw new MojoExecutionException(throwable.getMessage());
+        } catch (MafiaException me) {
+            throw new MojoExecutionException(me.getMessage(), me);
         }
         if (commander.hasError()) {
             logErrorMessages(commander.getOutput(), commander.getErrorOutput());
@@ -180,8 +180,8 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
         try {
             commander.stop();
             getLog().info("FitNesse stopped on: http://localhost:" + fitNesseRunPort);
-        } catch (Throwable throwable) {
-            throw new MojoExecutionException(throwable.getMessage());
+        } catch (MafiaException me) {
+            throw new MojoExecutionException(me.getMessage(), me);
         }
     }
 
@@ -240,7 +240,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
         try {
             outputStream = new FileOutputStream(outputDirectory + File.separator + "mafiaresults.properties");
         } catch (FileNotFoundException e) {
-            throw new MafiaException("Could not open mafiaresults.properties");
+            throw new MafiaException("Could not open mafiaresults.properties", e);
         }
 
         try {
@@ -252,7 +252,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
             try {
                 outputStream.close();
             } catch (IOException e) {
-                throw new MafiaException("Could not close property file stream.");
+                throw new MafiaException("Could not close property file stream.", e);
             }
         }
 

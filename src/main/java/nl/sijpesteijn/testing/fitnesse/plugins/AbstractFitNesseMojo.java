@@ -1,7 +1,10 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommanderConfig;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.*;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseJarLocator;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaProject;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.Project;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
@@ -13,7 +16,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 
 import java.io.File;
 import java.util.List;
@@ -34,12 +36,6 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
      */
     @Component
     private MavenProject project;
-
-    /**
-     * The dependency tree builder to use.
-     */
-    @Component(hint = "default")
-    private DependencyGraphBuilder dependencyGraphBuilder;
 
     /**
      * Used to look up Artifacts in the remote repository.
@@ -106,10 +102,8 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
      * @throws MojoFailureException thrown in case of an error.
      */
     protected final Project getMafiaProject() throws MojoFailureException {
-        final GraphBuilder mafiaGraphBuilder = new MafiaGraphBuilder(project, dependencyGraphBuilder,
-                new MafiaCollectingDependencyNodeVisitor());
         return new MafiaProject(this.project, localRepository, repositorySystem,
-                mavenProjectBuilder, remoteRepositories, mafiaGraphBuilder);
+                mavenProjectBuilder, remoteRepositories);
     }
 
     /**
@@ -152,7 +146,8 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
             return jvmStr.toString();
         }
         for (Dependency jvmDependency : jvmDependencies) {
-            jvmStr.append(File.pathSeparatorChar + getDependencyPath(jvmDependency));
+            jvmStr.append(File.pathSeparatorChar);
+            jvmStr.append(getDependencyPath(jvmDependency));
         }
         return jvmStr.toString();
     }

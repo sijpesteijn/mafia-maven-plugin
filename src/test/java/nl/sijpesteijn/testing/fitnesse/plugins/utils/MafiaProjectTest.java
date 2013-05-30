@@ -29,7 +29,6 @@ import static org.mockito.Mockito.when;
 public class MafiaProjectTest {
     private MafiaProject mafiaProject;
     private MavenProject mavenProject;
-    private GraphBuilder graphBuilderMock;
     private RepositorySystem repositorySystemMock;
     private ArtifactRepository artifactRepositoryMock;
     private MavenProjectBuilder mavenProjectBuilderMock;
@@ -45,8 +44,7 @@ public class MafiaProjectTest {
         repositorySystemMock = mock(RepositorySystem.class);
         mavenProjectBuilderMock = mock(MavenProjectBuilder.class);
         List<ArtifactRepository> remoteRepositories = new ArrayList<ArtifactRepository>();
-        graphBuilderMock = mock(GraphBuilder.class);
-        mafiaProject = new MafiaProject(mavenProject, artifactRepositoryMock, repositorySystemMock,mavenProjectBuilderMock, remoteRepositories, graphBuilderMock);
+        mafiaProject = new MafiaProject(mavenProject, artifactRepositoryMock, repositorySystemMock,mavenProjectBuilderMock, remoteRepositories);
     }
 
     @Test

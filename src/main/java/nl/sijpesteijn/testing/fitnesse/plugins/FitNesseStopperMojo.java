@@ -1,6 +1,7 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommander;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -21,8 +22,8 @@ public class FitNesseStopperMojo extends AbstractFitNesseMojo {
         final FitNesseCommander commander = new FitNesseCommander(getCommanderConfig());
         try {
             commander.stop();
-        } catch (Throwable throwable) {
-            throw new MojoExecutionException(throwable.getMessage());
+        } catch (MafiaException me) {
+            throw new MojoExecutionException(me.getMessage(), me);
         }
         if (commander.hasError()) {
             getLog().info("Could not stop FitNesse on port: " + getFitNessePort() + ". Are you sure it's running?");

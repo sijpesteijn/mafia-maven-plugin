@@ -50,11 +50,6 @@ public class MafiaProject implements Project {
     private final List<ArtifactRepository> remoteRepositories;
 
     /**
-     * Graph builder.
-     */
-    private final GraphBuilder graphBuilder;
-
-    /**
      * Constructor.
      *
      * @param project             - the mafia project.
@@ -62,18 +57,16 @@ public class MafiaProject implements Project {
      * @param repositorySystem    - the repository system.
      * @param mavenProjectBuilder - the maven project builder.
      * @param remoteRepositories  - the remote repositories.
-     * @param graphBuilder        - the graph builder.
      */
     public MafiaProject(final MavenProject project,
                         final ArtifactRepository localRepository, final RepositorySystem repositorySystem,
                         final MavenProjectBuilder mavenProjectBuilder,
-                        final List<ArtifactRepository> remoteRepositories, final GraphBuilder graphBuilder) {
+                        final List<ArtifactRepository> remoteRepositories) {
         this.project = project;
         this.localRepository = localRepository;
         this.repositorySystem = repositorySystem;
         this.mavenProjectBuilder = mavenProjectBuilder;
         this.remoteRepositories = remoteRepositories;
-        this.graphBuilder = graphBuilder;
     }
 
     /**

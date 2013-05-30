@@ -113,7 +113,7 @@ public class FitNesseReportMojo extends AbstractMavenReport {
         } catch (IOException e) {
             throw new MavenReportException("Could not generate report.", e);
         } catch (MafiaException e) {
-            throw new MavenReportException("Could not generate report." + e.getMessage());
+            throw new MavenReportException("Could not generate report." + e.getMessage(), e);
         }
 
     }
@@ -138,7 +138,7 @@ public class FitNesseReportMojo extends AbstractMavenReport {
      * @return - a resource bundle.
      */
     private ResourceBundle getBundle(final Locale locale) {
-        return ResourceBundle.getBundle("mafia-report", locale, FitNesseReportMojo.class.getClassLoader());
+        return ResourceBundle.getBundle("mafia-report", locale, Thread.currentThread().getContextClassLoader());
     }
 
     /**

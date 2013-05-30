@@ -35,8 +35,7 @@ public class JsoupReportFormatter implements ReportFormatter {
         updateIncludes(body);
 
         updateSummary(body, testType, testResult, timeStamp);
-        String html = body.toString();
-        return html;
+        return body.toString();
     }
 
     /**
