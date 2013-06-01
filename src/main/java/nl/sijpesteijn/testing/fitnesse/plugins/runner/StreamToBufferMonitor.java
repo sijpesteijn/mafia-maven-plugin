@@ -35,6 +35,7 @@ public class StreamToBufferMonitor implements Runnable {
      * Start the monitoring.
      */
     @Override
+    @SuppressWarnings("PMD")
     public final void run() {
         try {
             int c = inputStream.read();

@@ -59,13 +59,14 @@
         <maven-gpg-plugin.version>1.2</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>2.8.1</maven-javadoc-plugin.version>
 
+        <maven-site-plugin.version>3.3</maven-site-plugin.version>
         <maven-reporting-api.version>3.0</maven-reporting-api.version>
         <maven-reporting-impl.version>2.0.5</maven-reporting-impl.version>
         <doxia-site-renderer.version>1.0</doxia-site-renderer.version>
         <doxia-sink-api.version>1.0</doxia-sink-api.version>
 
         <cobertura.version>2.5.2</cobertura.version>
-        <pmd.version>2.7.1</pmd.version>
+        <pmd.version>2.5</pmd.version>
         <findbugs.version>2.5.2</findbugs.version>
         <junit.version>4.9</junit.version>
         <jsoup.version>1.7.2</jsoup.version>
@@ -102,20 +103,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${pmd.version}</version>
-                <configuration>
-                    <failOnViolation>true</failOnViolation>
-                    <failurePriority>0</failurePriority>
-                    <includeTests>true</includeTests>
-                    <rulesets>
-                        <ruleset>pmd.xml</ruleset>
-                    </rulesets>
-                    <targetJdk>1.6</targetJdk>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>${findbugs.version}</version>
@@ -132,10 +119,10 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <fitNesseRunPort>9999</fitNesseRunPort>
                     <wikiRoot>${project.build.outputDirectory}/</wikiRoot>
                     <tests>
                         <test>FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteRowFixtureSpec.TestBasicRowFixture</test>
+                        <test>FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteGeneralFixtureSpec.TestBlankAndNullCells</test>
                     </tests>
                 </configuration>
             </plugin>
@@ -164,11 +151,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <port>9000</port>
-                    <tempWebappDirectory>${basedir}/target/site/tempdir/</tempWebappDirectory>
-                </configuration>
+                <version>${maven-site-plugin.version}</version>
             </plugin>
         </plugins>
     </build>
@@ -198,9 +181,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven-javadoc-plugin.version}</version>
-                <configuration>
-                    <goal>javadoc</goal>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -234,12 +214,14 @@
                 <version>${pmd.version}</version>
                 <configuration>
                     <failOnViolation>true</failOnViolation>
-                    <failurePriority>0</failurePriority>
-                    <includeTests>true</includeTests>
+                    <includeTests>false</includeTests>
                     <rulesets>
-                        <ruleset>pmd.xml</ruleset>
+                        <ruleset>${basedir}/pmd.xml</ruleset>
                     </rulesets>
                     <targetJdk>1.6</targetJdk>
+                    <excludes>
+                        <exclude>/nl/sijpesteijn/testing/fitnesse/plugins/HelpMojo.*</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>

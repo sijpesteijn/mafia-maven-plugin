@@ -4,7 +4,6 @@ import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -88,9 +87,7 @@ public class FitNesseCommander {
             inputMonitor = new StreamToBufferMonitor(process.getInputStream());
             new Thread(inputMonitor).start();
             waitForProcess();
-        } catch (IOException e) {
-            throw new MafiaException("Could not run command.", e);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             throw new MafiaException("Could not run command.", e);
         }
     }
@@ -100,6 +97,7 @@ public class FitNesseCommander {
      *
      * @throws InterruptedException - unable to check process status.
      */
+    @SuppressWarnings("PMD")
     private void waitForProcess() throws InterruptedException {
         while (true) {
             try {

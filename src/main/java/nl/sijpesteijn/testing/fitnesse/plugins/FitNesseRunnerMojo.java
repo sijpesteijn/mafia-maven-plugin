@@ -30,7 +30,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     /**
      * Skip the running of test. Default false.
      */
-    @Parameter(property = "skip", defaultValue = "false")
+    @Parameter(property = "mafia.test.skip", defaultValue = "false")
     private boolean skip;
 
     /**

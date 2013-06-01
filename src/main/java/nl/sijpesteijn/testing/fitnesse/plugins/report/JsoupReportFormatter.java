@@ -74,6 +74,7 @@ public class JsoupReportFormatter implements ReportFormatter {
      * @param timeStamp - the timestamp.
      * @return - result string.
      */
+    @SuppressWarnings("PMD")
     private String getSummaryList(final Elements scripts, final long timeStamp) {
         String startStr = "existingContent + \"<li>";
         StringBuffer list = new StringBuffer();

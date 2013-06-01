@@ -3,7 +3,6 @@ package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 import nl.sijpesteijn.testing.fitnesse.plugins.AbstractFitNesseTest;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertNotNull;
@@ -37,7 +36,6 @@ public class FitNesseCommanderTest extends AbstractFitNesseTest {
     }
 
     @Test
-    @Ignore
     public void startNoJvmArguments() throws Throwable {
         FitNesseCommanderConfig config = new FitNesseCommanderConfig(PORT, WIKI_ROOT, NAME_ROOT_PAGE, LOG_DIRECTORY,0,
                 FITNESSE_JAR_PATH, null, mockLog);
@@ -47,11 +45,4 @@ public class FitNesseCommanderTest extends AbstractFitNesseTest {
         assertFalse(commander.hasError());
     }
 
-    @Test
-    @Ignore
-    public void stop() throws Throwable {
-        commander.start();
-        commander.stop();
-        assertFalse(commander.hasError());
-    }
 }
