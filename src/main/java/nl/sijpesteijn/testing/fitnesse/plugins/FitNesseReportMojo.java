@@ -101,8 +101,8 @@ public class FitNesseReportMojo extends AbstractMavenReport {
         final String mafiaTestResultsDir = wikiRoot + nameRootPage + "/files/mafiaResults/";
         getLog().debug(toString());
         try {
-            copyResources();
             FileUtils.copyDirectoryStructure(new File(mafiaTestResultsDir), new File(outputDirectory));
+            copyResources();
             final MafiaTestResultRepository resultRepository =
                     new MafiaTestResultRepository(new File(outputDirectory));
             final MafiaIndexGenerator generator =

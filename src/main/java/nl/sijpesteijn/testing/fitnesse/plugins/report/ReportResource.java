@@ -47,7 +47,7 @@ public class ReportResource {
         final File destination = new File(outputDirectory);
         final URL url =
                 Thread.currentThread().getContextClassLoader().getResource(pluginResources + resourceName);
-
+        System.out.println("URL: " + url);
         if (url != null) {
             if (isFile(url)) {
                 copyDirectory(new File(url.getFile()), destination);
@@ -90,6 +90,7 @@ public class ReportResource {
                         new File(dir).mkdirs();
                     }
                     String outputFile = dest + stripped;
+                    System.out.println("OUT: " + outputFile);
                     if (!dir.equals(outputFile)) {
                         final InputStream is = zip.getInputStream(entry);
                         saveInputStream(is, outputFile);
@@ -167,6 +168,8 @@ public class ReportResource {
      * @throws IOException - unable to copy directory.
      */
     private void copyDirectory(final File source, final File destination) throws IOException {
+        System.out.println("DIR: " + destination);
+
         FileUtils.copyDirectoryToDirectory(source, destination);
     }
 
