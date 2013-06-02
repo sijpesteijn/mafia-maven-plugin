@@ -40,9 +40,10 @@ public class FitNesseCommanderTest extends AbstractFitNesseTest {
         FitNesseCommanderConfig config = new FitNesseCommanderConfig(PORT, WIKI_ROOT, NAME_ROOT_PAGE, LOG_DIRECTORY,0,
                 FITNESSE_JAR_PATH, null, mockLog);
         commander = new FitNesseCommander(config);
-        commander.stop();
         commander.start();
-        assertFalse(commander.hasError());
+        System.out.println("ERR: " + commander.getErrorOutput());
+        System.out.println("OUT: " + commander.getOutput());
+        assertTrue(commander.hasError());
     }
 
 }
