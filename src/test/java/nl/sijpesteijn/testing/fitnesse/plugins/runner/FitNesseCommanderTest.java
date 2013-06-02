@@ -41,9 +41,7 @@ public class FitNesseCommanderTest extends AbstractFitNesseTest {
                 FITNESSE_JAR_PATH, null, mockLog);
         commander = new FitNesseCommander(config);
         commander.start();
-        System.out.println("ERR: " + commander.getErrorOutput());
-        System.out.println("OUT: " + commander.getOutput());
-        assertTrue(commander.hasError());
+        assertFalse(commander.hasError());
     }
 
 }

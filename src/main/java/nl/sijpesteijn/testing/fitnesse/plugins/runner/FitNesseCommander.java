@@ -165,7 +165,10 @@ public class FitNesseCommander {
      * @return boolean
      */
     public final boolean hasError() {
-        return !StringUtils.isEmpty(errorMonitor.getBuffer().toString().trim())
-                && !errorMonitor.getBuffer().toString().endsWith("Please be patient.");
+        if (inputMonitor.getBuffer().toString().trim().endsWith("FitNesse (v20121220) Started...")
+                || errorMonitor.getBuffer().toString().trim().endsWith("Please be patient.")) {
+            return false;
+        }
+        return true;
     }
 }
