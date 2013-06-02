@@ -21,13 +21,14 @@ public class AbstractFitNesseTest {
     protected final List<String> jvmArguments = new ArrayList<String>() {{add("-Dmaven.test.skip=true");add("maven.javadoc.skip=false");}};
     protected final LoggerStub mockLog = new LoggerStub();
     protected final String TEST_RESULT_DIR;
+    protected final String SEP = File.separator;
 
     public AbstractFitNesseTest() {
         base = new File("").getAbsolutePath();
-        WIKI_ROOT = base + "/target/";
-        LOG_DIRECTORY = base + "/target/log";
-        FITNESSE_JAR_PATH = base + "/src/test/resources/fitnesse.jar";
-        TEST_RESULT_DIR = base + "/target/test-results/";
+        WIKI_ROOT = base + SEP + "target" + SEP;
+        LOG_DIRECTORY = base + SEP +  "target" + SEP + "log";
+        FITNESSE_JAR_PATH = base + SEP + "src" + SEP + "test" + SEP + "resources"  + SEP + "fitnesse.jar";
+        TEST_RESULT_DIR = base +  SEP + "target" + SEP + "test-results" + SEP;
     }
 
 

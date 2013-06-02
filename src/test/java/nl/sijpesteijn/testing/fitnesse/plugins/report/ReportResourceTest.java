@@ -11,10 +11,11 @@ import java.io.File;
  */
 public class ReportResourceTest {
     private ReportResource reportResource;
-    private String root = new File("").getAbsolutePath();
+    private String root;
 
     @Before
     public void setup() throws Exception {
+        root = new File("").getAbsolutePath();
         reportResource = new ReportResource(root + "/target/", "");
     }
 
@@ -31,7 +32,7 @@ public class ReportResourceTest {
     @Test
     public void testCopyFileFromJar() throws Exception {
         reportResource = new ReportResource(root + "/target/", "eg/");
-        reportResource.copy("employeePayroll/Employees.class");
+        reportResource.copy("/employeePayroll/Employees.class");
     }
 
     @Test

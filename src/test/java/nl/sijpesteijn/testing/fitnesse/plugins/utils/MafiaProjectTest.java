@@ -11,6 +11,7 @@ import org.apache.maven.repository.RepositorySystem;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ public class MafiaProjectTest {
     private RepositorySystem repositorySystemMock;
     private ArtifactRepository artifactRepositoryMock;
     private MavenProjectBuilder mavenProjectBuilderMock;
+    private final String SEP = File.separator;
 
     @Before
     public void setup() throws Throwable {
@@ -80,7 +82,7 @@ public class MafiaProjectTest {
 
     @Test
     public void testResolveArtifact() throws Exception {
-        when(artifactRepositoryMock.getBasedir()).thenReturn("./target");
+        when(artifactRepositoryMock.getBasedir()).thenReturn("." + File.separator + "target");
         Artifact artifact = mock(Artifact.class);
         when(artifact.getGroupId()).thenReturn("org.sample");
         when(artifact.getArtifactId()).thenReturn("some");
@@ -90,12 +92,13 @@ public class MafiaProjectTest {
 
         String path = mafiaProject.resolveArtifact(artifact);
         assertNotNull(path);
-        assertEquals("./target/org/sample/some/1.0/some-1.0-sources.jar", path);
+        String root = "." + SEP + "target" + SEP + "org" + SEP + "sample" + SEP + "some" + SEP + "1.0" + SEP;
+        assertEquals(root + "some-1.0-sources.jar", path);
 
         Artifact dummyArtifact = getDummyArtifact();
         path = mafiaProject.resolveArtifact(dummyArtifact);
         assertNotNull(path);
-        assertEquals("./target/org/sample/some/1.0/some-1.0.jar", path);
+        assertEquals(root + "some-1.0.jar", path);
     }
 
     @Test
@@ -106,10 +109,11 @@ public class MafiaProjectTest {
         dependency.setVersion("1.0");
         dependency.setScope("test");
 
-        when(artifactRepositoryMock.getBasedir()).thenReturn("./target");
+        when(artifactRepositoryMock.getBasedir()).thenReturn("." + SEP + "target");
         String path = mafiaProject.resolveDependency(dependency);
         assertNotNull(path);
-        assertEquals("./target/org/sample/some/1.0/some-1.0.jar", path);
+        String root = "." + SEP + "target" + SEP + "org" + SEP + "sample" + SEP + "some" + SEP + "1.0" + SEP;
+        assertEquals(root + "some-1.0.jar", path);
     }
 
     @Test
