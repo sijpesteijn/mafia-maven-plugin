@@ -30,6 +30,8 @@ public class FitNesseCommanderTest extends AbstractFitNesseTest {
     public void start() throws Throwable {
         commander.stop();
         commander.start();
+        System.out.println("ERR: " + commander.getErrorOutput());
+        System.out.println("OUT: " + commander.getOutput());
         assertFalse(commander.hasError());
         assertTrue(commander.getOutput().contains("FitNesse (v20121220) Started...") || commander.getErrorOutput().equals("Unpacking new version of FitNesse resources. Please be patient."));
         assertNotNull(commander.getErrorOutput());
