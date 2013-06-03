@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class AbstractFitNesseTest {
     protected final String base;
-    protected final int PORT = 9999;
+    protected final int PORT = 9091;
     protected final String WIKI_ROOT;
     protected final String NAME_ROOT_PAGE = "FitNesseRoot";
     protected final String LOG_DIRECTORY;
