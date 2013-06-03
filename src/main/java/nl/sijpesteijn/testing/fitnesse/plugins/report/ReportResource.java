@@ -166,8 +166,6 @@ public class ReportResource {
      * @throws IOException - unable to copy directory.
      */
     private void copyDirectory(final File source, final File destination) throws IOException {
-        System.out.println("DIR: " + destination);
-
         FileUtils.copyDirectoryToDirectory(source, destination);
     }
 
