@@ -117,25 +117,25 @@
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>${findbugs.version}</version>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>-->
-                <!--<artifactId>mafia-maven-plugin</artifactId>-->
-                <!--<version>${project.version}</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>test</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-                <!--<configuration>-->
-                    <!--<wikiRoot>${project.build.outputDirectory}/</wikiRoot>-->
-                    <!--<tests>-->
-                        <!--<test>FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteRowFixtureSpec.TestBasicRowFixture</test>-->
-                        <!--<test>FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteGeneralFixtureSpec.TestBlankAndNullCells</test>-->
-                    <!--</tests>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
+                <artifactId>mafia-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <wikiRoot>${project.build.outputDirectory}/</wikiRoot>
+                    <tests>
+                        <test>FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteRowFixtureSpec.TestBasicRowFixture</test>
+                        <test>FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteGeneralFixtureSpec.TestBlankAndNullCells</test>
+                    </tests>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
@@ -234,14 +234,14 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>-->
-                <!--<artifactId>mafia-maven-plugin</artifactId>-->
-                <!--<version>${project.version}</version>-->
-                <!--<configuration>-->
-                    <!--<wikiRoot>${project.build.outputDirectory}/</wikiRoot>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
+                <artifactId>mafia-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <wikiRoot>${project.build.outputDirectory}/</wikiRoot>
+                </configuration>
+            </plugin>
         </plugins>
     </reporting>
 
