@@ -27,6 +27,7 @@ public class URLTestCallerTest extends AbstractFitNesseTest {
     public void setup() throws Throwable {
         resultStoreMock = mock(ResultStore.class);
         commander.start();
+        Thread.sleep(5000);
     }
 
     @After
