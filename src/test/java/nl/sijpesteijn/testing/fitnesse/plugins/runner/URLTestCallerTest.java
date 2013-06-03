@@ -41,7 +41,7 @@ public class URLTestCallerTest extends AbstractFitNesseTest {
         when(resultStoreMock.saveResult(isA(String.class), isA(File.class), isA(String.class))).thenReturn(new
                 MafiaTestSummary());
         final String testName =
-                "FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteColumnFixtureSpec.TestMissingMethod";
+                "FitNesse.SuiteAcceptanceTests.SuiteWidgetTests.TestExpression";
         MafiaTestSummary mafiaTestSummary = testCaller.test(testName, PageType.TEST, null, "/tests/");
         assertNotNull(mafiaTestSummary);
     }
@@ -53,7 +53,7 @@ public class URLTestCallerTest extends AbstractFitNesseTest {
         when(resultStoreMock.saveResult(isA(String.class), isA(File.class), isA(String.class))).thenReturn(new
                 MafiaTestSummary());
         final String testName =
-                "FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteColumnFixtureSpec.TestMissingMethod";
+                "FitNesse.SuiteAcceptanceTests.SuiteWidgetTests.TestExpression";
         try {
             MafiaTestSummary mafiaTestSummary = testCaller.test(testName, PageType.TEST, null, "/tests/");
             assertNotNull(mafiaTestSummary);
@@ -69,7 +69,7 @@ public class URLTestCallerTest extends AbstractFitNesseTest {
         when(resultStoreMock.saveResult(isA(String.class), isA(File.class), isA(String.class))).thenReturn(new
                 MafiaTestSummary());
         final String testName =
-                "FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteColumnFixtureSpec.TestMissingMethod";
+                "FitNesse.SuiteAcceptanceTests.SuiteWidgetTests.TestExpression";
         try {
             MafiaTestSummary mafiaTestSummary = testCaller.test(testName, PageType.TEST, null, "/tests/");
             assertNotNull(mafiaTestSummary);
