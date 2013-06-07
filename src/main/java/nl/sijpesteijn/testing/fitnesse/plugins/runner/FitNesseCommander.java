@@ -55,8 +55,8 @@ public class FitNesseCommander {
                 + " -d " + commanderConfig.getWikiRoot()
                 + " -r " + commanderConfig.getNameRootPage()
                 + " -e " + commanderConfig.getRetainDays()
-                + logArgument;
-//                + " -o";
+                + logArgument
+                + " -o";
         commanderConfig.getLog().info("Starting FitNesse. This could take some more seconds when first used....");
         run(command);
     }
