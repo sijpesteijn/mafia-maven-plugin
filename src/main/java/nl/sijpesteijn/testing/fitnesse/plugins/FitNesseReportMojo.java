@@ -37,6 +37,12 @@ public class FitNesseReportMojo extends AbstractMavenReport {
     private MavenProject project;
 
     /**
+     * @link {nl.sijpesteijn.testing.fitnesse.plugins.report.ReportFormatter}
+     */
+    @Component(role = ReportFormatter.class)
+    private ReportFormatter reportFormatter;
+
+    /**
      * SiteRenderer.
      */
     @Component
@@ -108,7 +114,7 @@ public class FitNesseReportMojo extends AbstractMavenReport {
             final MafiaIndexGenerator generator =
                     new MafiaIndexGenerator(resultRepository, getBundle(locale), getSink(),
                             getTestSummary(mafiaTestResultsDir + "mafiaresults.properties"),
-                            new JsoupReportFormatter());
+                            reportFormatter);
             generator.generate();
         } catch (IOException e) {
             throw new MavenReportException("Could not generate report.", e);

@@ -3,7 +3,6 @@ package nl.sijpesteijn.testing.fitnesse.plugins.context;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.Project;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.junit.Before;
@@ -34,24 +33,21 @@ public class FitNesseContextWriterTest {
 
     @Before
     public void setup() throws Throwable {
-        contentDir = new File("./target/");
+        contentDir = new File("./target/content/");
+        FileUtils.deleteDirectory(contentDir);
         projectMock = mock(Project.class);
     }
 
     @Test
     public void writeContent() throws Throwable {
-        List<Dependency> excludeDependencies = getExcludeDependencies();
-        fitNesseContextWriter = new FitNesseContextWriter(projectMock, statics, targets, resources, excludeDependencies, contentDir, true);
+        fitNesseContextWriter = new FitNesseContextWriter(projectMock, statics, targets, resources, new ArrayList<Dependency>(),
+                contentDir, true);
         Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact fitnesseArtifact = new ArtifactStub();
         fitnesseArtifact.setGroupId("org.fitnesse");
         fitnesseArtifact.setArtifactId("fitnesse");
         fitnesseArtifact.setVersion("1.0.0");
         artifacts.add(fitnesseArtifact);
-        Artifact excludeArtifact = new ArtifactStub();
-        excludeArtifact.setGroupId("org.exclude");
-        excludeArtifact.setArtifactId("exclude");
-        artifacts.add(excludeArtifact);
 
         when(projectMock.getArtifacts()).thenReturn(artifacts);
         when(projectMock.resolveArtifact(fitnesseArtifact)).thenReturn("fitnessePath");
@@ -82,12 +78,73 @@ public class FitNesseContextWriterTest {
         assertFalse(content.contains("!define TEST_SYSTEM {slim}"));
     }
 
+    @Test
+    public void testExcludeDependencies() throws Exception {
+        Set<Artifact> artifacts = new HashSet<Artifact>();
+        Artifact stubArtifact1 = mock(Artifact.class);
+        when(stubArtifact1.getGroupId()).thenReturn("org.exclude");
+        when(stubArtifact1.getArtifactId()).thenReturn("exclude");
+        when(stubArtifact1.getVersion()).thenReturn("1.0.0");
+        when(stubArtifact1.getType()).thenReturn("jar");
+        when(stubArtifact1.getClassifier()).thenReturn("sources");
+        when(stubArtifact1.getScope()).thenReturn("runtime");
+        artifacts.add(stubArtifact1);
+        Artifact stubArtifact2 = mock(Artifact.class);
+        when(stubArtifact2.getGroupId()).thenReturn("org.exclude");
+        when(stubArtifact2.getArtifactId()).thenReturn("exclude");
+        when(stubArtifact2.getVersion()).thenReturn("1.0.0");
+        when(stubArtifact2.getType()).thenReturn("jar");
+        when(stubArtifact2.getClassifier()).thenReturn("sources");
+        artifacts.add(stubArtifact2);
+        Artifact stubArtifact3 = mock(Artifact.class);
+        when(stubArtifact3.getGroupId()).thenReturn("org.exclude");
+        when(stubArtifact3.getArtifactId()).thenReturn("exclude");
+        when(stubArtifact3.getVersion()).thenReturn("1.0.0");
+        when(stubArtifact3.getType()).thenReturn("jar");
+        artifacts.add(stubArtifact3);
+        Artifact stubArtifact4 = mock(Artifact.class);
+        when(stubArtifact4.getGroupId()).thenReturn("org.exclude");
+        when(stubArtifact4.getArtifactId()).thenReturn("exclude");
+        when(stubArtifact4.getVersion()).thenReturn("1.0.0");
+        artifacts.add(stubArtifact4);
+        Artifact stubArtifact5 = mock(Artifact.class);
+        when(stubArtifact5.getGroupId()).thenReturn("org.exclude");
+        when(stubArtifact5.getArtifactId()).thenReturn("exclude");
+        artifacts.add(stubArtifact5);
+        Artifact stubArtifact6 = mock(Artifact.class);
+        when(stubArtifact6.getGroupId()).thenReturn("org.exclude");
+        artifacts.add(stubArtifact6);
+        Artifact stubArtifact7 = mock(Artifact.class);
+        artifacts.add(stubArtifact7);
+        Artifact stubArtifact8 = mock(Artifact.class);
+        when(stubArtifact8.getGroupId()).thenReturn("org.exclude");
+        when(stubArtifact8.getArtifactId()).thenReturn("exclude");
+        when(stubArtifact8.getVersion()).thenReturn("1.0.0");
+        when(stubArtifact8.getType()).thenReturn("war");
+        when(stubArtifact8.getClassifier()).thenReturn("sources");
+        when(stubArtifact8.getScope()).thenReturn("runtime");
+        artifacts.add(stubArtifact8);
+
+        when(projectMock.getArtifacts()).thenReturn(artifacts);
+
+
+        fitNesseContextWriter = new FitNesseContextWriter(projectMock, null, null, null, getExcludeDependencies(), contentDir, false);
+        fitNesseContextWriter.writeContent();
+
+        String content = FileUtils.readFileToString(new File(contentDir, "content.txt"));
+        assertFalse(content.contains("!define TEST_SYSTEM {slim}"));
+    }
+
     public List<Dependency> getExcludeDependencies() {
         List<Dependency> excludeDependencies = new ArrayList<Dependency>();
-        Dependency excludeDependency = new Dependency();
-        excludeDependency.setGroupId("org.exclude");
-        excludeDependency.setArtifactId("exclude");
-        excludeDependencies.add(excludeDependency);
+        Dependency dep1 = mock(Dependency.class);
+        when(dep1.getGroupId()).thenReturn("org.exclude");
+        when(dep1.getArtifactId()).thenReturn("exclude");
+        when(dep1.getVersion()).thenReturn("1.0.0");
+        when(dep1.getType()).thenReturn("jar");
+        when(dep1.getClassifier()).thenReturn("sources");
+        when(dep1.getScope()).thenReturn("runtime");
+        excludeDependencies.add(dep1);
         return excludeDependencies;
     }
 }

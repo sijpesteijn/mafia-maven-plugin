@@ -1,7 +1,6 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.List;
@@ -57,6 +56,7 @@ public class FitNesseCommander {
                 + " -r " + commanderConfig.getNameRootPage()
                 + " -e " + commanderConfig.getRetainDays()
                 + logArgument;
+//                + " -o";
         commanderConfig.getLog().info("Starting FitNesse. This could take some more seconds when first used....");
         run(command);
     }
@@ -165,8 +165,8 @@ public class FitNesseCommander {
      * @return boolean
      */
     public final boolean hasError() {
-        if (inputMonitor.getBuffer().toString().trim().endsWith("FitNesse (v20121220) Started...")
-                || errorMonitor.getBuffer().toString().trim().endsWith("Please be patient.")) {
+        if (inputMonitor.getBuffer().toString().trim().contains("Started...")
+                || errorMonitor.getBuffer().toString().trim().contains("Please be patient.")) {
             return false;
         }
         return true;

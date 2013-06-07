@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,7 +47,10 @@ public class MafiaIndexGeneratorTest extends AbstractReportTest {
 
     @Test
     public void testGetTime() throws Exception {
-        mafiaIndexGenerator.getTime(1234567890l);
+        String time = mafiaIndexGenerator.getTime(10000);
+        assertEquals("10s", time);
+        time = mafiaIndexGenerator.getTime(1234567890);
+        assertEquals("6h56m8s", time);
     }
 
     public List<MafiaTestResult> getTestResults() throws IOException {

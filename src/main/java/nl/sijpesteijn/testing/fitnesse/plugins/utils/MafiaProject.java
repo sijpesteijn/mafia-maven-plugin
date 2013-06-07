@@ -80,8 +80,8 @@ public class MafiaProject implements Project {
      * {@inheritDoc}
      */
     public final Artifact createArtifact(final String groupId, final String artifactId, final String version,
-                                    final String scope) {
-        return repositorySystem.createArtifact(groupId, artifactId, version, scope, "jar");
+                                    final String scope, final String classifier) {
+        return repositorySystem.createArtifactWithClassifier(groupId, artifactId, version, "jar", classifier);
     }
 
     /**
@@ -97,9 +97,9 @@ public class MafiaProject implements Project {
     public final String resolveArtifact(final Artifact artifact) {
         return localRepository.getBasedir() + SEP + artifact.getGroupId().replace('.', SEP)
                 + SEP + artifact.getArtifactId()
-                + SEP + artifact.getVersion()
+                + SEP + artifact.getBaseVersion()
                 + SEP + artifact.getArtifactId()
-                + "-" + artifact.getVersion() + addClassifierIfPresent(artifact.getClassifier()) + ".jar";
+                + "-" + artifact.getBaseVersion() + addClassifierIfPresent(artifact.getClassifier()) + ".jar";
     }
 
     /**
@@ -132,7 +132,7 @@ public class MafiaProject implements Project {
      */
     public final List<Dependency> getArtifactDependencies(final Artifact pluginArtifact) throws MafiaException {
         Artifact artifactPom = createArtifact(pluginArtifact.getGroupId(), pluginArtifact.getArtifactId(),
-                pluginArtifact.getVersion(), pluginArtifact.getScope());
+                pluginArtifact.getVersion(), pluginArtifact.getScope(), pluginArtifact.getClassifier());
         try {
             MavenProject pluginProject =
                     mavenProjectBuilder.buildFromRepository(artifactPom, this.remoteRepositories, localRepository);
@@ -158,6 +158,11 @@ public class MafiaProject implements Project {
      */
     public final Set<Artifact> getArtifacts() throws MafiaException {
         return project.getArtifacts();
+    }
+
+    @Override
+    public List<Dependency> getDependencies() {
+        return project.getDependencies();
     }
 
 }

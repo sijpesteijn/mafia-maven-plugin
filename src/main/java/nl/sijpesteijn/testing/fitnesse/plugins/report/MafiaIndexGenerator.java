@@ -1,7 +1,11 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.report;
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.tools.ant.util.DateUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -122,7 +126,7 @@ public class MafiaIndexGenerator {
         sink.lineBreak();
         sink.text("Run date: " + summary.getRunDate());
         sink.lineBreak();
-        sink.text("Run duration: " + getTime(summary.getTestTime()));
+        sink.text("Total run duration: " + getTime(summary.getTestTime()));
         sink.lineBreak();
         sink.text("Test result summary: ");
         addRight(summary.getRight());
@@ -323,19 +327,21 @@ public class MafiaIndexGenerator {
      * @return - xhxmxs, x = number.
      */
     public final String getTime(final long testTime) {
-
-        long hours = testTime / (THOUSAND * MINUTE * MINUTE);
-        long minutes = testTime - (THOUSAND * MINUTE * MINUTE * hours) / (THOUSAND * MINUTE);
-        double seconds = testTime - THOUSAND * MINUTE * MINUTE * hours - THOUSAND * MINUTE * minutes
-                / THOUSAND;
+        float tt = (float) testTime/1000;
+        DecimalFormat df = new DecimalFormat("#");
+        df.setRoundingMode(RoundingMode.UP);
+        long rounded = Long.valueOf(df.format(tt) + "000");
+        String hours = DateUtils.format(rounded, "H");
+        String minutes = DateUtils.format(rounded, "m");
+        String seconds = DateUtils.format(rounded, "s");
         String time = "";
-        if (hours > ZERO) {
+        if (!hours.equals("0")) {
             time += hours + "h";
         }
-        if (minutes > ZERO) {
+        if (!minutes.equals("0")) {
             time += minutes + "m";
         }
-        time += Math.round(seconds) + "s";
+        time += seconds + "s";
         if (time.equals("0s")) {
             return "<1s";
         }

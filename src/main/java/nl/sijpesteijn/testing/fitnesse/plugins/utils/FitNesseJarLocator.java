@@ -5,6 +5,7 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.model.Dependency;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -55,7 +56,7 @@ public class FitNesseJarLocator {
         Artifact mafiaPlugin = findMafiaPlugin(project.getPluginArtifacts());
         if (mafiaPlugin != null) {
             Artifact artifactPom = project.createArtifact(mafiaPlugin.getGroupId(), mafiaPlugin.getArtifactId(),
-                    mafiaPlugin.getVersion(), mafiaPlugin.getScope());
+                    mafiaPlugin.getVersion(), mafiaPlugin.getScope(), mafiaPlugin.getClassifier());
             List<Dependency> artifactDependencies = project.getArtifactDependencies(artifactPom);
             findFitNesseDependency(artifactDependencies);
         }
@@ -100,8 +101,17 @@ public class FitNesseJarLocator {
      * @throws MafiaException - unable to find fitnesse jar in project dependencies.
      */
     private void findInProjectDependencies() throws MafiaException {
-        Set<Artifact> compileArtifacts = project.getArtifacts(); //DefaultArtifact.SCOPE_COMPILE);
-        searchArtifacts(compileArtifacts);
+        List<Dependency> dependencies = project.getDependencies();
+        Set<Artifact> projectArtifacts = new HashSet<Artifact>();
+        for(Dependency dependency : dependencies) {
+            projectArtifacts.add(project.createArtifact(dependency.getGroupId(), dependency.getArtifactId(),
+                dependency.getVersion(), dependency.getScope(), dependency.getClassifier()));
+        }
+        searchArtifacts(projectArtifacts);
+        if (fitNesseArtifact == null) {
+            Set<Artifact> compileArtifacts = project.getArtifacts();
+            searchArtifacts(compileArtifacts);
+        }
     }
 
     /**

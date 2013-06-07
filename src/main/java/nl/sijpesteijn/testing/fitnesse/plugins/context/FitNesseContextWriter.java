@@ -2,6 +2,8 @@ package nl.sijpesteijn.testing.fitnesse.plugins.context;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.Project;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 
@@ -167,7 +169,7 @@ public class FitNesseContextWriter {
     }
 
     /**
-     * Check if it's an exclude dependency.
+     * Check if the dependency should be included.
      *
      * @param toAddDependency - a dependency.
      * @return boolean.
@@ -175,12 +177,41 @@ public class FitNesseContextWriter {
     private boolean isExcludeDependency(final Dependency toAddDependency) {
         if (excludeDependencies != null) {
             for (Dependency dependency : excludeDependencies) {
-                if (toAddDependency.getGroupId().equals(dependency.getGroupId())) {
+                if (sameDependency(toAddDependency,dependency)) {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    /**
+     * Check if dependencies are the same.
+     *
+     * @param dep1 - first dependency
+     * @param dep2 - second dependency
+     * @return - equal
+     */
+    private boolean sameDependency(final Dependency dep1, final Dependency dep2) {
+        if (!StringUtils.equals(dep1.getGroupId(),dep2.getGroupId())) {
+            return false;
+        }
+        if (!StringUtils.equals(dep1.getArtifactId(),dep2.getArtifactId())) {
+            return false;
+        }
+        if (!StringUtils.equals(dep1.getVersion(),dep2.getVersion())) {
+            return false;
+        }
+        if (!StringUtils.equals(dep1.getClassifier(),dep2.getClassifier())) {
+            return false;
+        }
+        if (!StringUtils.equals(dep1.getScope(),dep2.getScope())) {
+            return false;
+        }
+        if (!StringUtils.equals(dep1.getType(),dep2.getType())) {
+            return false;
+        }
+        return true;
     }
 
     /**

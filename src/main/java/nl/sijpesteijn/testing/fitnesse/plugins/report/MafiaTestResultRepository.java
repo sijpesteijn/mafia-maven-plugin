@@ -112,8 +112,10 @@ public class MafiaTestResultRepository implements TestResultRepository {
         String wrong = parts[1].split(" ")[1].trim();
         String ignore = parts[2].split(" ")[1].trim();
         String exception = parts[3].split(" ")[1].trim();
-        String time = parts[3].split(" ")[3].trim();
-        time = time.substring(1, time.length()).replace(".", "");
+        String time = summary.substring(summary.lastIndexOf("(") + 1, summary.lastIndexOf(")"));
+        time = time.replace(".","");
+        time = time.replace(",","");
+        time = time.split(" ")[0];
         MafiaTestSummary testSummary = new MafiaTestSummary();
         testSummary.right = Integer.parseInt(right);
         testSummary.wrong = Integer.parseInt(wrong);

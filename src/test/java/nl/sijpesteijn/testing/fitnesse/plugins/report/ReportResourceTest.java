@@ -12,6 +12,7 @@ import java.io.File;
 public class ReportResourceTest {
     private ReportResource reportResource;
     private String root;
+    private char separator = '/';
 
     @Before
     public void setup() throws Exception {
@@ -21,23 +22,23 @@ public class ReportResourceTest {
 
     @Test
     public void testCopyFile() throws Exception {
-        reportResource.copy("testResources/");
+        reportResource.copy("testResources" + separator);
     }
 
     @Test
     public void testCopyDirectoryFromJar() throws Exception {
-        reportResource.copy("fit/");
+        reportResource.copy("fit" + separator);
     }
 
     @Test
     public void testCopyFileFromJar() throws Exception {
-        reportResource = new ReportResource(root + "/target/", "eg/");
-        reportResource.copy("/employeePayroll/Employees.class");
+        reportResource = new ReportResource(root + "/target/", "eg" + separator);
+        reportResource.copy("employeePayroll" + separator + "Employees.class");
     }
 
     @Test
     public void testAddSeparatorFile() throws Exception {
         reportResource = new ReportResource(root + "/target", "");
-        reportResource.copy("testResources/");
+        reportResource.copy("testResources" + separator);
     }
 }

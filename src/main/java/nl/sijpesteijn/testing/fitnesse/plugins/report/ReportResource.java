@@ -47,7 +47,6 @@ public class ReportResource {
         final File destination = new File(outputDirectory);
         final URL url =
                 Thread.currentThread().getContextClassLoader().getResource(pluginResources + resourceName);
-        System.out.println("URL: " + url);
         if (url != null) {
             if (isFile(url)) {
                 copyDirectory(new File(url.getFile()), destination);
@@ -84,13 +83,12 @@ public class ReportResource {
                     String stripped = path.replaceAll(pluginResources, "");
 
                     String dir = dest + stripped;
-                    int end = stripped.lastIndexOf(File.separator);
+                    int end = stripped.lastIndexOf("/");
                     if (end > 0) {
                         dir = dest + stripped.substring(0, end + 1);
                         new File(dir).mkdirs();
                     }
                     String outputFile = dest + stripped;
-                    System.out.println("OUT: " + outputFile);
                     if (!dir.equals(outputFile)) {
                         final InputStream is = zip.getInputStream(entry);
                         saveInputStream(is, outputFile);
@@ -102,7 +100,7 @@ public class ReportResource {
             String path = zipEntry.toString();
             String stripped = path.replaceAll(pluginResources, "");
             String dir;
-            int end = stripped.lastIndexOf(File.separator);
+            int end = stripped.lastIndexOf("/");
             if (end > 0) {
                 dir = destination + stripped.substring(0, end + 1);
                 new File(dir).mkdirs();
@@ -168,8 +166,6 @@ public class ReportResource {
      * @throws IOException - unable to copy directory.
      */
     private void copyDirectory(final File source, final File destination) throws IOException {
-        System.out.println("DIR: " + destination);
-
         FileUtils.copyDirectoryToDirectory(source, destination);
     }
 

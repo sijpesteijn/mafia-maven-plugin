@@ -159,7 +159,7 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
      * @return the path
      */
     private String getDependencyPath(final Dependency dependency) {
-        final char sep = File.pathSeparatorChar;
+        final char sep = File.separatorChar;
         return localRepository.getBasedir() + sep + dependency.getGroupId().replace('.', sep)
                 + sep + dependency.getArtifactId()
                 + sep + dependency.getVersion()

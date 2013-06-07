@@ -26,9 +26,10 @@ public interface Project {
      * @param artifactId {@link java.lang.String}
      * @param version    {@link java.lang.String}
      * @param scope      {@link java.lang.String}
+     * @param classifier {@link java.lang.String}
      * @return {@link org.apache.maven.artifact.Artifact}
      */
-    Artifact createArtifact(final String groupId, final String artifactId, final String version, final String scope);
+    Artifact createArtifact(final String groupId, final String artifactId, final String version, final String scope, final String classifier);
 
     /**
      * Get the artifact repository.
@@ -77,4 +78,11 @@ public interface Project {
      * @throws MafiaException thrown in case of an error
      */
     Set<Artifact> getArtifacts() throws MafiaException;
+
+    /**
+     * Return the project dependencies.
+     *
+     * @return List of project dependencies.
+     */
+    List<Dependency> getDependencies();
 }

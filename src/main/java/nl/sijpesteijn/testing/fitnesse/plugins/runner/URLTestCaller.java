@@ -73,7 +73,6 @@ public class URLTestCaller implements TestCaller {
         MafiaTestSummary summary = null;
         try {
             URL url = new URL(protocol, host, fitNessePort, testUrl);
-            System.out.println(url);
             long start = System.currentTimeMillis();
             String content = IOUtils.toString(url, Charset.defaultCharset());
             long testTime = System.currentTimeMillis() - start;

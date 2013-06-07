@@ -51,7 +51,7 @@ public class FitNesseJarLocatorTest {
 
         when(mafiaProjectMock.getPluginArtifacts()).thenReturn(artifacts);
         Artifact pluginArtifact = new ArtifactStub();
-        when(mafiaProjectMock.createArtifact(fitnesseArtifact.getGroupId(), fitnesseArtifact.getArtifactId(), fitnesseArtifact.getVersion(), fitnesseArtifact.getScope())).thenReturn(pluginArtifact);
+        when(mafiaProjectMock.createArtifact(fitnesseArtifact.getGroupId(), fitnesseArtifact.getArtifactId(), fitnesseArtifact.getVersion(), fitnesseArtifact.getScope(), fitnesseArtifact.getClassifier())).thenReturn(pluginArtifact);
         List<Dependency> dependencies = new ArrayList<Dependency>();
         Dependency fitNesseDependency = new Dependency();
         fitNesseDependency.setGroupId("org.fitnesse");

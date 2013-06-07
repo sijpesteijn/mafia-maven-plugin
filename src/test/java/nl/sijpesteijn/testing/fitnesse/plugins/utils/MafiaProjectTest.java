@@ -3,7 +3,6 @@ package nl.sijpesteijn.testing.fitnesse.plugins.utils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -17,8 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.*;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -29,28 +27,36 @@ import static org.mockito.Mockito.when;
  */
 public class MafiaProjectTest {
     private MafiaProject mafiaProject;
-    private MavenProject mavenProject;
+    private MavenProject mavenProjectStub;
     private RepositorySystem repositorySystemMock;
     private ArtifactRepository artifactRepositoryMock;
     private MavenProjectBuilder mavenProjectBuilderMock;
     private final String SEP = File.separator;
+    private Set<Artifact> artifacts;
+    private List<Dependency> dependencies;
+    private Artifact artifactStub;
 
     @Before
     public void setup() throws Throwable {
-        mavenProject = new MavenProject();
-        Set<Artifact> pluginArtifacts = new HashSet<Artifact>();
-        pluginArtifacts.add(getDummyArtifact());
-        mavenProject.setArtifacts(pluginArtifacts);
-        mavenProject.setPluginArtifacts(pluginArtifacts);
+        mavenProjectStub = mock(MavenProject.class);
         artifactRepositoryMock = mock(ArtifactRepository.class);
         repositorySystemMock = mock(RepositorySystem.class);
         mavenProjectBuilderMock = mock(MavenProjectBuilder.class);
+
+        artifactStub = getArtifactStub();
+        artifacts = new HashSet<Artifact>();
+        artifacts.add(artifactStub);
+
+        dependencies = new ArrayList<Dependency>();
+        dependencies.add(new Dependency());
         List<ArtifactRepository> remoteRepositories = new ArrayList<ArtifactRepository>();
-        mafiaProject = new MafiaProject(mavenProject, artifactRepositoryMock, repositorySystemMock,mavenProjectBuilderMock, remoteRepositories);
+
+        mafiaProject = new MafiaProject(mavenProjectStub, artifactRepositoryMock, repositorySystemMock,mavenProjectBuilderMock, remoteRepositories);
     }
 
     @Test
     public void testGetArtifacts() throws Throwable {
+        when(mavenProjectStub.getArtifacts()).thenReturn(artifacts);
         Set<Artifact> artifacts = mafiaProject.getArtifacts();
         assertNotNull(artifacts);
         assertEquals("some", artifacts.iterator().next().getArtifactId());
@@ -58,13 +64,14 @@ public class MafiaProjectTest {
 
     @Test
     public void testCreateArtifact() throws Exception {
-        Artifact input = getDummyArtifact();
-        when(repositorySystemMock.createArtifact(isA(String.class), isA(String.class), isA(String.class), isA(String.class), isA(String.class))).thenReturn(input);
-        Artifact artifact = mafiaProject.createArtifact("org.sample", "some", "1.0", "test");
+        Artifact input = getArtifactStub();
+        when(repositorySystemMock.createArtifactWithClassifier(isA(String.class), isA(String.class), isA(String.class),
+                isA(String.class), isA(String.class))).thenReturn(input);
+        Artifact artifact = mafiaProject.createArtifact("org.sample", "some", "1.0", "test", "");
 
         assertEquals("org.sample", artifact.getGroupId());
         assertEquals("some", artifact.getArtifactId());
-        assertEquals("1.0", artifact.getVersion());
+        assertEquals("1.0", artifact.getBaseVersion());
         assertEquals("test", artifact.getScope());
     }
 
@@ -86,7 +93,7 @@ public class MafiaProjectTest {
         Artifact artifact = mock(Artifact.class);
         when(artifact.getGroupId()).thenReturn("org.sample");
         when(artifact.getArtifactId()).thenReturn("some");
-        when(artifact.getVersion()).thenReturn("1.0");
+        when(artifact.getBaseVersion()).thenReturn("1.0");
         when(artifact.getScope()).thenReturn("test");
         when(artifact.getClassifier()).thenReturn("sources");
 
@@ -95,10 +102,6 @@ public class MafiaProjectTest {
         String root = "." + SEP + "target" + SEP + "org" + SEP + "sample" + SEP + "some" + SEP + "1.0" + SEP;
         assertEquals(root + "some-1.0-sources.jar", path);
 
-        Artifact dummyArtifact = getDummyArtifact();
-        path = mafiaProject.resolveArtifact(dummyArtifact);
-        assertNotNull(path);
-        assertEquals(root + "some-1.0.jar", path);
     }
 
     @Test
@@ -116,21 +119,59 @@ public class MafiaProjectTest {
         assertEquals(root + "some-1.0.jar", path);
     }
 
-    @Test
-    public void testPluginDependencies() throws Throwable {
-        Artifact input = getDummyArtifact();
-        when(repositorySystemMock.createArtifact(isA(String.class), isA(String.class), isA(String.class), isA(String.class), isA(String.class))).thenReturn(input);
-        when(mavenProjectBuilderMock.buildFromRepository(isA(Artifact.class), isA(List.class), isA(ArtifactRepository.class))).thenReturn(new MavenProject());
-        List<Dependency> pluginDependencies = mafiaProject.getPluginDependencies();
+//    @Test
+//    public void testPluginDependencies() throws Throwable {
+//        Artifact input = getDummyArtifact();
+//
+//        when(repositorySystemMock.createArtifactWithClassifier(isA(String.class), isA(String.class), isA(String.class),
+//                isA(String.class), isA(String.class))).thenReturn(input);
+//
+////        when(mavenProjectStub.getDependencies()).thenReturn(new ArrayList<Dependency>());
+//        when(mavenProjectBuilderMock.buildFromRepository(isA(Artifact.class), isA(List.class),
+//                isA(ArtifactRepository.class))).thenReturn(mavenProjectStub);
+//
+//        List<Dependency> pluginDependencies = mafiaProject.getPluginDependencies();
+//        assertNotNull(pluginDependencies);
+//    }
 
-        assertNotNull(pluginDependencies);
+//    @Test
+//    public void testPluginDependenciesFailure() throws Throwable {
+//        Artifact input = getDummyArtifact();
+//        when(repositorySystemMock.createArtifactWithClassifier(isA(String.class), isA(String.class), isA(String.class),
+//                isA(String.class), isA(String.class))).thenReturn(input);
+//        when(mavenProjectBuilderMock.buildFromRepository(isA(Artifact.class), isA(List.class), isA(ArtifactRepository.class))).thenThrow(ProjectBuildingException.class);
+//        try {
+//            mafiaProject.getPluginDependencies();
+//        } catch(MafiaException me) {
+//            assertEquals("Could not load plugin artifact pom.", me.getMessage());
+//        }
+//    }
+
+    @Test
+    public void getPluginDependencies() throws Exception {
+        when(mavenProjectStub.getPluginArtifacts()).thenReturn(artifacts);
+
+        when(repositorySystemMock.createArtifactWithClassifier(artifactStub.getGroupId(),
+                artifactStub.getArtifactId(), artifactStub.getVersion(), "jar",
+                artifactStub.getClassifier())).thenReturn(artifactStub);
+        MavenProject artifactProjectStub = mock(MavenProject.class);
+        when(mavenProjectBuilderMock.buildFromRepository(isA(Artifact.class), isA(List.class),
+                isA(ArtifactRepository.class))).thenReturn(artifactProjectStub);
+        when(artifactProjectStub.getDependencies()).thenReturn(dependencies);
+
+        List<Dependency> pluginDependencies = mafiaProject.getPluginDependencies();
+        assertTrue(pluginDependencies.size() == 1);
     }
 
     @Test
     public void testPluginDependenciesFailure() throws Throwable {
-        Artifact input = getDummyArtifact();
-        when(repositorySystemMock.createArtifact(isA(String.class), isA(String.class), isA(String.class), isA(String.class), isA(String.class))).thenReturn(input);
-        when(mavenProjectBuilderMock.buildFromRepository(isA(Artifact.class), isA(List.class), isA(ArtifactRepository.class))).thenThrow(ProjectBuildingException.class);
+        when(mavenProjectStub.getPluginArtifacts()).thenReturn(artifacts);
+
+        when(repositorySystemMock.createArtifactWithClassifier(artifactStub.getGroupId(),
+                artifactStub.getArtifactId(), artifactStub.getVersion(), "jar",
+                artifactStub.getClassifier())).thenReturn(artifactStub);
+        when(mavenProjectBuilderMock.buildFromRepository(isA(Artifact.class), isA(List.class),
+                isA(ArtifactRepository.class))).thenThrow(ProjectBuildingException.class);
         try {
             mafiaProject.getPluginDependencies();
         } catch(MafiaException me) {
@@ -138,13 +179,20 @@ public class MafiaProjectTest {
         }
     }
 
-    public Artifact getDummyArtifact() {
-        Artifact artifact = new ArtifactStub();
-        artifact.setGroupId("org.sample");
-        artifact.setArtifactId("some");
-        artifact.setVersion("1.0");
-        artifact.setScope("test");
-        ((ArtifactStub)artifact).setType("jar");
+    @Test
+    public void getDependencies() throws Exception {
+        when(mavenProjectStub.getDependencies()).thenReturn(dependencies);
+
+        assertTrue(mafiaProject.getDependencies().size() == 1);
+    }
+
+    public Artifact getArtifactStub() {
+        Artifact artifact = mock(Artifact.class);
+        when(artifact.getGroupId()).thenReturn("org.sample");
+        when(artifact.getArtifactId()).thenReturn("some");
+        when(artifact.getBaseVersion()).thenReturn("1.0");
+        when(artifact.getScope()).thenReturn("test");
+        when(artifact.getClassifier()).thenReturn("sources");
         return artifact;
     }
 }

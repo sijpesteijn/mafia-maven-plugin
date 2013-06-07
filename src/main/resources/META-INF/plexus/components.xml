@@ -3,7 +3,10 @@
         <component>
             <role>nl.sijpesteijn.testing.fitnesse.plugins.runner.ResultStore</role>
             <implementation>nl.sijpesteijn.testing.fitnesse.plugins.runner.DiskResultStore</implementation>
-
+        </component>
+        <component>
+            <role>nl.sijpesteijn.testing.fitnesse.plugins.report.ReportFormatter</role>
+            <implementation>nl.sijpesteijn.testing.fitnesse.plugins.report.JsoupReportFormatter</implementation>
         </component>
     </components>
 </component-set>

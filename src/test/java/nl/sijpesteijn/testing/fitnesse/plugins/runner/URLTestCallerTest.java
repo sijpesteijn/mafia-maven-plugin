@@ -27,6 +27,9 @@ public class URLTestCallerTest extends AbstractFitNesseTest {
     public void setup() throws Throwable {
         resultStoreMock = mock(ResultStore.class);
         commander.start();
+        if (commander.getErrorOutput().contains("Unpacking")) {
+            Thread.sleep(5000);
+        }
     }
 
     @After
@@ -36,44 +39,41 @@ public class URLTestCallerTest extends AbstractFitNesseTest {
 
     @Test
     public void testSuccess() throws Exception {
-        URLTestCaller testCaller = new URLTestCaller(PORT, "http", "localhost",new File(TEST_RESULT_DIR),
-                resultStoreMock);
-        when(resultStoreMock.saveResult(isA(String.class), isA(File.class), isA(String.class))).thenReturn(new
-                MafiaTestSummary());
-        final String testName =
-                "FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteColumnFixtureSpec.TestMissingMethod";
+        URLTestCaller testCaller = new URLTestCaller(PORT, "http", "localhost", new File(TEST_RESULT_DIR),
+                                                     resultStoreMock);
+        when(resultStoreMock.saveResult(isA(String.class), isA(File.class), isA(String.class)))
+                .thenReturn(new MafiaTestSummary());
+        final String testName = "FitNesse.SuiteAcceptanceTests.SuiteWidgetTests.TestExpression";
         MafiaTestSummary mafiaTestSummary = testCaller.test(testName, PageType.TEST, null, "/tests/");
         assertNotNull(mafiaTestSummary);
     }
 
     @Test
     public void testNoConnection() throws Exception {
-        URLTestCaller testCaller = new URLTestCaller(PORT, "http", "wronghost",new File(TEST_RESULT_DIR),
-                resultStoreMock);
-        when(resultStoreMock.saveResult(isA(String.class), isA(File.class), isA(String.class))).thenReturn(new
-                MafiaTestSummary());
-        final String testName =
-                "FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteColumnFixtureSpec.TestMissingMethod";
+        URLTestCaller testCaller = new URLTestCaller(PORT, "http", "wronghost", new File(TEST_RESULT_DIR),
+                                                     resultStoreMock);
+        when(resultStoreMock.saveResult(isA(String.class), isA(File.class), isA(String.class)))
+                .thenReturn(new MafiaTestSummary());
+        final String testName = "FitNesse.SuiteAcceptanceTests.SuiteWidgetTests.TestExpression";
         try {
             MafiaTestSummary mafiaTestSummary = testCaller.test(testName, PageType.TEST, null, "/tests/");
             assertNotNull(mafiaTestSummary);
-        } catch(MafiaException me) {
+        } catch (MafiaException me) {
             assertEquals("Could not open connection.", me.getMessage());
         }
     }
 
     @Test
     public void testMailFormattedUrl() throws Exception {
-        URLTestCaller testCaller = new URLTestCaller(PORT, "brrr", "localhost",new File(TEST_RESULT_DIR),
-                resultStoreMock);
-        when(resultStoreMock.saveResult(isA(String.class), isA(File.class), isA(String.class))).thenReturn(new
-                MafiaTestSummary());
-        final String testName =
-                "FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteColumnFixtureSpec.TestMissingMethod";
+        URLTestCaller testCaller = new URLTestCaller(PORT, "brrr", "localhost", new File(TEST_RESULT_DIR),
+                                                     resultStoreMock);
+        when(resultStoreMock.saveResult(isA(String.class), isA(File.class), isA(String.class)))
+                .thenReturn(new MafiaTestSummary());
+        final String testName = "FitNesse.SuiteAcceptanceTests.SuiteWidgetTests.TestExpression";
         try {
             MafiaTestSummary mafiaTestSummary = testCaller.test(testName, PageType.TEST, null, "/tests/");
             assertNotNull(mafiaTestSummary);
-        } catch(MafiaException me) {
+        } catch (MafiaException me) {
             assertEquals("Could not make url call.", me.getMessage());
         }
     }

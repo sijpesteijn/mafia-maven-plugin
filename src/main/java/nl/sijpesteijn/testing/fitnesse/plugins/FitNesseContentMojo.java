@@ -19,7 +19,7 @@ import java.util.List;
  * The file is default placed in the wiki root of FitNesse.
  */
 @Mojo(name = "content", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, requiresDependencyResolution = ResolutionScope
-        .COMPILE_PLUS_RUNTIME)
+        .RUNTIME_PLUS_SYSTEM)
 public class FitNesseContentMojo extends AbstractFitNesseMojo {
 
     /**
@@ -49,7 +49,7 @@ public class FitNesseContentMojo extends AbstractFitNesseMojo {
     /**
      * Add plugin dependencies.
      */
-    @Parameter(property = "addPluginDependencies", defaultValue = "true")
+    @Parameter(property = "addPluginDependencies", defaultValue = "false")
     private boolean addPluginDependencies;
 
     /**
