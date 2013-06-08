@@ -3,7 +3,6 @@ package nl.sijpesteijn.testing.fitnesse.plugins.report;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.tools.ant.util.DateUtils;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -358,7 +357,7 @@ public class MafiaIndexGenerator {
         String style = "pass";
         if (testSummary.getWrong() > ZERO) {
             style = "fail";
-        } else if (testSummary.getExceptions() > ZERO || testSummary.getIgnores() > ZERO) {
+        } else if (testSummary.getExceptions() > ZERO) {
             style = "error";
         }
         return style;

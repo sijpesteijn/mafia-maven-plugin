@@ -126,7 +126,7 @@ public class JsoupReportFormatter implements ReportFormatter {
         String style = "pass";
         if (testSummary.getWrong() > 0) {
             style = "fail";
-        } else if (testSummary.getExceptions() > 0 || testSummary.getIgnores() > 0) {
+        } else if (testSummary.getExceptions() > 0) {
             style = "error";
         }
         return style;
