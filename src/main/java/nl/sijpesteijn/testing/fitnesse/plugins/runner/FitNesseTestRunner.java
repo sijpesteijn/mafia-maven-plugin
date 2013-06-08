@@ -1,6 +1,6 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
-import fitnesse.responders.run.TestSummary;
+import fitnesse.testsystems.TestSummary;
 import fitnesse.wiki.PageType;
 import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;

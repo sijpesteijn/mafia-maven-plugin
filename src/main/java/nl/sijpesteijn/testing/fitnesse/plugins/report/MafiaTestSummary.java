@@ -1,6 +1,6 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.report;
 
-import fitnesse.responders.run.TestSummary;
+import fitnesse.testsystems.TestSummary;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

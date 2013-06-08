@@ -51,6 +51,7 @@
 
     <properties>
         <project.build.sourceEndcoding>UTF-8</project.build.sourceEndcoding>
+        <fitnesse.version>20130530</fitnesse.version>
         <maven.version>3.0.4</maven.version>
         <maven-plugin-annotations.version>3.2</maven-plugin-annotations.version>
         <maven-source-plugin.version>2.1.2</maven-source-plugin.version>
@@ -249,7 +250,7 @@
         <dependency>
             <groupId>org.fitnesse</groupId>
             <artifactId>fitnesse</artifactId>
-            <version>20121220</version>
+            <version>${fitnesse.version}</version>
             <classifier>standalone</classifier>
         </dependency>
 
@@ -295,6 +296,11 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.7.0</version>
         </dependency>
 
         <!-- doxia -->
