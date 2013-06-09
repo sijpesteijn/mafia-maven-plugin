@@ -92,7 +92,7 @@
                 <configuration>
                     <check>
                         <lineRate>95</lineRate>
-                        <haltOnFailure>true</haltOnFailure>
+                        <haltOnFailure>false</haltOnFailure>
                         <totalBranchRate>75</totalBranchRate>
                         <totalLineRate>95</totalLineRate>
                         <packageLineRate>95</packageLineRate>
