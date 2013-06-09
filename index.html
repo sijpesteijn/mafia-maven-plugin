@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Mafia-maven-plugin : FitNesse plugin for maven" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Mafia-maven-plugin</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/sijpesteijn/mafia-maven-plugin">View on GitHub</a>
+
+          <h1 id="project_title">Mafia-maven-plugin</h1>
+          <h2 id="project_tagline">FitNesse plugin for maven</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/sijpesteijn/mafia-maven-plugin/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/sijpesteijn/mafia-maven-plugin/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="this-is-a-maven-plugin-for-fitnesse" class="anchor" href="#this-is-a-maven-plugin-for-fitnesse"><span class="octicon octicon-link"></span></a>This is a maven plugin for FitNesse.</h1>
+
+<p>mafia-maven-plugin  <strong>MA</strong>aven <strong>FI</strong>tnesse <strong>A</strong>dapter</p>
+
+<p>This plugin let's you control: </p>
+
+<ul>
+<li>
+<strong>STARTING &amp; STOPPING</strong> FitNesse.</li>
+<li>
+<strong>RUN TEST(S), SUITE(S), OR TAG FILTERED TESTS</strong>.</li>
+<li>
+<strong>CLASSPATH ENTRIES &amp; DEFINITIONS</strong> can be written to root page of FitNesse using the pom configuration.</li>
+<li>
+<strong>COLLECT REPORTING</strong>.</li>
+</ul><p>1 - STARTING FitNesse.
+<br></p>
+
+<p>goal: start<br>
+phase: install<br>
+command: mvn mafia:start<br></p>
+
+<p>This maven goal will start the FitNesse server. You can create a configuration section in your pom to change
+default behaviour.
+<br>
+Configuration:</p>
+
+<table>
+<tr>
+<td><b>Property</b></td>
+        <td><b>Default</b></td>
+        <td><b>Description</b></td>
+    </tr>
+<tr>
+<td>fitNessePort</td>
+        <td>9090</td>
+        <td>Port for FitNesse to listen on.</td>
+    </tr>
+<tr>
+<td>wikiRoot</td>
+        <td>${basedir}</td>
+        <td>Root of FitNesse.</td>
+    </tr>
+<tr>
+<td>nameRootPage</td>
+        <td>FitNesseRoot</td>
+        <td>Name of the root page</td>
+    </tr>
+<tr>
+<td>retainDays</td>
+        <td>14</td>
+        <td>Number of days to retain older versions (.zip files)</td>
+    </tr>
+<tr>
+<td>jvmArguments</td>
+        <td></td>
+        <td>Arguments for the jvm.</td>
+    </tr>
+<tr>
+<td>jvmDependencies</td>
+        <td></td>
+        <td>Classpath entries for the jvm.</td>
+    </tr>
+<tr>
+<td>logDirectory</td>
+        <td>${basedir}/log/</td>
+        <td>Where to put and what to call the run log.</td>
+    </tr>
+</table>
+
+Configuration example with defaults and example values:
+
+<pre>
+  <code>
+    &lt;plugin&gt;
+        &lt;groupId&gt;nl.sijpesteijn.testing.fitnesse.plugins&lt;/groupId&gt;
+        &lt;artifactId&gt;mafia-maven-plugin&lt;/artifactId&gt;
+        &lt;configuration&gt;
+            &lt;fitNessePort&gt;9090&lt;/fitNessePort&gt;
+            &lt;wikiRoot&gt;${basedir}&lt;/wikiRoot&gt;
+            &lt;nameRootPage&gt;FitNesseRoot&lt;/nameRootPage&gt;
+            &lt;retainDays&gt;14&lt;/retainDays&gt;
+            &lt;jvmArguments&gt;
+                &lt;jvmArgument&gt;CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem&lt;/jvmArgument&gt;
+            &lt;/jvmArguments&gt;
+            &lt;jvmDependencies&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;nl.abc.fitnesse&lt;/groupId&gt;
+                    &lt;artifactId&gt;fitnesse-plugin&lt;/artifactId&gt;
+                &lt;/dependency&gt;
+            &lt;/jvmDependencies&gt;
+            &lt;log&gt;${basedir}/log/&lt;/log&gt;
+        &lt;/configuration&gt;
+     &lt;/plugin&gt;
+  </code>
+</pre>
+
+
+2 - STOPPING FitNesse.
+<br>
+
+goal: stop<br>
+phase: clean<br>
+command: mvn mafia:stop<br><br>
+This maven goal will stop the FitNesse server. You can create a configuration section in your pom to change
+default behaviour.
+<br>
+Configuration:
+
+<table>
+<tr>
+<td><b>Property</b></td>
+        <td><b>Default</b></td>
+        <td><b>Description</b></td>
+    </tr>
+<tr>
+<td>fitNessePort</td>
+        <td>9090</td>
+        <td>Port for FitNesse to listen on.</td>
+    </tr>
+<tr>
+<td>jvmArguments</td>
+        <td></td>
+        <td>Arguments for the jvm.</td>
+    </tr>
+<tr>
+<td>jvmDependencies</td>
+        <td></td>
+        <td>Classpath entries for the jvm.</td>
+    </tr>
+</table>
+
+Configuration example with defaults and exmaple values:
+
+<pre>
+  <code>
+    &lt;plugin&gt;
+        &lt;groupId&gt;nl.sijpesteijn.testing.fitnesse.plugins&lt;/groupId&gt;
+        &lt;artifactId&gt;mafia-maven-plugin&lt;/artifactId&gt;
+        &lt;configuration&gt;
+            &lt;fitNessePort&gt;9090&lt;/fitNessePort&gt;
+            &lt;jvmArguments&gt;
+                &lt;jvmArgument&gt;CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem&lt;/jvmArgument&gt;
+            &lt;/jvmArguments&gt;
+            &lt;jvmDependencies&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;nl.abc.fitnesse&lt;/groupId&gt;
+                    &lt;artifactId&gt;fitnesse-plugin&lt;/artifactId&gt;
+                &lt;/dependency&gt;
+            &lt;/jvmDependencies&gt;
+        &lt;/configuration&gt;
+    &lt;/plugin&gt;
+  </code>
+</pre>
+
+
+3 - RUN TEST(S), SUITE(S), OR TAG FILTERED TESTS.
+<br>
+
+goal: test<br>
+phase: integration-test<br>
+command: mvn mafia:test<br><br>
+This maven goal will run the tests listed in the configuration section. Note that the tests are run on a FitNesse
+server running on separate port, default 9091.
+<br>
+Configuration:
+
+<table>
+<tr>
+<td><b>Property</b></td>
+        <td><b>Default</b></td>
+        <td><b>Description</b></td>
+    </tr>
+<tr>
+<td>fitNesseRunPort</td>
+        <td>9091</td>
+        <td>Port for FitNesse to listen on.</td>
+    </tr>
+<tr>
+<td>jvmArguments</td>
+        <td></td>
+        <td>Arguments for the jvm.</td>
+    </tr>
+<tr>
+<td>jvmDependencies</td>
+        <td></td>
+        <td>Classpath entries for the jvm.</td>
+    </tr>
+<tr>
+<td>testResultsDirectory</td>
+        <td>${basedir}/FitNesse/files/mafiaTestResults</td>
+        <td>Output directory for the mafia test results.</td>
+    </tr>
+<tr>
+<td>stopTestsOnIgnore</td>
+        <td>false</td>
+        <td>Stop the run when an ignore exception occurs.</td>
+    </tr>
+<tr>
+<td>stopTestsOnException</td>
+        <td>true</td>
+        <td>Stop the run when an exception occurs.</td>
+    </tr>
+<tr>
+<td>stopTestsOnWrong</td>
+        <td>true</td>
+        <td>Stop the run when a wrong exception occurs.</td>
+    </tr>
+<tr>
+<td>tests</td>
+        <td></td>
+        <td>List of  elements with tests.</td>
+    </tr>
+<tr>
+<td>suites</td>
+        <td></td>
+        <td>List of  elements with suites.</td>
+    </tr>
+<tr>
+<td>suitePageName</td>
+        <td></td>
+        <td>Root page of filtered suites to run.</td>
+    </tr>
+<tr>
+<td>suiteFilter</td>
+        <td></td>
+        <td>tag filter to use. Used in combination with a suitePageName</td>
+    </tr>
+</table>
+
+Configuration with defaults. tests, suites and a suiteFilter can be mixed. A suiteFilter needs a suitePageName.
+
+<pre>
+  <code>
+    &lt;plugin&gt;
+        &lt;groupId&gt;nl.sijpesteijn.testing.fitnesse.plugins&lt;/groupId&gt;
+        &lt;artifactId&gt;mafia-maven-plugin&lt;/artifactId&gt;
+        &lt;configuration&gt;
+            &lt;fitNesseRunPort&gt;9091&lt;/fitNesseRunPort&gt;
+            &lt;jvmArguments&gt;
+                &lt;jvmArgument&gt;CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem&lt;/jvmArgument&gt;
+            &lt;/jvmArguments&gt;
+            &lt;jvmDependencies&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;nl.abc.fitnesse&lt;/groupId&gt;
+                    &lt;artifactId&gt;fitnesse-plugin&lt;/artifactId&gt;
+                &lt;/dependency&gt;
+            &lt;/jvmDependencies&gt;
+            &lt;testResultsDirectory&gt;${project.build.directory}/fitnesse/&lt;/testResultsDirectory&gt;
+            &lt;stopTestsOnIgnore&gt;false&lt;/stopTestsOnIgnore&gt;
+            &lt;stopTestsOnException&gt;true&lt;/stopTestsOnException&gt;
+            &lt;stopTestsOnWrong&gt;true&lt;/stopTestsOnWrong&gt;
+            &lt;tests&gt;
+                &lt;test&gt;FrontPage.IntegrationTest&lt;/test&gt;
+                &lt;test&gt;...&lt;/test&gt;
+            &lt;/tests&gt;
+            &lt;suites&gt;
+                &lt;suite&gt;FrontPage.IntegrationSuite&lt;/suite&gt;
+                &lt;suite&gt;...&lt;/suite&gt;
+            &lt;/suites&gt;
+            &lt;suitePageName&gt;FrontPage.SomeSuite&lt;/suitePageName&gt;
+            &lt;suiteFilter&gt;critical_tests&lt;/suiteFilter&gt;
+        &lt;/configuration&gt;
+    &lt;/plugin&gt;
+  </code>
+</pre>
+
+
+4 CLASSPATH ENTRIES &amp; DEFINITIONS.
+<br>
+
+goal: content<br>
+phase: process-resources<br>  
+command: mvn mafia:content<br><br>
+This maven goal will create the content.txt file, root page, for FitNesse, filling it with 
+classpath entries (!path ) and definitions (!define ). Automatically including the compile and
+runtime dependencies, but you can exclude dependencies in the configuration.
+<br>
+Configuration:
+
+<table>
+<tr>
+<td><b>Property</b></td>
+        <td><b>Default</b></td>
+        <td><b>Description</b></td>
+    </tr>
+<tr>
+<td>wikiRoot</td>
+        <td>${basedir}</td>
+        <td>Root of FitNesse.</td>
+    </tr>
+<tr>
+<td>nameRootPage</td>
+        <td>FitNesseRoot</td>
+        <td>Name of the root page</td>
+    </tr>
+<tr>
+<td>statics</td>
+        <td></td>
+        <td>Values ares copied as is to content.txt (This could also be wiki text)</td>
+    </tr>
+<tr>
+<td>resources</td>
+        <td></td>
+        <td>Values are prefixed with !define and copied to content.txt</td>
+    </tr>
+<tr>
+<td>targets</td>
+        <td></td>
+        <td>Values are prefixed with !define and postfixed with /target/classes/ and added to content.txt (useful
+        for hot-deployment).</td>
+    </tr>
+<tr>
+<td>excludeDependencies</td>
+        <td></td>
+        <td>Listed dependencies are excluded from the classpath entries. (Most likely the ones listed in the targets
+        configuration section).</td>
+    </tr>
+</table><p>Example:</p>
+
+<pre>
+  <code>
+    &lt;plugin&gt;
+        &lt;groupId&gt;nl.sijpesteijn.testing.fitnesse.plugins&lt;/groupId&gt;
+        &lt;artifactId&gt;mafia-maven-plugin&lt;/artifactId&gt;
+        &lt;configuration&gt;
+            &lt;wikiRoot&gt;${basedir}&lt;/wikiRoot&gt;
+            &lt;nameRootPage&gt;FitNesseRoot&lt;/nameRootPage&gt;
+            &lt;statics&gt;
+                &lt;static&gt;!define TEST_SYSTEM {slim}&lt;/static&gt;
+            &lt;/statics&gt;
+            &lt;resources&gt;
+                &lt;resource&gt;/resource_location/resources/&lt;/resource&gt;
+            &lt;/resources&gt;
+            &lt;targets&gt;
+                &lt;target&gt;../application-to-test/&lt;/target&gt;
+            &lt;/targets&gt;
+            &lt;excludeDependencies&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;nl.abc.dependency&lt;/groupId&gt;
+                    &lt;artifactId&gt;some-artifact&lt;/artifactId&gt;
+                    &lt;version&gt;1.0.0&lt;/version&gt;
+                &lt;/dependency&gt;
+            &lt;/excludeDependencies&gt;
+        &lt;/configuration&gt;
+    &lt;/plugin&gt;
+  </code>
+</pre>
+
+<p>5 - COLLECT REPORTING.
+<br></p>
+
+<p>goal: report<br>
+phase: site<br><br>
+command: mvn mafia:report<br></p>
+
+<p>This maven goal will generate a report of the last run tests. 
+<br>
+Configuration:</p>
+
+<table>
+<tr>
+<td><b>Property</b></td>
+        <td><b>Default</b></td>
+        <td><b>Description</b></td>
+    </tr>
+<tr>
+<td>wikiRoot</td>
+        <td>${basedir}</td>
+        <td>Root of FitNesse.</td>
+    </tr>
+<tr>
+<td>nameRootPage</td>
+        <td>FitNesseRoot</td>
+        <td>Name of the root page</td>
+    </tr>
+</table><p>Configuration with defaults:</p>
+
+<pre>
+  <code>
+    &lt;reporting&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;nl.sijpesteijn.testing.fitnesse.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;mafia-maven-plugin&lt;/artifactId&gt;
+                &lt;configuration&gt;
+                    &lt;wikiRoot&gt;${basedir}&lt;/wikiRoot&gt;
+                    &lt;nameRootPage&gt;FitNesseRoot&lt;/nameRootPage&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/reporting&gt;
+ </code>
+</pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Mafia-maven-plugin maintained by <a href="https://github.com/sijpesteijn">sijpesteijn</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
