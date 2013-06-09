@@ -6,6 +6,7 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -22,7 +23,7 @@ import java.util.ResourceBundle;
 /**
  * This mojo will collect the test results from the run tests.
  */
-@Mojo(name = "report")
+@Mojo(name = "report", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class FitNesseReportMojo extends AbstractMavenReport {
 
     /**

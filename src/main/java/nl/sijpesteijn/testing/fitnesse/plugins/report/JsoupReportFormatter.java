@@ -16,7 +16,7 @@ public class JsoupReportFormatter implements ReportFormatter {
      *
      * {@inheritDoc}
      */
-    public final String getHtml(final MafiaTestResult testResult, final TestType testType) {
+    public String getHtml(final MafiaTestResult testResult, final TestType testType) {
         long timeStamp = System.currentTimeMillis();
         Document document = Jsoup.parse(testResult.getHtmlResult());
         Element body = document.body();
