@@ -347,24 +347,6 @@
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>content</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <addPluginDependencies>true</addPluginDependencies>
-                            <statics>
-                                <static>!define TEST_SYSTEM {slim}</static>
-                            </statics>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>nl.sijpesteijn.testing.fitnesse.plugins</groupId>
-                        <artifactId>mafia-maven-plugin</artifactId>
-                        <version>${project.version}</version>
-                        <executions>
-                            <execution>
-                                <goals>
                                     <goal>test</goal>
                                 </goals>
                             </execution>
@@ -373,7 +355,6 @@
                             <wikiRoot>${project.build.outputDirectory}/</wikiRoot>
                             <tests>
                                 <test>FitNesse.SuiteAcceptanceTests.SuiteWidgetTests.TestEvaluator</test>
-                                <!--<test>FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteGeneralFixtureSpec.TestBlankAndNullCells</test>-->
                             </tests>
                         </configuration>
                     </plugin>
