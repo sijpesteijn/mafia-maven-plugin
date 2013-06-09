@@ -29,7 +29,8 @@ public interface Project {
      * @param classifier {@link java.lang.String}
      * @return {@link org.apache.maven.artifact.Artifact}
      */
-    Artifact createArtifact(final String groupId, final String artifactId, final String version, final String scope, final String classifier);
+    Artifact createArtifact(final String groupId, final String artifactId, final String version, final String scope,
+                            final String classifier);
 
     /**
      * Get the artifact repository.

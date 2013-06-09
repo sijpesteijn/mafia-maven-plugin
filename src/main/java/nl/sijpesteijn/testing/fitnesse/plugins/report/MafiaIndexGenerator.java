@@ -39,16 +39,6 @@ public class MafiaIndexGenerator {
     private final ReportFormatter reportFormatter;
 
     /**
-     * Thousand.
-     */
-    private static final int THOUSAND = 1000;
-
-    /**
-     * Minute.
-     */
-    private static final int MINUTE = 60;
-
-    /**
      * Zero.
      */
     private static final int ZERO = 0;
@@ -326,7 +316,7 @@ public class MafiaIndexGenerator {
      * @return - xhxmxs, x = number.
      */
     public final String getTime(final long testTime) {
-        float tt = (float) testTime/1000;
+        float tt = (float) testTime / 1000;
         DecimalFormat df = new DecimalFormat("#");
         df.setRoundingMode(RoundingMode.UP);
         long rounded = Long.valueOf(df.format(tt) + "000");

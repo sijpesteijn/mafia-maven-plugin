@@ -83,7 +83,7 @@ public class ReportResource {
                     String stripped = path.replaceAll(pluginResources, "");
 
                     String dir = dest + stripped;
-                    int end = stripped.lastIndexOf("/");
+                    int end = stripped.lastIndexOf('/');
                     if (end > 0) {
                         dir = dest + stripped.substring(0, end + 1);
                         new File(dir).mkdirs();
@@ -100,7 +100,7 @@ public class ReportResource {
             String path = zipEntry.toString();
             String stripped = path.replaceAll(pluginResources, "");
             String dir;
-            int end = stripped.lastIndexOf("/");
+            int end = stripped.lastIndexOf('/');
             if (end > 0) {
                 dir = destination + stripped.substring(0, end + 1);
                 new File(dir).mkdirs();

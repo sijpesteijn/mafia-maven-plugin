@@ -2,7 +2,6 @@ package nl.sijpesteijn.testing.fitnesse.plugins.context;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.Project;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
@@ -177,7 +176,7 @@ public class FitNesseContextWriter {
     private boolean isExcludeDependency(final Dependency toAddDependency) {
         if (excludeDependencies != null) {
             for (Dependency dependency : excludeDependencies) {
-                if (sameDependency(toAddDependency,dependency)) {
+                if (sameDependency(toAddDependency, dependency)) {
                     return true;
                 }
             }
@@ -193,22 +192,22 @@ public class FitNesseContextWriter {
      * @return - equal
      */
     private boolean sameDependency(final Dependency dep1, final Dependency dep2) {
-        if (!StringUtils.equals(dep1.getGroupId(),dep2.getGroupId())) {
+        if (!StringUtils.equals(dep1.getGroupId(), dep2.getGroupId())) {
             return false;
         }
-        if (!StringUtils.equals(dep1.getArtifactId(),dep2.getArtifactId())) {
+        if (!StringUtils.equals(dep1.getArtifactId(), dep2.getArtifactId())) {
             return false;
         }
-        if (!StringUtils.equals(dep1.getVersion(),dep2.getVersion())) {
+        if (!StringUtils.equals(dep1.getVersion(), dep2.getVersion())) {
             return false;
         }
-        if (!StringUtils.equals(dep1.getClassifier(),dep2.getClassifier())) {
+        if (!StringUtils.equals(dep1.getClassifier(), dep2.getClassifier())) {
             return false;
         }
-        if (!StringUtils.equals(dep1.getScope(),dep2.getScope())) {
+        if (!StringUtils.equals(dep1.getScope(), dep2.getScope())) {
             return false;
         }
-        if (!StringUtils.equals(dep1.getType(),dep2.getType())) {
+        if (!StringUtils.equals(dep1.getType(), dep2.getType())) {
             return false;
         }
         return true;
@@ -231,7 +230,7 @@ public class FitNesseContextWriter {
     /**
      * Add lines to the content.txt file.
      *
-     * @param writer - the writer
+     * @param writer  - the writer
      * @param chapter - Chapter title.
      * @param lines   - the lines.
      * @param prefix  - prefix.

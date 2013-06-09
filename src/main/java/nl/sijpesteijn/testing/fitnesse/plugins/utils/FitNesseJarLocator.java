@@ -103,7 +103,7 @@ public class FitNesseJarLocator {
     private void findInProjectDependencies() throws MafiaException {
         List<Dependency> dependencies = project.getDependencies();
         Set<Artifact> projectArtifacts = new HashSet<Artifact>();
-        for(Dependency dependency : dependencies) {
+        for (Dependency dependency : dependencies) {
             projectArtifacts.add(project.createArtifact(dependency.getGroupId(), dependency.getArtifactId(),
                 dependency.getVersion(), dependency.getScope(), dependency.getClassifier()));
         }

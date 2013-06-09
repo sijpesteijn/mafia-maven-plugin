@@ -161,7 +161,7 @@ public class MafiaProject implements Project {
     }
 
     @Override
-    public List<Dependency> getDependencies() {
+    public final List<Dependency> getDependencies() {
         return project.getDependencies();
     }
 

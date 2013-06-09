@@ -114,9 +114,9 @@ public class MafiaTestResultRepository implements TestResultRepository {
         String exception = parts[3].split(" ")[1].trim();
         String time = "0";
         if (summary.contains("(")) {
-            time = summary.substring(summary.lastIndexOf("(") + 1, summary.lastIndexOf(")"));
-            time = time.replace(".","");
-            time = time.replace(",","");
+            time = summary.substring(summary.lastIndexOf('(') + 1, summary.lastIndexOf(')'));
+            time = time.replace(".", "");
+            time = time.replace(",", "");
             time = time.split(" ")[0];
         }
         MafiaTestSummary testSummary = new MafiaTestSummary();
