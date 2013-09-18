@@ -130,7 +130,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
 
                 final Date startDate = new Date();
                 final FitNesseTestRunner runner = new FitNesseTestRunner(testCaller,
-                        stopTestsOnIgnore, stopTestsOnException, stopTestsOnIgnore, getLog());
+                        stopTestsOnIgnore, stopTestsOnException, stopTestsOnWrong, getLog());
                 runner.runTests(tests);
                 runner.runSuites(suites);
                 runner.runFilteredSuite(suitePageName, suiteFilter);

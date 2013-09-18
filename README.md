@@ -58,6 +58,11 @@ Configuration:
         <td>Classpath entries for the jvm.</td>
     </tr>
     <tr>
+        <td>unpackWaitTime</td>
+        <td>3000 milliseconds</td>
+        <td>Time to wait after unpacking a fitnesse.</td>
+    </tr>
+    <tr>
         <td>logDirectory</td>
         <td>${basedir}/log/</td>
         <td>Where to put and what to call the run log.</td>
@@ -76,6 +81,7 @@ Configuration example with defaults and example values:
 			&lt;wikiRoot&gt;${basedir}&lt;/wikiRoot&gt;
 			&lt;nameRootPage&gt;FitNesseRoot&lt;/nameRootPage&gt;
 			&lt;retainDays&gt;14&lt;/retainDays&gt;
+			&lt;unpackWaitTime&gt;3000&lt;/unpackWaitTime&gt;
 			&lt;jvmArguments&gt;
 				&lt;jvmArgument&gt;CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem&lt;/jvmArgument&gt;
 			&lt;/jvmArguments&gt;
@@ -224,6 +230,11 @@ Configuration:
         <td></td>
         <td>tag filter to use. Used in combination with a suitePageName</td>
     </tr>
+    <tr>
+        <td>unpackWaitTime</td>
+        <td>3000 milliseconds</td>
+        <td>Time to wait after unpacking a fitnesse.</td>
+    </tr>
  </table>
 
 Configuration with defaults. tests, suites and a suiteFilter can be mixed. A suiteFilter needs a suitePageName.
@@ -248,6 +259,7 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 			&lt;stopTestsOnIgnore&gt;false&lt;/stopTestsOnIgnore&gt;
 			&lt;stopTestsOnException&gt;true&lt;/stopTestsOnException&gt;
 			&lt;stopTestsOnWrong&gt;true&lt;/stopTestsOnWrong&gt;
+			&lt;unpackWaitTime&gt;3000&lt;/unpackWaitTime&gt;
 			&lt;tests&gt;
 				&lt;test&gt;FrontPage.IntegrationTest&lt;/test&gt;
 				&lt;test&gt;...&lt;/test&gt;

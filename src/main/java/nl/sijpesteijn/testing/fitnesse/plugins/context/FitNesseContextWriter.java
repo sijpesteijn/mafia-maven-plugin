@@ -120,7 +120,7 @@ public class FitNesseContextWriter {
      * @throws IOException    - unable to write to content file.
      */
     private void addPluginDependencies(final Writer writer) throws MafiaException, IOException {
-        writer.write("!note Plugin Dependencies:" + DEF_RETURN + DEF_RETURN);
+        writer.write("!note Plugin Dependencies:" + DEF_RETURN);
         List<Dependency> pluginDependencies = project.getPluginDependencies();
         if (pluginDependencies != null) {
             for (Dependency pluginDependency : pluginDependencies) {
@@ -140,7 +140,7 @@ public class FitNesseContextWriter {
      * @throws MafiaException - some mafia exception.
      */
     private void addDependencies(final Writer writer) throws IOException, MafiaException {
-        writer.write("!note Project Dependencies:" + DEF_RETURN + DEF_RETURN);
+        writer.write("!note Project Dependencies:" + DEF_RETURN);
         Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact artifact : artifacts) {
             if (!isExcludeDependency(createDependency(artifact))) {
@@ -175,8 +175,8 @@ public class FitNesseContextWriter {
      */
     private boolean isExcludeDependency(final Dependency toAddDependency) {
         if (excludeDependencies != null) {
-            for (Dependency dependency : excludeDependencies) {
-                if (sameDependency(toAddDependency, dependency)) {
+            for (Dependency excludeDependency : excludeDependencies) {
+                if (sameDependency(toAddDependency, excludeDependency)) {
                     return true;
                 }
             }
@@ -192,22 +192,22 @@ public class FitNesseContextWriter {
      * @return - equal
      */
     private boolean sameDependency(final Dependency dep1, final Dependency dep2) {
-        if (!StringUtils.equals(dep1.getGroupId(), dep2.getGroupId())) {
+        if (dep2.getGroupId() != null && !StringUtils.equals(dep1.getGroupId(), dep2.getGroupId())) {
             return false;
         }
-        if (!StringUtils.equals(dep1.getArtifactId(), dep2.getArtifactId())) {
+        if (dep2.getArtifactId() != null && !StringUtils.equals(dep1.getArtifactId(), dep2.getArtifactId())) {
             return false;
         }
-        if (!StringUtils.equals(dep1.getVersion(), dep2.getVersion())) {
+        if (dep2.getVersion() != null && !StringUtils.equals(dep1.getVersion(), dep2.getVersion())) {
             return false;
         }
-        if (!StringUtils.equals(dep1.getClassifier(), dep2.getClassifier())) {
+        if (dep2.getClassifier() != null && !StringUtils.equals(dep1.getClassifier(), dep2.getClassifier())) {
             return false;
         }
-        if (!StringUtils.equals(dep1.getScope(), dep2.getScope())) {
+        if (dep2.getScope() != null && !StringUtils.equals(dep1.getScope(), dep2.getScope())) {
             return false;
         }
-        if (!StringUtils.equals(dep1.getType(), dep2.getType())) {
+        if (dep2.getType() != null && !StringUtils.equals(dep1.getType(), dep2.getType())) {
             return false;
         }
         return true;
@@ -240,7 +240,7 @@ public class FitNesseContextWriter {
     private void addLines(final Writer writer, final String chapter, final List<String> lines,
                           final String prefix, final String postfix) throws IOException {
         if (lines != null && !lines.isEmpty()) {
-            writer.write("!note " + chapter + DEF_RETURN + DEF_RETURN);
+            writer.write("!note " + chapter + DEF_RETURN);
             for (final String entry : lines) {
                 writer.write(prefix + entry + postfix + DEF_RETURN);
             }

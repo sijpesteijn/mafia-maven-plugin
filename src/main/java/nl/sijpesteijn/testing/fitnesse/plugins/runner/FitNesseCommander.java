@@ -109,11 +109,11 @@ public class FitNesseCommander {
             if (inputMonitor.isFinished()) {
                 if (errorMonitor.getBuffer().toString()
                         .endsWith("Unpacking new version of FitNesse resources. Please be patient.")) {
-                    Thread.sleep(3000);
+                    Thread.sleep(commanderConfig.getUnpackWaitTime());
                 }
                 return;
             }
-            Thread.sleep(2000);
+            Thread.sleep(commanderConfig.getUnpackWaitTime());
         }
     }
 

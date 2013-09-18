@@ -50,6 +50,11 @@ public class FitNesseCommanderConfig {
     private final String nameRootPage;
 
     /**
+     * Time to wait after unpacking a new fitnesse.
+     */
+    private final long unpackWaitTime;
+
+    /**
      * Constructor.
      *
      * @param fitNessePort - fitnesse port.
@@ -59,12 +64,13 @@ public class FitNesseCommanderConfig {
      * @param retainDays - retain days.
      * @param classpathString - class path string.
      * @param jvmArguments - jvm arguments.
+     * @param unpackWaitTime - time to wait after unpacking a new fitnesse.
      * @param log - logger.
      */
     public FitNesseCommanderConfig(final int fitNessePort, final String wikiRoot, final String nameRootPage,
                                    final String fitNesseLogDirectory, final int retainDays,
                                    final String classpathString,
-                                   final List<String> jvmArguments, final Log log) {
+                                   final List<String> jvmArguments, final long unpackWaitTime, final Log log) {
         this.fitNessePort = fitNessePort;
         this.wikiRoot = wikiRoot;
         this.nameRootPage = nameRootPage;
@@ -72,6 +78,7 @@ public class FitNesseCommanderConfig {
         this.retainDays = retainDays;
         this.classpathString = classpathString;
         this.jvmArguments = jvmArguments;
+        this.unpackWaitTime = unpackWaitTime;
         this.log = log;
     }
 
@@ -145,5 +152,9 @@ public class FitNesseCommanderConfig {
      */
     public final String getClasspathString() {
         return classpathString;
+    }
+
+    public long getUnpackWaitTime() {
+        return unpackWaitTime;
     }
 }
