@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -117,6 +118,11 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     public final void execute() throws MojoExecutionException, MojoFailureException {
         getLog().debug(toString());
         if (!skip) {
+
+            if (fitNesseRunPort == -1) {
+                fitNesseRunPort = getAvailablePort();
+            }
+
             if (startServer) {
                 startCommander();
             }
@@ -147,6 +153,25 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
         } else {
             getLog().info("Skipping mafia reporting.");
         }
+    }
+
+    private int getAvailablePort() {
+        ServerSocket ss = null;
+        try {
+            ss = new ServerSocket(0);
+            ss.setReuseAddress(true);
+            return ss.getLocalPort();
+        } catch (IOException e) {
+        } finally {
+            if (ss != null) {
+                try {
+                    ss.close();
+                } catch (IOException e) {
+                /* should not be thrown */
+                }
+            }
+        }
+        return -1;
     }
 
     /**

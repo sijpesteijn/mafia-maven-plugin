@@ -107,7 +107,7 @@ public class FitNesseCommander {
                 // process has not finished yet.
             }
             if (inputMonitor.isFinished()) {
-                if (errorMonitor.getBuffer().toString()
+                if (errorMonitor.getBuffer().toString().trim()
                         .endsWith("Unpacking new version of FitNesse resources. Please be patient.")) {
                     Thread.sleep(commanderConfig.getUnpackWaitTime());
                 }
