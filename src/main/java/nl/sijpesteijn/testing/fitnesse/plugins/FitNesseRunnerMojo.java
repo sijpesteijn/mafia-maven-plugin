@@ -129,7 +129,8 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
             getLog().info("Starting test run....");
             try {
                 outputDirectory = getWikiRoot() + File.separator + getNameRootPage() + "/files/mafiaResults/";
-                clearOutputDirectory();
+                clearOutputDirectory(outputDirectory);
+                new File(outputDirectory).mkdirs();
 
                 final TestCaller testCaller = new URLTestCaller(fitNesseRunPort, "http", "localhost",
                         new File(outputDirectory), resultStore);
@@ -214,10 +215,11 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
      * Clear the test result output directory.
      *
      * @throws MojoFailureException - unable to delete output directory.
+     * @param directory
      */
-    private void clearOutputDirectory() throws MojoFailureException {
+    private void clearOutputDirectory(String directory) throws MojoFailureException {
         try {
-            FileUtils.deleteDirectory(new File(outputDirectory));
+            FileUtils.deleteDirectory(new File(directory));
         } catch (IOException e) {
             throw new MojoFailureException("Could not clear output directory.", e);
         }
