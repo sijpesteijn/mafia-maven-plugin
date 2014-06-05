@@ -50,8 +50,8 @@
 
     <properties>
         <project.build.sourceEndcoding>UTF-8</project.build.sourceEndcoding>
-        <fitnesse.version>20130530</fitnesse.version>
-        <maven.version>3.0.4</maven.version>
+        <fitnesse.version>20140418</fitnesse.version>
+        <maven.version>3.0.5</maven.version>
         <maven-plugin-annotations.version>3.2</maven-plugin-annotations.version>
         <maven-source-plugin.version>2.1.2</maven-source-plugin.version>
         <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
