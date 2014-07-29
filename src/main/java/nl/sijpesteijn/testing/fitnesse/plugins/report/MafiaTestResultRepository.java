@@ -108,10 +108,10 @@ public class MafiaTestResultRepository implements TestResultRepository {
      */
     private MafiaTestSummary extractSummary(final String summary) {
         String[] parts = summary.split(",");
-        String right = parts[0].trim().split(" ")[0].trim();
-        String wrong = parts[1].split(" ")[1].trim();
-        String ignore = parts[2].split(" ")[1].trim();
-        String exception = parts[3].split(" ")[1].trim();
+        String rightStr = parts[0].trim().split(" ")[0].trim();
+        String wrongStr = parts[1].split(" ")[1].trim();
+        String ignoreStr = parts[2].split(" ")[1].trim();
+        String exceptionStr = parts[3].split(" ")[1].trim();
         String time = "0";
         if (summary.contains("(")) {
             time = summary.substring(summary.lastIndexOf('(') + 1, summary.lastIndexOf(')'));
@@ -119,11 +119,11 @@ public class MafiaTestResultRepository implements TestResultRepository {
             time = time.replace(",", "");
             time = time.split(" ")[0];
         }
-        MafiaTestSummary testSummary = new MafiaTestSummary();
-        testSummary.right = Integer.parseInt(right);
-        testSummary.wrong = Integer.parseInt(wrong);
-        testSummary.ignores = Integer.parseInt(ignore);
-        testSummary.exceptions = Integer.parseInt(exception);
+        int right = Integer.parseInt(rightStr);
+        int wrong = Integer.parseInt(wrongStr);
+        int ignores = Integer.parseInt(ignoreStr);
+        int exceptions = Integer.parseInt(exceptionStr);
+        MafiaTestSummary testSummary = new MafiaTestSummary(right, wrong, ignores, exceptions);
         testSummary.setTestTime(Long.parseLong(time));
         return testSummary;
     }

@@ -236,15 +236,21 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
                                                      final Date runDate) throws MafiaException {
         final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         if (testSummaries != null) {
-            final MafiaTestSummary summary = new MafiaTestSummary();
+            int exceptions = 0;
+            int wrong = 0;
+            int ignores = 0;
+            int right = 0;
+            long testTime = 0;
             for (Map.Entry<String, MafiaTestSummary> entry : testSummaries.entrySet()) {
                 final MafiaTestSummary mafiaTestSummary = entry.getValue();
-                summary.exceptions += mafiaTestSummary.exceptions;
-                summary.wrong += mafiaTestSummary.wrong;
-                summary.ignores += mafiaTestSummary.ignores;
-                summary.right += mafiaTestSummary.right;
-                summary.setTestTime(summary.getTestTime() + mafiaTestSummary.getTestTime());
+                exceptions += mafiaTestSummary.getExceptions();
+                wrong += mafiaTestSummary.getWrong();
+                ignores += mafiaTestSummary.getIgnores();
+                right += mafiaTestSummary.getRight();
+                testTime += mafiaTestSummary.getTestTime();
             }
+            final MafiaTestSummary summary = new MafiaTestSummary(right, wrong, ignores, exceptions);
+            summary.setTestTime(testTime);
             final Properties properties = new Properties();
             properties.put("exceptions", "" + summary.getExceptions());
             properties.put("wrong", "" + summary.getWrong());

@@ -31,6 +31,14 @@ public class MafiaTestSummary extends TestSummary {
      */
     private String runDate;
 
+    public MafiaTestSummary(final int right, final int wrong, final int ignores, final int exceptions) {
+        super(right, wrong, ignores, exceptions);
+    }
+
+    public MafiaTestSummary() {
+
+    }
+
     /**
      * Set the report time stamp to now.
      */

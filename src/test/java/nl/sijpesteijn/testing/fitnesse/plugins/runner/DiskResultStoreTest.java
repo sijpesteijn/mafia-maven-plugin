@@ -27,6 +27,6 @@ public class DiskResultStoreTest {
     public void testStore() throws Throwable {
         MafiaTestSummary mafiaTestSummary = store.saveResult(LINE + "\n" + STYLE, new File("./target/junitTestResults"), "sample-test");
         assertNotNull(mafiaTestSummary);
-        assertTrue(mafiaTestSummary.right == 10);
+        assertTrue(mafiaTestSummary.getRight() == 10);
     }
 }

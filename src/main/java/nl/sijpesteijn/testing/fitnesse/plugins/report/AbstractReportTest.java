@@ -16,11 +16,7 @@ public abstract class AbstractReportTest {
      */
     public final MafiaTestSummary getSummary(final int right, final int wrong, final int exceptions,
                                              final int ignores) {
-        MafiaTestSummary testSummary = new MafiaTestSummary();
-        testSummary.wrong = wrong;
-        testSummary.right = right;
-        testSummary.exceptions = exceptions;
-        testSummary.ignores = ignores;
+        MafiaTestSummary testSummary = new MafiaTestSummary(right, wrong, ignores, exceptions);
         return testSummary;
     }
 }

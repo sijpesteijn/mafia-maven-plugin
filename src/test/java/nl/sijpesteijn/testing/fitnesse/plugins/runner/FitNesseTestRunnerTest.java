@@ -101,10 +101,10 @@ public class FitNesseTestRunnerTest extends AbstractFitNesseTest {
         final String testName =
                 "FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteColumnFixtureSpec.TestMissingField";
 
-        MafiaTestSummary summary = new MafiaTestSummary();
-        when(testCallerMock.test(testName, PageType.TEST, null, "/tests/")).thenReturn(summary);
+        MafiaTestSummary summary = null;
 
-        summary.ignores = 1;
+        summary = new MafiaTestSummary(0, 0, 1, 0);
+        when(testCallerMock.test(testName, PageType.TEST, null, "/tests/")).thenReturn(summary);
 
         try {
             runner.runTests(new ArrayList<String>() {{
@@ -114,8 +114,8 @@ public class FitNesseTestRunnerTest extends AbstractFitNesseTest {
             assertTrue(me.getMessage().endsWith(" failed with ignore exception."));
         }
 
-        summary.ignores = 0;
-        summary.exceptions = 1;
+        summary = new MafiaTestSummary(0,0,0,1);
+        when(testCallerMock.test(testName, PageType.TEST, null, "/tests/")).thenReturn(summary);
         try {
             runner.runTests(new ArrayList<String>() {{
                 add(testName);
@@ -124,8 +124,8 @@ public class FitNesseTestRunnerTest extends AbstractFitNesseTest {
             assertTrue(me.getMessage().endsWith(" failed with an exception."));
         }
 
-        summary.exceptions = 0;
-        summary.wrong = 1;
+        summary = new MafiaTestSummary(0,1,0,0);
+        when(testCallerMock.test(testName, PageType.TEST, null, "/tests/")).thenReturn(summary);
         try {
             runner.runTests(new ArrayList<String>() {{
                 add(testName);
@@ -141,23 +141,23 @@ public class FitNesseTestRunnerTest extends AbstractFitNesseTest {
         final String testName =
                 "FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteColumnFixtureSpec.TestMissingField";
 
-        MafiaTestSummary summary = new MafiaTestSummary();
+        MafiaTestSummary summary = null;
+
+        summary = new MafiaTestSummary(0,0,1,0);
         when(testCallerMock.test(testName, PageType.TEST, null, "/tests/")).thenReturn(summary);
 
-        summary.ignores = 1;
-
             runner.runTests(new ArrayList<String>() {{
                 add(testName);
             }});
 
-        summary.ignores = 0;
-        summary.exceptions = 1;
+        summary = new MafiaTestSummary(0,0,0,1);
+        when(testCallerMock.test(testName, PageType.TEST, null, "/tests/")).thenReturn(summary);
             runner.runTests(new ArrayList<String>() {{
                 add(testName);
             }});
 
-        summary.exceptions = 0;
-        summary.wrong = 1;
+        summary = new MafiaTestSummary(0,1,0,0);
+        when(testCallerMock.test(testName, PageType.TEST, null, "/tests/")).thenReturn(summary);
             runner.runTests(new ArrayList<String>() {{
                 add(testName);
             }});

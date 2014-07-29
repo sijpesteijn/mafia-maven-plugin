@@ -189,15 +189,16 @@ public class FitNesseReportMojo extends AbstractMavenReport {
      */
     private MafiaTestSummary getTestSummary(final String mafiaTestResultDir) throws IOException {
         final Properties properties = new Properties();
-        final MafiaTestSummary summary = new MafiaTestSummary();
+        MafiaTestSummary summary = new MafiaTestSummary();
         if (new File(mafiaTestResultDir).exists()) {
             final InputStream is = new FileInputStream(mafiaTestResultDir);
             try {
                 properties.load(is);
-                summary.wrong = Integer.parseInt(properties.getProperty("wrong"));
-                summary.right = Integer.parseInt(properties.getProperty("right"));
-                summary.ignores = Integer.parseInt(properties.getProperty("ignores"));
-                summary.exceptions = Integer.parseInt(properties.getProperty("exceptions"));
+                int wrong = Integer.parseInt(properties.getProperty("wrong"));
+                int right = Integer.parseInt(properties.getProperty("right"));
+                int ignores = Integer.parseInt(properties.getProperty("ignores"));
+                int exceptions = Integer.parseInt(properties.getProperty("exceptions"));
+                summary  = new MafiaTestSummary(right, wrong, ignores, exceptions);
                 summary.setTestTime(Long.parseLong(properties.getProperty("testTime")));
                 summary.setRunDate(properties.getProperty("runDate"));
             } finally {

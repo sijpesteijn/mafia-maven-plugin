@@ -61,7 +61,6 @@ public class DiskResultStore implements ResultStore {
      * @return - mafia test summary.
      */
     private MafiaTestSummary updateSummary(final String inputLine) {
-        final MafiaTestSummary summary = new MafiaTestSummary();
         final String assertions = "<strong>Assertions:</strong>";
         int start = inputLine.indexOf(assertions);
         int stop = inputLine.indexOf("right", start + assertions.length());
@@ -75,10 +74,11 @@ public class DiskResultStore implements ResultStore {
         start = stop + "ignored".length() + 1;
         stop = inputLine.indexOf("exceptions", start);
         final String exceptionsStr = inputLine.substring(start, stop);
-        summary.right += Integer.parseInt(rightStr.trim());
-        summary.wrong += Integer.parseInt(wrongStr.trim());
-        summary.ignores += Integer.parseInt(ignoreStr.trim());
-        summary.exceptions += Integer.parseInt(exceptionsStr.trim());
+        int right = Integer.parseInt(rightStr.trim());
+        int wrong = Integer.parseInt(wrongStr.trim());
+        int ignores = Integer.parseInt(ignoreStr.trim());
+        int exceptions = Integer.parseInt(exceptionsStr.trim());
+        final MafiaTestSummary summary = new MafiaTestSummary(right, wrong, ignores, exceptions);
         return summary;
     }
 

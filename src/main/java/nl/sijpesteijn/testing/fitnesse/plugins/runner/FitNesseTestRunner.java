@@ -1,6 +1,5 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
-import fitnesse.testsystems.TestSummary;
 import fitnesse.wiki.PageType;
 import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
@@ -129,14 +128,14 @@ public class FitNesseTestRunner {
      */
     private void checkStopConditions() throws MafiaException {
         for (final String key : testSummaries.keySet()) {
-            final TestSummary testSummary = testSummaries.get(key);
-            if (testSummary.wrong > 0 && stopTestsOnWrong) {
+            final MafiaTestSummary testSummary = testSummaries.get(key);
+            if (testSummary.getWrong() > 0 && stopTestsOnWrong) {
                 throw new MafiaException(key + " failed with wrong exception.");
             }
-            if (testSummary.ignores > 0 && stopTestsOnIgnore) {
+            if (testSummary.getIgnores() > 0 && stopTestsOnIgnore) {
                 throw new MafiaException(key + " failed with ignore exception.");
             }
-            if (testSummary.exceptions > 0 && stopTestsOnException) {
+            if (testSummary.getExceptions() > 0 && stopTestsOnException) {
                 throw new MafiaException(key + " failed with an exception.");
             }
         }
