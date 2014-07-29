@@ -7,4 +7,6 @@
 /.project
 /.git
 /.git
+/.idea
+/mafia-maven-plugin.iml
 /FitNesseRoot
