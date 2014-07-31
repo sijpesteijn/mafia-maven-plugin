@@ -10,6 +10,23 @@ This plugin let's you control:
 - **CLASSPATH ENTRIES & DEFINITIONS** can be written to root page of FitNesse using the pom configuration.
 - **COLLECT REPORTING**.
 
+Supported versions of FitNesse:
+
+- 20140630
+- 20140623
+- 20140418
+- 20140201
+- 20131110
+- 20131109
+- 20130530
+- 20130531
+- 20121220
+- 20111025
+
+**NOTE if you don't want to use the fitnesse version (= latest) that comes with the mafia plugin, please include
+fitnesse as a dependency of your product. IMPORTANT add the <classifier>standalone</classifier> to include velocity
+and htmlparser dependencies.
+
 1 - STARTING FitNesse.
 <br/>
 
