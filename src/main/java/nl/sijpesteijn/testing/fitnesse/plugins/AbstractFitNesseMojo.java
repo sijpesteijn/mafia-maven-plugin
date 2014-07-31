@@ -90,25 +90,21 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
      */
     @Parameter(property = "unpackWaitTime", defaultValue = "3000")
     private long unpackWaitTime;
-    
-    
+
+
     /**
-     * fitNesse user:password 
+     * fitNesse user:password
      */
     @Parameter(property = "fitNesseAuthenticate", defaultValue = "")
-    private String                   fitNesseAuthenticate;
+    private String fitNesseAuthenticate;
 
 
-    
     /**
      * fitNesse UpdatePrevents
      */
     @Parameter(property = "fitNesseUpdatePrevents", defaultValue = "false")
-    private Boolean                   fitNesseUpdatePrevents;
-    
-    
-    
-    
+    private Boolean fitNesseUpdatePrevents;
+
 
     /**
      * Get a commander configuration.
@@ -119,7 +115,7 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
     protected final FitNesseCommanderConfig getCommanderConfig() throws MojoFailureException {
         return getCommanderConfig(null, null, 0, fitNessePort, null);
     }
-    
+
     protected final FitNesseCommanderConfig getCommanderConfig(String fitNesseAuthenticate) throws MojoFailureException {
         return getCommanderConfig(null, null, 0, fitNessePort, fitNesseAuthenticate);
     }
@@ -155,7 +151,7 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
             final String classpathString = createClasspathString(jvmDependencies, jarLocator.getFitNesseJarPath());
 
             return new FitNesseCommanderConfig(port, wikiRoot, nameRootPage, logDirectory, retainDays,
-                    classpathString, jvmArguments, unpackWaitTime, getLog(), 
+                    classpathString, jvmArguments, unpackWaitTime, getLog(),
                     fitNesseAuthenticate, fitNesseUpdatePrevents);
         } catch (MafiaException e) {
             throw new MojoFailureException("Could not get command configuration.", e);
@@ -240,7 +236,7 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
                 + ", Wiki root: " + this.wikiRoot
                 + ", Name of root page: " + this.nameRootPage
                 + ", Log directory: " + logDirectory
-                + ", fitNesseAuthenticate:"  + fitNesseAuthenticate
+                + ", fitNesseAuthenticate:" + fitNesseAuthenticate
                 + ", fitNesseUpdatePrevents: " + fitNesseUpdatePrevents;
     }
 
@@ -271,23 +267,21 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
     public final int getFitNessePort() {
         return fitNessePort;
     }
-    
+
     /**
-     * 
      * @return {@link java.lang.String}
      */
-	public String getFitNesseAuthenticate() {
-		return fitNesseAuthenticate;
-	}
+    public String getFitNesseAuthenticate() {
+        return fitNesseAuthenticate;
+    }
 
 
     /**
-     * 
      * @return
      */
-	public Boolean getFitNesseUpdatePrevents() {
-		return fitNesseUpdatePrevents;
-	}
+    public Boolean getFitNesseUpdatePrevents() {
+        return fitNesseUpdatePrevents;
+    }
 
 
 }
