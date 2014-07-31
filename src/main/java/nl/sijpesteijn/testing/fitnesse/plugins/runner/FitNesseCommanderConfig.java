@@ -53,8 +53,25 @@ public class FitNesseCommanderConfig {
      * Time to wait after unpacking a new fitnesse.
      */
     private final long unpackWaitTime;
-
+    
+    
     /**
+     * fitNesse authentication in start -a username:password
+     *                         in stop  -c username password
+     */
+    private final String       fitNesseAuthenticate;
+    
+    
+    /**
+     * fitNesse Update Prevents -o
+     */
+    private final Boolean fitNesseUpdatePrevents;
+
+
+
+
+
+	/**
      * Constructor.
      *
      * @param fitNessePort - fitnesse port.
@@ -66,11 +83,16 @@ public class FitNesseCommanderConfig {
      * @param jvmArguments - jvm arguments.
      * @param unpackWaitTime - time to wait after unpacking a new fitnesse.
      * @param log - logger.
+     * @param fitNesseAuthenticate - fitNesse username password.
+     * @param fitNesseUpdatePrevents - Update Prevents.
+     * 
      */
     public FitNesseCommanderConfig(final int fitNessePort, final String wikiRoot, final String nameRootPage,
                                    final String fitNesseLogDirectory, final int retainDays,
                                    final String classpathString,
-                                   final List<String> jvmArguments, final long unpackWaitTime, final Log log) {
+                                   final List<String> jvmArguments, final long unpackWaitTime, final Log log, 
+                                   final String fitNesseAuthenticate,
+                                   final Boolean fitNesseUpdatePrevents) {
         this.fitNessePort = fitNessePort;
         this.wikiRoot = wikiRoot;
         this.nameRootPage = nameRootPage;
@@ -80,6 +102,9 @@ public class FitNesseCommanderConfig {
         this.jvmArguments = jvmArguments;
         this.unpackWaitTime = unpackWaitTime;
         this.log = log;
+        this.fitNesseAuthenticate = fitNesseAuthenticate;
+        this.fitNesseUpdatePrevents = fitNesseUpdatePrevents;
+        
     }
 
     /**
@@ -157,4 +182,17 @@ public class FitNesseCommanderConfig {
     public long getUnpackWaitTime() {
         return unpackWaitTime;
     }
+    
+    /**
+     * Get the authenticate String
+     * @return
+     */
+    public String getFitNesseAuthenticate() {
+		return fitNesseAuthenticate;
+	}
+
+
+	public Boolean getFitNesseUpdatePrevents() {
+		return fitNesseUpdatePrevents;
+	}
 }
