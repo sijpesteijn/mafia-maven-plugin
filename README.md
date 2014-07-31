@@ -24,7 +24,8 @@ Supported versions of FitNesse:
 - 20111025
 
 **NOTE if you don't want to use the fitnesse version (= latest) that comes with the mafia plugin, please include
-fitnesse as a dependency of your product. IMPORTANT add the <classifier>standalone</classifier> to include velocity
+fitnesse as a dependency of your product. IMPORTANT add the &lt;classifier&gt;standalone&lt;/classifier&gt; to include
+velocity
 and htmlparser dependencies.
 
 1 - STARTING FitNesse.
