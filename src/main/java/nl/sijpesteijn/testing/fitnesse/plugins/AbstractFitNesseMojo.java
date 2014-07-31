@@ -91,6 +91,21 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
     @Parameter(property = "unpackWaitTime", defaultValue = "3000")
     private long unpackWaitTime;
 
+
+    /**
+     * fitNesse user:password
+     */
+    @Parameter(property = "fitNesseAuthenticate", defaultValue = "")
+    private String fitNesseAuthenticate;
+
+
+    /**
+     * fitNesse UpdatePrevents
+     */
+    @Parameter(property = "fitNesseUpdatePrevents", defaultValue = "false")
+    private Boolean fitNesseUpdatePrevents;
+
+
     /**
      * Get a commander configuration.
      *
@@ -98,7 +113,11 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
      * @throws MojoFailureException thrown in cause of an error.
      */
     protected final FitNesseCommanderConfig getCommanderConfig() throws MojoFailureException {
-        return getCommanderConfig(null, null, 0, fitNessePort);
+        return getCommanderConfig(null, null, 0, fitNessePort, null);
+    }
+
+    protected final FitNesseCommanderConfig getCommanderConfig(String fitNesseAuthenticate) throws MojoFailureException {
+        return getCommanderConfig(null, null, 0, fitNessePort, fitNesseAuthenticate);
     }
 
     /**
@@ -124,7 +143,7 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
      */
     protected final FitNesseCommanderConfig getCommanderConfig(final List<Dependency> jvmDependencies,
                                                                final List<String> jvmArguments,
-                                                               final int retainDays, final int port)
+                                                               final int retainDays, final int port, String fitNesseAuthenticate)
             throws MojoFailureException {
         try {
             final FitNesseJarLocator jarLocator = new FitNesseJarLocator(getMafiaProject());
@@ -132,7 +151,8 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
             final String classpathString = createClasspathString(jvmDependencies, jarLocator.getFitNesseJarPath());
 
             return new FitNesseCommanderConfig(port, wikiRoot, nameRootPage, logDirectory, retainDays,
-                    classpathString, jvmArguments, unpackWaitTime, getLog());
+                    classpathString, jvmArguments, unpackWaitTime, getLog(),
+                    fitNesseAuthenticate, fitNesseUpdatePrevents);
         } catch (MafiaException e) {
             throw new MojoFailureException("Could not get command configuration.", e);
         }
@@ -215,7 +235,9 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
         return "FitNesse port: " + fitNessePort
                 + ", Wiki root: " + this.wikiRoot
                 + ", Name of root page: " + this.nameRootPage
-                + ", Log directory: " + logDirectory;
+                + ", Log directory: " + logDirectory
+                + ", fitNesseAuthenticate:" + fitNesseAuthenticate
+                + ", fitNesseUpdatePrevents: " + fitNesseUpdatePrevents;
     }
 
     /**
@@ -245,5 +267,21 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
     public final int getFitNessePort() {
         return fitNessePort;
     }
+
+    /**
+     * @return {@link java.lang.String}
+     */
+    public String getFitNesseAuthenticate() {
+        return fitNesseAuthenticate;
+    }
+
+
+    /**
+     * @return
+     */
+    public Boolean getFitNesseUpdatePrevents() {
+        return fitNesseUpdatePrevents;
+    }
+
 
 }

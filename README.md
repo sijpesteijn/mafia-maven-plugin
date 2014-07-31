@@ -81,6 +81,16 @@ Configuration:
         <td>Time to wait after unpacking a fitnesse.</td>
     </tr>
     <tr>
+        <td>fitNesseAuthenticate</td>
+        <td>no auth</td>
+        <td>username:password - Enforces access for one user or /auth/file/path/and/name - Enforces access for a file of users with encrypted passwords</td>
+    </tr>
+    <tr>
+        <td>fitNesseUpdatePrevents</td>
+        <td>update</td>
+        <td>Prevents (omits) updating FitNesseRoot content</td>
+    </tr>
+    <tr>
         <td>logDirectory</td>
         <td>${basedir}/log/</td>
         <td>Where to put and what to call the run log.</td>
@@ -148,6 +158,16 @@ Configuration:
         <td>jvmDependencies</td>
         <td></td>
         <td>Classpath entries for the jvm.</td>
+    </tr>
+    <tr>
+        <td>fitNesseAuthenticate</td>
+        <td>no auth</td>
+        <td>username:password - Enforces access for one user or /auth/file/path/and/name - Enforces access for a file of users with encrypted passwords</td>
+    </tr>
+    <tr>
+        <td>fitNesseUpdatePrevents</td>
+        <td>update</td>
+        <td>Prevents (omits) updating FitNesseRoot content</td>
     </tr>
  </table>
 
@@ -252,6 +272,16 @@ Configuration:
         <td>unpackWaitTime</td>
         <td>3000 milliseconds</td>
         <td>Time to wait after unpacking a fitnesse.</td>
+    </tr>
+    <tr>
+        <td>fitNesseAuthenticate</td>
+        <td>no auth</td>
+        <td>username:password - Enforces access for one user or /auth/file/path/and/name - Enforces access for a file of users with encrypted passwords</td>
+    </tr>
+    <tr>
+        <td>fitNesseUpdatePrevents</td>
+        <td>update</td>
+        <td>Prevents (omits) updating FitNesseRoot content</td>
     </tr>
  </table>
 

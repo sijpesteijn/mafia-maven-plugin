@@ -50,14 +50,31 @@ public class FitNesseCommander {
         if (commanderConfig.getFitNesseLogDirectory() != null) {
             logArgument = " -l " + commanderConfig.getFitNesseLogDirectory();
         }
+        String authArgument = "";
+        if (commanderConfig.getFitNesseAuthenticate() != null) {
+        	authArgument = " -a " + commanderConfig.getFitNesseAuthenticate();
+        }
+        
+        String updatePreventsArgument = "";
+        if (commanderConfig.getFitNesseUpdatePrevents() != null && commanderConfig.getFitNesseUpdatePrevents()) {
+        	updatePreventsArgument = " -o";
+        }
+        
         final String command = "java" + getJVMArguments(commanderConfig.getJvmArguments())
                 + " -cp " + commanderConfig.getClasspathString()
                 + " fitnesseMain.FitNesseMain -p " + commanderConfig.getFitNessePort()
                 + " -d " + commanderConfig.getWikiRoot()
                 + " -r " + commanderConfig.getNameRootPage()
                 + " -e " + commanderConfig.getRetainDays()
-                + logArgument;
+                + logArgument
+                + authArgument
+                + updatePreventsArgument;
+        
         commanderConfig.getLog().info("Starting FitNesse. This could take some more seconds when first used....");
+       
+
+        this.commanderConfig.getLog().debug("Starting FitNesse with Command:" + command);
+        
         run(command);
     }
 
@@ -67,8 +84,22 @@ public class FitNesseCommander {
      * @throws MafiaException thrown in case of an error.
      */
     public final void stop() throws MafiaException {
+    	
+        String authArgument = "";
+        if (commanderConfig.getFitNesseAuthenticate() != null 
+          // in Shutdown fitnesse does not support user/paassword reading from file
+          // so we detect a valid user:password with the ":" separator
+          && commanderConfig.getFitNesseAuthenticate().contains(":")) {
+        	String userPasswordArgument = commanderConfig.getFitNesseAuthenticate().replaceFirst(":", " ");
+        	authArgument = " -c " + userPasswordArgument;
+        }
+    	
+
         final String command = "java -cp " + commanderConfig.getClasspathString() + " fitnesse.Shutdown -p "
-                + commanderConfig.getFitNessePort();
+                + commanderConfig.getFitNessePort()
+                + authArgument;
+
+        this.commanderConfig.getLog().debug("Stopping FitNesse with Command:" + command);
         run(command);
     }
 

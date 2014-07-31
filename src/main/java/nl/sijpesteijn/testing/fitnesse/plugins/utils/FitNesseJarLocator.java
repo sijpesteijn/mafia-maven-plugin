@@ -147,7 +147,7 @@ public class FitNesseJarLocator {
      * @return - boolean.
      */
     private boolean isFitNesseJar(final Artifact artifact) {
-        return artifact.getGroupId().equals("org.fitnesse");
+        return artifact.getGroupId().equals("org.fitnesse") && artifact.getArtifactId().equals("fitnesse");
     }
 
     /**
