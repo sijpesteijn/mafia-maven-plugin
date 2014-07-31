@@ -28,7 +28,8 @@ public class FitNesseStarterMojo extends AbstractStartFitNesseMojo {
         }
         if (commander.hasError()) {
             logErrorMessages(commander.getOutput(), commander.getErrorOutput());
-            throw new MojoExecutionException("Could not start FitNesse");
+            throw new MojoExecutionException("Could not start FitNesse: (error output: " + commander.getErrorOutput()
+                    + ", output: " + commander.getOutput() + ")");
         } else {
             getLog().info("FitNesse start on: http://localhost:" + getFitNessePort());
         }
