@@ -93,10 +93,16 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
 
 
     /**
-     * fitNesse user:password
+     * fitNesse user:password or file
      */
-    @Parameter(property = "fitNesseAuthenticate", defaultValue = "")
-    private String fitNesseAuthenticate;
+    @Parameter(property = "fitNesseAuthenticateStart", defaultValue = "")
+    private String fitNesseAuthenticateStart;
+    
+    /**
+     *  fitNesse user:password 
+     */
+    @Parameter(property = "fitNesseAuthenticateStop", defaultValue = "")
+    private String fitNesseAuthenticateStop;
 
 
     /**
@@ -104,6 +110,13 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
      */
     @Parameter(property = "fitNesseUpdatePrevents", defaultValue = "false")
     private Boolean fitNesseUpdatePrevents;
+    
+    /**
+     * fitNesse Verbose
+     */
+    @Parameter(property = "fitNesseVerbose", defaultValue = "false")
+    private Boolean fitNesseVerbose;
+
 
 
     /**
@@ -143,7 +156,7 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
      */
     protected final FitNesseCommanderConfig getCommanderConfig(final List<Dependency> jvmDependencies,
                                                                final List<String> jvmArguments,
-                                                               final int retainDays, final int port, String fitNesseAuthenticate)
+                                                               final int retainDays, final int port, String fitNesseAuthenticateStart)
             throws MojoFailureException {
         try {
             final FitNesseJarLocator jarLocator = new FitNesseJarLocator(getMafiaProject());
@@ -152,7 +165,7 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
 
             return new FitNesseCommanderConfig(port, wikiRoot, nameRootPage, logDirectory, retainDays,
                     classpathString, jvmArguments, unpackWaitTime, getLog(),
-                    fitNesseAuthenticate, fitNesseUpdatePrevents);
+                    fitNesseAuthenticateStart, fitNesseAuthenticateStop, fitNesseUpdatePrevents, fitNesseVerbose);
         } catch (MafiaException e) {
             throw new MojoFailureException("Could not get command configuration.", e);
         }
@@ -236,8 +249,10 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
                 + ", Wiki root: " + this.wikiRoot
                 + ", Name of root page: " + this.nameRootPage
                 + ", Log directory: " + logDirectory
-                + ", fitNesseAuthenticate:" + fitNesseAuthenticate
-                + ", fitNesseUpdatePrevents: " + fitNesseUpdatePrevents;
+                + ", fitNesseAuthenticateStart:" + fitNesseAuthenticateStart
+                + ", fitNesseAuthenticateStop:" + fitNesseAuthenticateStop
+                + ", fitNesseUpdatePrevents: " + fitNesseUpdatePrevents
+                + ", fitNesseVerbose: " + fitNesseVerbose;
     }
 
     /**
@@ -271,10 +286,16 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
     /**
      * @return {@link java.lang.String}
      */
-    public String getFitNesseAuthenticate() {
-        return fitNesseAuthenticate;
+    public String getFitNesseAuthenticateStart() {
+        return fitNesseAuthenticateStart;
     }
 
+    /**
+     * @return {@link java.lang.String}
+     */
+    public String getFitNesseAuthenticateStop() {
+        return fitNesseAuthenticateStop;
+    }
 
     /**
      * @return
@@ -282,6 +303,10 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
     public Boolean getFitNesseUpdatePrevents() {
         return fitNesseUpdatePrevents;
     }
+
+	public Boolean getFitNesseVerbose() {
+		return fitNesseVerbose;
+	}
 
 
 }

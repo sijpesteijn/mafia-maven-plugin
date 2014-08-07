@@ -19,7 +19,7 @@ public class FitNesseStopperMojo extends AbstractFitNesseMojo {
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
         getLog().debug(toString());
-        final FitNesseCommander commander = new FitNesseCommander(getCommanderConfig(getFitNesseAuthenticate()));
+        final FitNesseCommander commander = new FitNesseCommander(getCommanderConfig(getFitNesseAuthenticateStop()));
         try {
             commander.stop();
         } catch (MafiaException me) {

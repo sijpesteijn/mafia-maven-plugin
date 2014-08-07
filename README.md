@@ -81,13 +81,18 @@ Configuration:
         <td>Time to wait after unpacking a fitnesse.</td>
     </tr>
     <tr>
-        <td>fitNesseAuthenticate</td>
+        <td>fitNesseAuthenticateStart</td>
         <td>no auth</td>
         <td>username:password - Enforces access for one user or /auth/file/path/and/name - Enforces access for a file of users with encrypted passwords</td>
     </tr>
     <tr>
-        <td>fitNesseUpdatePrevents</td>
-        <td>update</td>
+        <td>fitNesseVerbose></td>
+        <td>false</td>
+        <td>Sets verbose option for fitnesse</td>
+    </tr>
+    <tr>
+        <td>fitNesseVerbose</td>
+        <td>not verbose</td>
         <td>Prevents (omits) updating FitNesseRoot content</td>
     </tr>
     <tr>
@@ -160,14 +165,9 @@ Configuration:
         <td>Classpath entries for the jvm.</td>
     </tr>
     <tr>
-        <td>fitNesseAuthenticate</td>
+        <td>fitNesseAuthenticateStop</td>
         <td>no auth</td>
-        <td>username:password - Enforces access for one user or /auth/file/path/and/name - Enforces access for a file of users with encrypted passwords</td>
-    </tr>
-    <tr>
-        <td>fitNesseUpdatePrevents</td>
-        <td>update</td>
-        <td>Prevents (omits) updating FitNesseRoot content</td>
+        <td>username:password - Enforces access for user on shutdown</td>
     </tr>
  </table>
 
@@ -274,14 +274,24 @@ Configuration:
         <td>Time to wait after unpacking a fitnesse.</td>
     </tr>
     <tr>
-        <td>fitNesseAuthenticate</td>
+        <td>fitNesseAuthenticateStart</td>
         <td>no auth</td>
-        <td>username:password - Enforces access for one user or /auth/file/path/and/name - Enforces access for a file of users with encrypted passwords</td>
+        <td>username:password - Enforces access for one user or /auth/file/path/and/name - Enforces access for a file of users with encrypted passwords on startup</td>
+    </tr>
+    <tr>
+        <td>fitNesseAuthenticateStop</td>
+        <td>no auth</td>
+        <td>username:password - Enforces access for user on shutdown</td>
     </tr>
     <tr>
         <td>fitNesseUpdatePrevents</td>
         <td>update</td>
         <td>Prevents (omits) updating FitNesseRoot content</td>
+    </tr>
+    <tr>
+        <td>fitNesseVerbose></td>
+        <td>not verbose</td>
+        <td>Sets verbose option for fitnesse</td>
     </tr>
  </table>
 

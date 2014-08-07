@@ -20,7 +20,7 @@ public class FitNesseStarterMojo extends AbstractStartFitNesseMojo {
         getLog().debug(toString());
         final FitNesseCommander commander = new FitNesseCommander(getCommanderConfig(getJvmDependencies(),
                 getJvmArguments(),
-                getRetainDays(), getFitNessePort(), getFitNesseAuthenticate()));
+                getRetainDays(), getFitNessePort(), getFitNesseAuthenticateStart()));
         try {
             commander.start();
         } catch (MafiaException me) {
