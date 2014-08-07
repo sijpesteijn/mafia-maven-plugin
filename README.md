@@ -91,11 +91,6 @@ Configuration:
         <td>Sets verbose option for fitnesse</td>
     </tr>
     <tr>
-        <td>fitNesseVerbose</td>
-        <td>not verbose</td>
-        <td>Prevents (omits) updating FitNesseRoot content</td>
-    </tr>
-    <tr>
         <td>logDirectory</td>
         <td>${basedir}/log/</td>
         <td>Where to put and what to call the run log.</td>
