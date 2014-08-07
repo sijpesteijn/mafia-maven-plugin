@@ -86,7 +86,7 @@ Configuration:
         <td>username:password - Enforces access for one user or /auth/file/path/and/name - Enforces access for a file of users with encrypted passwords</td>
     </tr>
     <tr>
-        <td>fitNesseVerbose></td>
+        <td>fitNesseVerbose</td>
         <td>false</td>
         <td>Sets verbose option for fitnesse</td>
     </tr>
@@ -284,7 +284,7 @@ Configuration:
         <td>Prevents (omits) updating FitNesseRoot content</td>
     </tr>
     <tr>
-        <td>fitNesseVerbose></td>
+        <td>fitNesseVerbose</td>
         <td>not verbose</td>
         <td>Sets verbose option for fitnesse</td>
     </tr>
