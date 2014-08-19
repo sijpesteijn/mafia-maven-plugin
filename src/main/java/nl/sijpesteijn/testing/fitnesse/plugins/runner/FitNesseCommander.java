@@ -50,14 +50,18 @@ public class FitNesseCommander {
         if (commanderConfig.getFitNesseLogDirectory() != null) {
             logArgument = " -l " + commanderConfig.getFitNesseLogDirectory();
         }
-        String authArgument = "";
-        if (commanderConfig.getFitNesseAuthenticate() != null) {
-        	authArgument = " -a " + commanderConfig.getFitNesseAuthenticate();
+        String authArgumentStart = "";
+        if (commanderConfig.getFitNesseAuthenticateStart() != null) {
+        	authArgumentStart = " -a " + commanderConfig.getFitNesseAuthenticateStart();
         }
         
         String updatePreventsArgument = "";
         if (commanderConfig.getFitNesseUpdatePrevents() != null && commanderConfig.getFitNesseUpdatePrevents()) {
         	updatePreventsArgument = " -o";
+        }
+        String verboseArgument = "";
+        if (commanderConfig.getFitNesseVerbose() != null && commanderConfig.getFitNesseVerbose()) {
+        	verboseArgument = " -v";
         }
         
         final String command = "java" + getJVMArguments(commanderConfig.getJvmArguments())
@@ -67,8 +71,9 @@ public class FitNesseCommander {
                 + " -r " + commanderConfig.getNameRootPage()
                 + " -e " + commanderConfig.getRetainDays()
                 + logArgument
-                + authArgument
-                + updatePreventsArgument;
+                + authArgumentStart
+                + updatePreventsArgument
+                + verboseArgument;
         
         commanderConfig.getLog().info("Starting FitNesse. This could take some more seconds when first used....");
        
@@ -86,11 +91,11 @@ public class FitNesseCommander {
     public final void stop() throws MafiaException {
     	
         String authArgument = "";
-        if (commanderConfig.getFitNesseAuthenticate() != null 
+        if (commanderConfig.getFitNesseAuthenticateStop() != null 
           // in Shutdown fitnesse does not support user/paassword reading from file
           // so we detect a valid user:password with the ":" separator
-          && commanderConfig.getFitNesseAuthenticate().contains(":")) {
-        	String userPasswordArgument = commanderConfig.getFitNesseAuthenticate().replaceFirst(":", " ");
+          && commanderConfig.getFitNesseAuthenticateStop().contains(":")) {
+        	String userPasswordArgument = commanderConfig.getFitNesseAuthenticateStop().replaceFirst(":", " ");
         	authArgument = " -c " + userPasswordArgument;
         }
     	
