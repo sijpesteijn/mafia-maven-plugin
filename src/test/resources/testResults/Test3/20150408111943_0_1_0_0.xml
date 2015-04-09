@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<testResults>
+	<FitNesseVersion>v20150226</FitNesseVersion>
+	<rootPath>Test3</rootPath>
+	<result>
+		<counts>
+			<right>2</right>
+			<wrong>2</wrong>
+			<ignores>0</ignores>
+			<exceptions>2</exceptions>
+		</counts>
+		<runTimeInMillis>760</runTimeInMillis>
+	</result>
+	<finalCounts>
+		<right>0</right>
+		<wrong>1</wrong>
+		<ignores>0</ignores>
+		<exceptions>0</exceptions>
+	</finalCounts>
+	<totalRunTimeInMillis>760</totalRunTimeInMillis>
+</testResults>
+
