@@ -288,6 +288,11 @@ Configuration:
         <td>not verbose</td>
         <td>Sets verbose option for fitnesse</td>
     </tr>
+    <tr>
+        <td>writeSurefireReports</td>
+        <td>false</td>
+        <td>If true, every test result will be written to the folder "surefire-reports" in the maven build directory. This enabled tools like Jenkins to recognize if a test failed.</td>
+    </tr>
  </table>
 
 Configuration with defaults. tests, suites and a suiteFilter can be mixed. A suiteFilter needs a suitePageName.
