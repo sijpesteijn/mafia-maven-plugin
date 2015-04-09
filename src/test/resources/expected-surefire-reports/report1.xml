@@ -1,6 +1,6 @@
 <testsuite errors="1" skipped="1" tests="11" time="0.3" failures="4" name="Suite1.Suite11">
 <properties/>
 <testcase classname="Suite1.Suite11.Test1" time="0.3" name="Test1">
-<error type="java.lang.AssertionError" message="exceptions: 1 wrong: 4"><br/>See dummypath/tests/Suite1.Suite11.Test1.html in workspace for more details.</error>
+<error type="java.lang.AssertionError" message="exceptions: 1 wrong: 4"><br/>See dummypath/ in workspace for more details.</error>
 </testcase>
 </testsuite>
