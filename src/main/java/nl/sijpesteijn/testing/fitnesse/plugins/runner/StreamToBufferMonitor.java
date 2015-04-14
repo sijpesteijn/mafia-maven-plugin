@@ -25,7 +25,8 @@ public class StreamToBufferMonitor implements Runnable {
     /**
      * Constructor.
      *
-     * @param inputStream {@link java.io.InputStream}
+     * @param inputStream
+     *            {@link java.io.InputStream}
      */
     public StreamToBufferMonitor(final InputStream inputStream) {
         this.inputStream = inputStream;
