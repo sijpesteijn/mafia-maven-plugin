@@ -2,7 +2,6 @@ package nl.sijpesteijn.testing.fitnesse.plugins;
 
 import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommander;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -20,19 +19,17 @@ public class FitNesseStarterMojo extends AbstractStartFitNesseMojo {
     public final void execute() throws MojoExecutionException, MojoFailureException {
         getLog().debug(toString());
         final FitNesseCommander commander = new FitNesseCommander(getCommanderConfig(getJvmDependencies(),
-            getJvmArguments(),
-            getRetainDays(), getFitNessePort(), getFitNesseAuthenticateStart()));
+                getJvmArguments(),
+                getRetainDays(), getFitNessePort(), getFitNesseAuthenticateStart()));
         try {
             commander.start();
         } catch (MafiaException me) {
             throw new MojoExecutionException(me.getMessage(), me);
         }
-        getLog().debug("Fitnesse output: " + commander.getOutput());
-        getLog().debug("Fitnesse error output: " + commander.getErrorOutput());
         if (commander.hasError()) {
             logErrorMessages(commander.getOutput(), commander.getErrorOutput());
             throw new MojoExecutionException("Could not start FitNesse: (error output: " + commander.getErrorOutput()
-                + ", output: " + commander.getOutput() + ")");
+                    + ", output: " + commander.getOutput() + ")");
         } else {
             getLog().info("FitNesse start on: http://localhost:" + getFitNessePort());
         }
@@ -44,8 +41,8 @@ public class FitNesseStarterMojo extends AbstractStartFitNesseMojo {
     @Override
     public final String toString() {
         return super.toString()
-            + ", Retain days: " + getRetainDays() + ", JVM arguments: " + getJvmArguments()
-            + ", JVM dependencies: " + getJvmDependencies();
+                + ", Retain days: " + getRetainDays() + ", JVM arguments: " + getJvmArguments()
+                + ", JVM dependencies: " + getJvmDependencies();
     }
 
 }

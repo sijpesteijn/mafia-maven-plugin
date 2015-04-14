@@ -92,7 +92,8 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     private boolean stopTestsOnIgnore;
 
     /**
-     * If true, the mojo will stop when it encountered an exception error message.
+     * If true, the mojo will stop when it encountered an exception error
+     * message.
      */
     @Parameter(property = "stopTestsOnException", defaultValue = "true")
     private boolean stopTestsOnException;
@@ -213,10 +214,8 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     /**
      * Start the fitnesse commander.
      *
-     * @throws MojoFailureException
-     *             - unable to create FitNesseCommander.
-     * @throws MojoExecutionException
-     *             - unable to start commander.
+     * @throws MojoFailureException   - unable to create FitNesseCommander.
+     * @throws MojoExecutionException - unable to start commander.
      */
     private void startCommander() throws MojoFailureException, MojoExecutionException {
         commander =
@@ -227,8 +226,6 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
         } catch (MafiaException me) {
             throw new MojoExecutionException(me.getMessage(), me);
         }
-        getLog().debug("Fitnesse output: " + commander.getOutput());
-        getLog().debug("Fitnesse error output: " + commander.getErrorOutput());
         if (commander.hasError()) {
             logErrorMessages(commander.getOutput(), commander.getErrorOutput());
             throw new MojoExecutionException("Could not start FitNesse");
@@ -239,8 +236,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     /**
      * Stop the fitnesse commander.
      *
-     * @throws MojoExecutionException
-     *             - unable to stop fitnesse.
+     * @throws MojoExecutionException - unable to stop fitnesse.
      */
     private void stopCommander() throws MojoExecutionException {
         try {
@@ -254,8 +250,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     /**
      * Clear the test result output directory.
      *
-     * @throws MojoFailureException
-     *             - unable to delete output directory.
+     * @throws MojoFailureException - unable to delete output directory.
      * @param directory
      */
     private void clearOutputDirectory(String directory) throws MojoFailureException {
@@ -269,12 +264,9 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     /**
      * Save the test summaries and write properties file with total test results.
      *
-     * @param testSummaries
-     *            - the test summaries to save.
-     * @param runDate
-     *            - date the test was run.
-     * @throws MafiaException
-     *             - unable to save test summaries.
+     * @param testSummaries - the test summaries to save.
+     * @param runDate       - date the test was run.
+     * @throws MafiaException - unable to save test summaries.
      */
     private void saveTestSummariesAndWriteProperties(final Map<String, MafiaTestSummary> testSummaries,
         final Date runDate) throws MafiaException {
@@ -309,10 +301,8 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     /**
      * Save the properties file with total test results to disk.
      *
-     * @param properties
-     *            - properties object.
-     * @throws MafiaException
-     *             - unable to save properties.
+     * @param properties - properties object.
+     * @throws MafiaException - unable to save properties.
      */
     private void saveProperties(final Properties properties) throws MafiaException {
         FileOutputStream outputStream;
@@ -340,8 +330,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     /**
      * Write test results to maven log.
      *
-     * @param testSummaries
-     *            - test summaries to log.
+     * @param testSummaries - test summaries to log.
      */
     private void printTestResults(final Map<String, MafiaTestSummary> testSummaries) {
         if (testSummaries != null) {
