@@ -227,15 +227,16 @@ public class FitNesseCommander {
      * @return boolean
      */
     public final boolean hasError() {
-        if (inputMonitor.getBuffer().toString().trim().contains("Started...")
-            || errorMonitor.getBuffer().toString().trim().contains("Please be patient.")
-            || StringUtils
-                .isEmpty(errorMonitor.getBuffer().toString())
-            || inputMonitor
-                .getBuffer()
-                .toString()
-                .contains(
-                    "Bootstrapping FitNesse, the fully integrated standalone wiki and acceptance testing framework.")) {
+        String stdErr = errorMonitor.getBuffer().toString().trim();
+        if (stdErr.contains("SEVERE")) {
+            return true;
+        }
+        String stdOut = inputMonitor.getBuffer().toString().trim();
+        if (stdOut.contains("Started...")
+            || stdErr.contains("Please be patient.")
+            || StringUtils.isEmpty(stdErr)
+            || stdOut
+                .contains("Bootstrapping FitNesse, the fully integrated standalone wiki and acceptance testing framework.")) {
             return false;
         }
         return true;
