@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<suiteResults>
+	<FitNesseVersion>v20140630</FitNesseVersion>
+	<rootPath>Suite1</rootPath>
+	<pageHistoryReference>
+		<name>Test1</name>
+		<date>04/01/2015 11:29:19</date>
+		<pageHistoryLink>Test1?pageHistory&amp;resultDate=20150401112919
+		</pageHistoryLink>
+		<counts>
+			<right>102</right>
+			<wrong>0</wrong>
+			<ignores>4</ignores>
+			<exceptions>0</exceptions>
+		</counts>
+		<runTimeInMillis>9541</runTimeInMillis>
+	</pageHistoryReference>
+	<finalCounts>
+		<right>1</right>
+		<wrong>0</wrong>
+		<ignores>0</ignores>
+		<exceptions>0</exceptions>
+	</finalCounts>
+	<totalRunTimeInMillis>9887</totalRunTimeInMillis>
+
+</suiteResults>
+

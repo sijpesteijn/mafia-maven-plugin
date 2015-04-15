@@ -1,16 +1,5 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
-import nl.sijpesteijn.testing.fitnesse.plugins.runner.*;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
-import org.apache.commons.io.FileUtils;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -21,6 +10,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommander;
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseTestRunner;
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.ResultStore;
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.TestCaller;
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.URLTestCaller;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.SurefireReportWriter;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.TestResult;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.TestResultReader;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Goal to run the Fitnesse tests.
@@ -96,6 +105,16 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     private boolean stopTestsOnWrong;
 
     /**
+     * If true, every test result will be written to the folder "surefire-reports" in the maven build directory. This
+     * enabled tools like Jenkins to recognize if a test failed. Default: false.
+     */
+    @Parameter(property = "writeSurefireReports", defaultValue = "false")
+    private boolean writeSurefireReports;
+
+    @Parameter(defaultValue = "${project}")
+    MavenProject mavenProject;
+
+    /**
      * The test result output directory.
      */
     private String outputDirectory;
@@ -133,17 +152,18 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
                 new File(outputDirectory).mkdirs();
 
                 final TestCaller testCaller = new URLTestCaller(fitNesseRunPort, "http", "localhost",
-                        new File(outputDirectory), resultStore);
+                    new File(outputDirectory), resultStore);
 
                 final Date startDate = new Date();
                 final FitNesseTestRunner runner = new FitNesseTestRunner(testCaller,
-                        stopTestsOnIgnore, stopTestsOnException, stopTestsOnWrong, getLog());
+                    stopTestsOnIgnore, stopTestsOnException, stopTestsOnWrong, getLog());
                 runner.runTests(tests);
                 runner.runSuites(suites);
                 runner.runFilteredSuite(suitePageName, suiteFilter);
                 saveTestSummariesAndWriteProperties(runner.getTestSummaries(), startDate);
                 printTestResults(runner.getTestSummaries());
                 getLog().info("Finished test run.");
+                writeSurefireReportsIfNecessary();
             } catch (MafiaException e) {
                 throw new MojoFailureException("Failed to run tests.", e);
             } finally {
@@ -156,19 +176,35 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
         }
     }
 
+    private void writeSurefireReportsIfNecessary() {
+        if (writeSurefireReports) {
+            getLog().info("Writing content of testResults to surefire-reports...");
+
+            String testResultsFolder = getWikiRoot() + File.separator + getNameRootPage() + "/files/testResults/";
+            TestResultReader testResultReader = new TestResultReader(getLog());
+            List<TestResult> allTestResultFiles = testResultReader.readAllTestResultFiles(new File(
+                testResultsFolder));
+
+            String buildDirectory = mavenProject.getBuild().getDirectory();
+            File surefireReportBaseDir = new File(buildDirectory, "/surefire-reports/");
+            surefireReportBaseDir.mkdirs();
+            SurefireReportWriter surefireReportWriter = new SurefireReportWriter(getLog(), outputDirectory);
+            surefireReportWriter.serialize(allTestResultFiles, surefireReportBaseDir);
+        }
+    }
+
     private int getAvailablePort() {
         ServerSocket ss = null;
         try {
             ss = new ServerSocket(0);
             ss.setReuseAddress(true);
             return ss.getLocalPort();
-        } catch (IOException e) {
-        } finally {
+        } catch (IOException e) {} finally {
             if (ss != null) {
                 try {
                     ss.close();
                 } catch (IOException e) {
-                /* should not be thrown */
+                    /* should not be thrown */
                 }
             }
         }
@@ -183,8 +219,8 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
      */
     private void startCommander() throws MojoFailureException, MojoExecutionException {
         commander =
-                new FitNesseCommander(getCommanderConfig(getJvmDependencies(), getJvmArguments(), 0,
-                        fitNesseRunPort, getFitNesseAuthenticateStart()));
+            new FitNesseCommander(getCommanderConfig(getJvmDependencies(), getJvmArguments(), 0,
+                fitNesseRunPort, getFitNesseAuthenticateStart()));
         try {
             commander.start();
         } catch (MafiaException me) {
@@ -233,7 +269,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
      * @throws MafiaException - unable to save test summaries.
      */
     private void saveTestSummariesAndWriteProperties(final Map<String, MafiaTestSummary> testSummaries,
-                                                     final Date runDate) throws MafiaException {
+        final Date runDate) throws MafiaException {
         final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         if (testSummaries != null) {
             int exceptions = 0;
@@ -310,14 +346,14 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     @Override
     public final String toString() {
         return super.toString()
-                + ", FitNesseRunPort: " + fitNesseRunPort
-                + ", Test results directory: " + testResultsDirectory
-                + ", Tests: " + tests
-                + ", Suites: " + suites
-                + ", Suite page name: " + suitePageName
-                + ", Suite filter: " + suiteFilter
-                + ", Stop tests on ignore: " + stopTestsOnIgnore
-                + ", Stop tests on exception: " + stopTestsOnException
-                + ", Stop tests on wrong: " + stopTestsOnWrong;
+            + ", FitNesseRunPort: " + fitNesseRunPort
+            + ", Test results directory: " + testResultsDirectory
+            + ", Tests: " + tests
+            + ", Suites: " + suites
+            + ", Suite page name: " + suitePageName
+            + ", Suite filter: " + suiteFilter
+            + ", Stop tests on ignore: " + stopTestsOnIgnore
+            + ", Stop tests on exception: " + stopTestsOnException
+            + ", Stop tests on wrong: " + stopTestsOnWrong;
     }
 }
