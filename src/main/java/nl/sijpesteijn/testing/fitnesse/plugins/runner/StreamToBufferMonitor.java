@@ -39,6 +39,9 @@ public class StreamToBufferMonitor implements Runnable {
     @SuppressWarnings("PMD")
     public final void run() {
         try {
+            if (inputStream.available() <= 0) {
+                return;
+            }
             int c = inputStream.read();
             while (c != -1 && inputStream.available() > 0) {
                 buffer.append((char) c);
