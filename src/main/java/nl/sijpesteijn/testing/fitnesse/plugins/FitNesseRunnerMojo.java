@@ -201,7 +201,8 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
             String buildDirectory = mavenProject.getBuild().getDirectory();
             File surefireReportBaseDir = new File(buildDirectory, "/surefire-reports/");
             surefireReportBaseDir.mkdirs();
-            SurefireReportWriter surefireReportWriter = new SurefireReportWriter(getLog(), outputDirectory);
+            SurefireReportWriter surefireReportWriter = new SurefireReportWriter(getLog(), outputDirectory,
+                testResultsFolder);
             surefireReportWriter.serialize(allTestResultFiles, surefireReportBaseDir);
         }
     }
