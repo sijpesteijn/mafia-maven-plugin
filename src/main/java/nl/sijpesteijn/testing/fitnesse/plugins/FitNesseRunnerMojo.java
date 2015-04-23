@@ -17,7 +17,9 @@ import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseTestRunner;
 import nl.sijpesteijn.testing.fitnesse.plugins.runner.ResultStore;
 import nl.sijpesteijn.testing.fitnesse.plugins.runner.TestCaller;
 import nl.sijpesteijn.testing.fitnesse.plugins.runner.URLTestCaller;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseResourceAccess;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaRuntimeException;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.SurefireReportWriter;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.TestResult;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.TestResultReader;
@@ -162,6 +164,8 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
                 saveTestSummariesAndWriteProperties(runner.getTestSummaries(), startDate);
                 printTestResults(runner.getTestSummaries());
                 getLog().info("Finished test run.");
+                copyFitNesseResourcesTo(outputDirectory
+                    + FitNesseResourceAccess.RESOURCES_FOLDER_NAME_WITHIN_MAFIARESULTS);
                 writeSurefireReportsIfNecessary();
             } catch (MafiaException e) {
                 throw new MojoFailureException("Failed to run tests.", e);
@@ -172,6 +176,16 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
             }
         } else {
             getLog().info("Skipping mafia reporting.");
+        }
+    }
+
+    private void copyFitNesseResourcesTo(String targetResourceDir) throws MojoFailureException {
+        getLog().debug("Copying the fitnesse resources (css, js etc.) to " + targetResourceDir + " ...");
+        FitNesseResourceAccess fitNesseJarAccess = new FitNesseResourceAccess(getMafiaProject());
+        try {
+            fitNesseJarAccess.copyResourcesTo(targetResourceDir);
+        } catch (MafiaRuntimeException e) {
+            getLog().warn("Couldn't copy resources (css, js) to " + targetResourceDir, e);
         }
     }
 
@@ -187,7 +201,8 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
             String buildDirectory = mavenProject.getBuild().getDirectory();
             File surefireReportBaseDir = new File(buildDirectory, "/surefire-reports/");
             surefireReportBaseDir.mkdirs();
-            SurefireReportWriter surefireReportWriter = new SurefireReportWriter(getLog(), outputDirectory);
+            SurefireReportWriter surefireReportWriter = new SurefireReportWriter(getLog(), outputDirectory,
+                testResultsFolder);
             surefireReportWriter.serialize(allTestResultFiles, surefireReportBaseDir);
         }
     }

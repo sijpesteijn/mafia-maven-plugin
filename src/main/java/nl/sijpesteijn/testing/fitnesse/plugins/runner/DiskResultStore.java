@@ -1,9 +1,16 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
+import static java.text.MessageFormat.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
+import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseResourceAccess;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 
 /**
  * DiskResultStore.
@@ -16,7 +23,7 @@ public class DiskResultStore implements ResultStore {
      */
     @Override
     public final MafiaTestSummary saveResult(final String content, final File resultsDirectory,
-                                       final String fileName) throws MafiaException {
+        final String fileName) throws MafiaException {
         resultsDirectory.mkdirs();
         File resultFile = new File(resultsDirectory, fileName + ".html");
         MafiaTestSummary summary = null;
@@ -27,11 +34,11 @@ public class DiskResultStore implements ResultStore {
             for (int i = 0; i < lines.length; i++) {
                 String line = lines[i];
                 if (line.contains("getElementById(\"test-summary\")")
-                        && line.contains("<strong>Assertions:</strong>")) {
+                    && line.contains("<strong>Assertions:</strong>")) {
                     summary = updateSummary(line);
                 }
                 line = updatePaths(line);
-                writer.write(line);
+                writer.write(line + "\n");
             }
             writer.close();
             fos.close();
@@ -44,12 +51,14 @@ public class DiskResultStore implements ResultStore {
     /**
      * Update the paths.
      *
-     * @param line - html string.
+     * @param line
+     *            - html string.
      * @return - updated html.
      */
     private String updatePaths(final String line) {
         if (line.contains("/files/fitnesse/")) {
-            return line.replaceAll("/files/fitnesse/", "./");
+            return line.replaceAll("/files/fitnesse/",
+                format("../{0}/", FitNesseResourceAccess.RESOURCES_FOLDER_NAME_WITHIN_MAFIARESULTS));
         }
         return line;
     }
@@ -57,7 +66,8 @@ public class DiskResultStore implements ResultStore {
     /**
      * Update the mafia test summary with result.
      *
-     * @param inputLine - html result string.
+     * @param inputLine
+     *            - html result string.
      * @return - mafia test summary.
      */
     private MafiaTestSummary updateSummary(final String inputLine) {

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -30,7 +31,13 @@ public class TestResultReader {
         this.log = log;
     }
 
+    @SuppressWarnings("unchecked")
     public List<TestResult> readAllTestResultFiles(File baseFolder) {
+        if (!baseFolder.exists()) {
+            log.info("Could not read Test Results. Folder " + baseFolder
+                + " doesn't exist. Probably no tests have been executed.");
+            return Collections.EMPTY_LIST;
+        }
         List<File> testResultFiles = getLatestTestResultFiles(baseFolder);
         List<TestResult> testResults = new ArrayList<TestResult>(testResultFiles.size());
         for (File testResultFile : testResultFiles) {

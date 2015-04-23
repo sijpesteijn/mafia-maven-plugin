@@ -17,9 +17,12 @@ public class SurefireReportWriter {
 
     private String mafiaResultsDir;
 
-    public SurefireReportWriter(Log log, String mafiaResultsDir) {
+    private String testResultsDir;
+
+    public SurefireReportWriter(Log log, String mafiaResultsDir, String testResultsDir) {
         this.log = log;
         this.mafiaResultsDir = mafiaResultsDir;
+        this.testResultsDir = testResultsDir;
     }
 
     final static String SUREFIRE_REPORT_TEMPLATE =
@@ -32,7 +35,8 @@ public class SurefireReportWriter {
 
     final static String SUREFIRE_REPORT_ERROR_PART_TEMPLATE =
         "<error type=\"java.lang.AssertionError\" message=\"exceptions: %s wrong: %s\"><br/>"
-            + "See %s in workspace for more details."
+            + "See %s in workspace for more details.<br/>"
+            + "See %s for the execution log."
             + "</error>";
 
     public void serialize(List<TestResult> testResults, File surefireReportBaseDir) {
@@ -82,7 +86,8 @@ public class SurefireReportWriter {
         String surefireReportContent = String.format(SUREFIRE_REPORT_ERROR_PART_TEMPLATE,
             testResult.getExceptionCount(),
             testResult.getWrongTestCount(),
-            mafiaResultsDir
+            mafiaResultsDir,
+            testResultsDir
             );
         return surefireReportContent;
     }
