@@ -50,12 +50,6 @@ public class FitNesseCommanderConfig {
     private final String nameRootPage;
 
     /**
-     * Time to wait after unpacking a new fitnesse.
-     */
-    private final long unpackWaitTime;
-    
-    
-    /**
      * fitNesse authentication in start -a username:password
      *                         or filename
      */
@@ -103,7 +97,7 @@ public class FitNesseCommanderConfig {
     public FitNesseCommanderConfig(final int fitNessePort, final String wikiRoot, final String nameRootPage,
                                    final String fitNesseLogDirectory, final int retainDays,
                                    final String classpathString,
-                                   final List<String> jvmArguments, final long unpackWaitTime, final Log log, 
+                                   final List<String> jvmArguments, final Log log, 
                                    final String fitNesseAuthenticateStart,
                                    final String fitNesseAuthenticateStop,
                                    final Boolean fitNesseUpdatePrevents,
@@ -115,7 +109,6 @@ public class FitNesseCommanderConfig {
         this.retainDays = retainDays;
         this.classpathString = classpathString;
         this.jvmArguments = jvmArguments;
-        this.unpackWaitTime = unpackWaitTime;
         this.log = log;
         this.fitNesseAuthenticateStart = fitNesseAuthenticateStart;
         this.fitNesseAuthenticateStop = fitNesseAuthenticateStop;
@@ -196,10 +189,6 @@ public class FitNesseCommanderConfig {
         return classpathString;
     }
 
-    public long getUnpackWaitTime() {
-        return unpackWaitTime;
-    }
-    
     /**
      * Get the start authenticate String / File
      * @return

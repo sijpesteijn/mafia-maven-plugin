@@ -76,11 +76,6 @@ Configuration:
         <td>Classpath entries for the jvm.</td>
     </tr>
     <tr>
-        <td>unpackWaitTime</td>
-        <td>3000 milliseconds</td>
-        <td>Time to wait after unpacking a fitnesse.</td>
-    </tr>
-    <tr>
         <td>fitNesseAuthenticateStart</td>
         <td>no auth</td>
         <td>username:password - Enforces access for one user or /auth/file/path/and/name - Enforces access for a file of users with encrypted passwords</td>
@@ -109,7 +104,6 @@ Configuration example with defaults and example values:
 			&lt;wikiRoot&gt;${basedir}&lt;/wikiRoot&gt;
 			&lt;nameRootPage&gt;FitNesseRoot&lt;/nameRootPage&gt;
 			&lt;retainDays&gt;14&lt;/retainDays&gt;
-			&lt;unpackWaitTime&gt;3000&lt;/unpackWaitTime&gt;
 			&lt;jvmArguments&gt;
 				&lt;jvmArgument&gt;CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem&lt;/jvmArgument&gt;
 			&lt;/jvmArguments&gt;

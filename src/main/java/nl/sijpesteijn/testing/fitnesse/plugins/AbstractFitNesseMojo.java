@@ -86,13 +86,6 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
     private String logDirectory;
 
     /**
-     * The time to wait after a fitnesse has been started.
-     */
-    @Parameter(property = "unpackWaitTime", defaultValue = "3000")
-    private long unpackWaitTime;
-
-
-    /**
      * fitNesse user:password or file
      */
     @Parameter(property = "fitNesseAuthenticateStart", defaultValue = "")
@@ -164,7 +157,7 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
             final String classpathString = createClasspathString(jvmDependencies, jarLocator.getFitNesseJarPath());
 
             return new FitNesseCommanderConfig(port, wikiRoot, nameRootPage, logDirectory, retainDays,
-                    classpathString, jvmArguments, unpackWaitTime, getLog(),
+                    classpathString, jvmArguments, getLog(),
                     fitNesseAuthenticateStart, fitNesseAuthenticateStop, fitNesseUpdatePrevents, fitNesseVerbose);
         } catch (MafiaException e) {
             throw new MojoFailureException("Could not get command configuration.", e);
