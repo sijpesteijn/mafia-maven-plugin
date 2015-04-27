@@ -236,7 +236,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     private void startCommander() throws MojoFailureException, MojoExecutionException {
         commander =
             new FitNesseCommander(getCommanderConfig(getJvmDependencies(), getJvmArguments(), 0,
-                fitNesseRunPort, getFitNesseAuthenticateStart()));
+                fitNesseRunPort, getFitNesseAuthenticateStart(), getConnectionAttempts()));
         try {
             commander.start();
         } catch (MafiaException me) {

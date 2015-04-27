@@ -90,6 +90,11 @@ Configuration:
         <td>${basedir}/log/</td>
         <td>Where to put and what to call the run log.</td>
     </tr>
+    <tr>
+        <td>connectionAttempts</td>
+        <td>4</td>
+        <td>Mafia waits for the startup of FitNesse by trying to connect to it. This configuration determines how often Mafia will attempt.</td>
+    </tr>
  </table>
 
 Configuration example with defaults and example values:
@@ -114,6 +119,7 @@ Configuration example with defaults and example values:
 				&lt;/dependency&gt;
 			&lt;/jvmDependencies&gt;
 			&lt;log>${basedir}/log/&lt;/log&gt;
+			&lt;connectionAttempts&gt4&lt;/connectionAttempts&gt;
 		&lt;/configuration&gt;
 	 &lt;/plugin&gt;
   </code>
@@ -287,6 +293,11 @@ Configuration:
         <td>false</td>
         <td>If true, every test result will be written to the folder "surefire-reports" in the maven build directory. This enabled tools like Jenkins to recognize if a test failed.</td>
     </tr>
+    <tr>
+        <td>connectionAttempts</td>
+        <td>4</td>
+        <td>Mafia waits for the startup of FitNesse by trying to connect to it. This configuration determines how often Mafia will attempt.</td>
+    </tr>
  </table>
 
 Configuration with defaults. tests, suites and a suiteFilter can be mixed. A suiteFilter needs a suitePageName.
@@ -322,6 +333,8 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 			&lt;/suites&gt;
 			&lt;suitePageName&gt;FrontPage.SomeSuite&lt;/suitePageName&gt;
 			&lt;suiteFilter&gt;critical_tests&lt;/suiteFilter&gt;
+			&lt;writeSurefireReports&gtfalse&lt;/writeSurefireReports&gt;
+			&lt;connectionAttempts&gt4&lt;/connectionAttempts&gt;
 		&lt;/configuration&gt;
 	&lt;/plugin&gt;
   </code>

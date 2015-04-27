@@ -1,8 +1,8 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
-import org.apache.maven.plugin.logging.Log;
-
 import java.util.List;
+
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * FitNesse commander configuration.
@@ -70,6 +70,8 @@ public class FitNesseCommanderConfig {
      * fitNesse Verbose -o
      */
     private final Boolean fitNesseVerbose;
+    
+    private final int connectionAttempts;
 
 
 
@@ -101,7 +103,8 @@ public class FitNesseCommanderConfig {
                                    final String fitNesseAuthenticateStart,
                                    final String fitNesseAuthenticateStop,
                                    final Boolean fitNesseUpdatePrevents,
-                                   final Boolean fitNesseVerbose) {
+                                   final Boolean fitNesseVerbose,
+                                   final int connectionAttempts) {
         this.fitNessePort = fitNessePort;
         this.wikiRoot = wikiRoot;
         this.nameRootPage = nameRootPage;
@@ -114,6 +117,7 @@ public class FitNesseCommanderConfig {
         this.fitNesseAuthenticateStop = fitNesseAuthenticateStop;
         this.fitNesseUpdatePrevents = fitNesseUpdatePrevents;
         this.fitNesseVerbose = fitNesseVerbose;
+        this.connectionAttempts = connectionAttempts;
         
     }
 
@@ -212,4 +216,8 @@ public class FitNesseCommanderConfig {
 	public Boolean getFitNesseVerbose() {
 		return fitNesseVerbose;
 	}
+	
+	public int getConnectionAttempts() {
+        return connectionAttempts;
+    }
 }

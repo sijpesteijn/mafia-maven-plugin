@@ -1,10 +1,14 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
+import java.io.File;
+import java.util.List;
+
 import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommanderConfig;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseJarLocator;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaProject;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.Project;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
@@ -16,9 +20,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.settings.Settings;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * AbstractFitNesseMojo.
@@ -112,18 +113,8 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
 
 
 
-    /**
-     * Get a commander configuration.
-     *
-     * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommanderConfig}
-     * @throws MojoFailureException thrown in cause of an error.
-     */
-    protected final FitNesseCommanderConfig getCommanderConfig() throws MojoFailureException {
-        return getCommanderConfig(null, null, 0, fitNessePort, null);
-    }
-
     protected final FitNesseCommanderConfig getCommanderConfig(String fitNesseAuthenticate) throws MojoFailureException {
-        return getCommanderConfig(null, null, 0, fitNessePort, fitNesseAuthenticate);
+        return getCommanderConfig(null, null, 0, fitNessePort, fitNesseAuthenticate, 0);
     }
 
     /**
@@ -149,7 +140,8 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
      */
     protected final FitNesseCommanderConfig getCommanderConfig(final List<Dependency> jvmDependencies,
                                                                final List<String> jvmArguments,
-                                                               final int retainDays, final int port, String fitNesseAuthenticateStart)
+                                                               final int retainDays, final int port, String fitNesseAuthenticateStart,
+                                                               int connectionAttempts)
             throws MojoFailureException {
         try {
             final FitNesseJarLocator jarLocator = new FitNesseJarLocator(getMafiaProject());
@@ -158,7 +150,7 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
 
             return new FitNesseCommanderConfig(port, wikiRoot, nameRootPage, logDirectory, retainDays,
                     classpathString, jvmArguments, getLog(),
-                    fitNesseAuthenticateStart, fitNesseAuthenticateStop, fitNesseUpdatePrevents, fitNesseVerbose);
+                    fitNesseAuthenticateStart, fitNesseAuthenticateStop, fitNesseUpdatePrevents, fitNesseVerbose, connectionAttempts);
         } catch (MafiaException e) {
             throw new MojoFailureException("Could not get command configuration.", e);
         }

@@ -1,13 +1,11 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
+import static junit.framework.Assert.*;
 import nl.sijpesteijn.testing.fitnesse.plugins.AbstractFitNesseTest;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * User: gijs
@@ -43,7 +41,7 @@ public class FitNesseCommanderTest extends AbstractFitNesseTest {
 
             FitNesseCommanderConfig config = new FitNesseCommanderConfig(PORT, WIKI_ROOT, NAME_ROOT_PAGE,
                     LOG_DIRECTORY, 0, FITNESSE_JAR_PATH,
-                    null, mockLog, null, null, null, null);
+                    null, mockLog, null, null, null, null, 4);
             commander = new FitNesseCommander(config);
             commander.start();
             assertFalse(commander.hasError());
@@ -60,7 +58,7 @@ public class FitNesseCommanderTest extends AbstractFitNesseTest {
     public void failureWikiRoot() throws Exception {
         FitNesseCommanderConfig config = new FitNesseCommanderConfig(PORT, "$&#&^&$", NAME_ROOT_PAGE,
                 null, 0, FITNESSE_JAR_PATH,
-                null, mockLog, null, null, null, null);
+                null, mockLog, null, null, null, null, 4);
         commander = new FitNesseCommander(config);
         commander.start();
     }
