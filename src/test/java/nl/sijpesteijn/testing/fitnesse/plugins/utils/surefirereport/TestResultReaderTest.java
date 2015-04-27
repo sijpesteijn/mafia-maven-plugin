@@ -5,9 +5,6 @@ import static junit.framework.Assert.*;
 import java.io.File;
 import java.util.List;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.TestResult;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.TestResultReader;
-
 import org.apache.maven.plugin.testing.SilentLog;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +38,7 @@ public class TestResultReaderTest {
 
 		File file = new File(TEST_RESULT_BASE_FOLDER + "/Test1/20150408111924_0_1_0_0.xml");
 		TestResult testResult = testResultReader.readTestResultFile(file);
+		assertTrue(testResult.executedSuccessfully());
 		assertEquals(expectedTestResult, testResult);
 	}
 
@@ -51,7 +49,18 @@ public class TestResultReaderTest {
 	public void readAllTestResultFiles() {
 		File baseFolder = new File(TEST_RESULT_BASE_FOLDER);
 		List<TestResult> testResults = testResultReader.readAllTestResultFiles(baseFolder);
-		assertEquals(4, testResults.size());
+		assertEquals(5, testResults.size());
 	}
+	
+	@Test
+	public void fileWithException(){
+	    File file = new File(TEST_RESULT_BASE_FOLDER + "/Test5-exception/20150423141746_0_0_0_0.xml");
+	    TestResult testResult = testResultReader.readTestResultFile(file);
+	    assertFalse(testResult.executedSuccessfully());
+	    assertEquals(1, testResult.getExceptionCount());
+	    assertEquals(143, testResult.getExitCode());
+	    assertEquals("Read timed out", testResult.getExcutionLogException());
+	}
+	
 
 }

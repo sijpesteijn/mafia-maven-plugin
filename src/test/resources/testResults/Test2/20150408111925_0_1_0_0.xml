@@ -12,6 +12,13 @@
 		<runTimeInMillis>942</runTimeInMillis>
 		<content></content>
 	</result>
+	<executionLog>
+		<testSystem></testSystem>
+		<command></command>
+		<exitCode>0</exitCode>
+		<stdOut></stdOut>
+		<stdErr></stdErr>
+	</executionLog>
 	<finalCounts>
 		<right>0</right>
 		<wrong>1</wrong>
