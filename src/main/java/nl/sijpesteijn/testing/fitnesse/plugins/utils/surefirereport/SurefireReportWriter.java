@@ -100,7 +100,7 @@ public class SurefireReportWriter {
         } else {
             String surefireReportContent = String.format(SUREFIRE_REPORT_ERROR_PART_TEMPLATE_WITH_ERROR,
                 testResult.getExitCode(),
-                testResult.getExcutionLogException(),
+                testResult.getExecutionLogException(),
                 mafiaResultsDir,
                 testResultsDir
                 );

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<testResults>
+	<FitNesseVersion>v20150226</FitNesseVersion>
+	<rootPath>TestWithoutExecutionLog</rootPath>
+	<result>
+		<counts>
+			<right>3</right>
+			<wrong>0</wrong>
+			<ignores>0</ignores>
+			<exceptions>0</exceptions>
+		</counts>
+		<runTimeInMillis>625</runTimeInMillis>
+		<content>asdf</content>
+		<relativePageName>TestWithoutExecutionLog</relativePageName>
+		<instructions>
+			<!-- ... -->
+		</instructions>
+	</result>
+	<finalCounts>
+		<right>1</right>
+		<wrong>0</wrong>
+		<ignores>0</ignores>
+		<exceptions>0</exceptions>
+	</finalCounts>
+	<totalRunTimeInMillis>625</totalRunTimeInMillis>
+</testResults>
+

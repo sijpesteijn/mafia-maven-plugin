@@ -61,13 +61,35 @@ public class SurefireReportWriterTest {
         .withExceptionCount(1)
         .withRunTimeInMillis(300)
         .withExitCode(143)
-        .withExcutionLogException("Read timed out");
+        .withExecutionLogException("Read timed out");
         
         File serializedReport = new File(serializedReportFolder, "report2-exception.xml");
         surefireReportWriter.serialize(expectedTestResult, serializedReport);
         
         List<String> serializedReportContent = IOUtils.readLines(new FileReader(serializedReport));
         File expectedReport = new File(EXPRECTED_SUREFIRE_REPORTS_DIR, "report2-exception.xml");
+        List<String> expectedReportContent = IOUtils.readLines(new FileReader(expectedReport));
+        
+        assertListEquals(serializedReportContent, expectedReportContent);
+    }
+    
+    @Test
+    public void serializeSingleFileWithoutExecutionLog() throws FileNotFoundException, IOException {
+        TestResult expectedTestResult = new TestResult()
+        .withPath("Suite1.Suite11.Test1")
+        .withRightTestCount(1)
+        .withWrongTestCount(0)
+        .withIgnoredTestCount(0)
+        .withExceptionCount(0)
+        .withRunTimeInMillis(300)
+        .withExitCode(null)
+        .withExecutionLogException(null);
+        
+        File serializedReport = new File(serializedReportFolder, "report3-noExecLog.xml");
+        surefireReportWriter.serialize(expectedTestResult, serializedReport);
+        
+        List<String> serializedReportContent = IOUtils.readLines(new FileReader(serializedReport));
+        File expectedReport = new File(EXPRECTED_SUREFIRE_REPORTS_DIR, "report3-noExecLog.xml");
         List<String> expectedReportContent = IOUtils.readLines(new FileReader(expectedReport));
         
         assertListEquals(serializedReportContent, expectedReportContent);

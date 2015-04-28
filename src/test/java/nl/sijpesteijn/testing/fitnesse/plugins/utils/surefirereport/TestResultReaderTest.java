@@ -34,13 +34,16 @@ public class TestResultReaderTest {
 			.withWrongTestCount(46)
 			.withIgnoredTestCount(10)
 			.withExceptionCount(1)
-			.withRunTimeInMillis(903);
+			.withRunTimeInMillis(903)
+			.withExitCode(0)
+			.withExecutionLogException(null);
 
 		File file = new File(TEST_RESULT_BASE_FOLDER + "/Test1/20150408111924_0_1_0_0.xml");
 		TestResult testResult = testResultReader.readTestResultFile(file);
 		assertTrue(testResult.executedSuccessfully());
 		assertEquals(expectedTestResult, testResult);
 	}
+
 
 	/**
 	 * don't use suites and only use latest xml file in a folder.
@@ -49,7 +52,7 @@ public class TestResultReaderTest {
 	public void readAllTestResultFiles() {
 		File baseFolder = new File(TEST_RESULT_BASE_FOLDER);
 		List<TestResult> testResults = testResultReader.readAllTestResultFiles(baseFolder);
-		assertEquals(5, testResults.size());
+		assertEquals(6, testResults.size());
 	}
 	
 	@Test
@@ -58,9 +61,23 @@ public class TestResultReaderTest {
 	    TestResult testResult = testResultReader.readTestResultFile(file);
 	    assertFalse(testResult.executedSuccessfully());
 	    assertEquals(1, testResult.getExceptionCount());
-	    assertEquals(143, testResult.getExitCode());
-	    assertEquals("Read timed out", testResult.getExcutionLogException());
+	    assertEquals(143, (int)testResult.getExitCode());
+	    assertEquals("Read timed out", testResult.getExecutionLogException());
 	}
 	
+	   
+    @Test
+     public void fileWithoutExecutionLog() {
+        File file = new File(TEST_RESULT_BASE_FOLDER + "/Test6-noExecLog/20150428121832_1_0_0_0.xml");
+        TestResult testResult = testResultReader.readTestResultFile(file);
+        assertTrue(testResult.executedSuccessfully());
+        assertEquals(3, testResult.getRightTestCount());
+        assertEquals(0, testResult.getWrongTestCount());
+        assertEquals(0, testResult.getIgnoredTestCount());
+        assertEquals(0, testResult.getExceptionCount());
+        assertEquals(625, testResult.getRunTimeInMillis());
+        assertEquals(null, testResult.getExitCode());
+        assertEquals(null, testResult.getExecutionLogException());
+    }
 
 }

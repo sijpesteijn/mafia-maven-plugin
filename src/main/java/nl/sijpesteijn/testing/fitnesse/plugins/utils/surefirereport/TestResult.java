@@ -12,8 +12,8 @@ public class TestResult {
     private int ignoredTestCount;
     private int exceptionCount;
     private long runTimeInMillis;
-    private int exitCode;
-    private String excutionLogException;
+    private Integer exitCode;
+    private String executionLogException;
 
     TestResult() {}
 
@@ -47,13 +47,13 @@ public class TestResult {
         return this;
     }
 
-    public TestResult withExitCode(int exitCode) {
+    public TestResult withExitCode(Integer exitCode) {
         this.exitCode = exitCode;
         return this;
     }
 
-    public TestResult withExcutionLogException(String excutionLogException) {
-        this.excutionLogException = excutionLogException;
+    public TestResult withExecutionLogException(String executionLogException) {
+        this.executionLogException = executionLogException;
         return this;
     }
 
@@ -85,16 +85,19 @@ public class TestResult {
         return runTimeInMillis / 1000.0;
     }
 
-    public int getExitCode() {
+    public Integer getExitCode() {
         return exitCode;
     }
 
     public boolean executedSuccessfully() {
+        if (exitCode == null){
+            return true;
+        }
         return exitCode == 0;
     }
 
-    public String getExcutionLogException() {
-        return excutionLogException;
+    public String getExecutionLogException() {
+        return executionLogException;
     }
 
     public Object getTotalTestCount() {
@@ -114,7 +117,7 @@ public class TestResult {
     public String toString() {
         return "TestResult [path=" + Arrays.toString(path) + ", rightTestCount=" + rightTestCount + ", wrongTestCount="
             + wrongTestCount + ", ignoredTestCount=" + ignoredTestCount + ", exceptionCount=" + exceptionCount
-            + ", runTimeInMillis=" + runTimeInMillis + ", exitCode=" + exitCode + ", excutionLogException=" + excutionLogException
+            + ", runTimeInMillis=" + runTimeInMillis + ", exitCode=" + exitCode + ", excutionLogException=" + executionLogException
             + "]";
     }
 
@@ -123,8 +126,8 @@ public class TestResult {
         final int prime = 31;
         int result = 1;
         result = prime * result + exceptionCount;
-        result = prime * result + ((excutionLogException == null) ? 0 : excutionLogException.hashCode());
-        result = prime * result + exitCode;
+        result = prime * result + ((executionLogException == null) ? 0 : executionLogException.hashCode());
+        result = prime * result + ((exitCode == null) ? 0 : exitCode.hashCode());
         result = prime * result + ignoredTestCount;
         result = prime * result + Arrays.hashCode(path);
         result = prime * result + rightTestCount;
@@ -140,10 +143,12 @@ public class TestResult {
         if (getClass() != obj.getClass()) return false;
         TestResult other = (TestResult) obj;
         if (exceptionCount != other.exceptionCount) return false;
-        if (excutionLogException == null) {
-            if (other.excutionLogException != null) return false;
-        } else if (!excutionLogException.equals(other.excutionLogException)) return false;
-        if (exitCode != other.exitCode) return false;
+        if (executionLogException == null) {
+            if (other.executionLogException != null) return false;
+        } else if (!executionLogException.equals(other.executionLogException)) return false;
+        if (exitCode == null) {
+            if (other.exitCode != null) return false;
+        } else if (!exitCode.equals(other.exitCode)) return false;
         if (ignoredTestCount != other.ignoredTestCount) return false;
         if (!Arrays.equals(path, other.path)) return false;
         if (rightTestCount != other.rightTestCount) return false;
@@ -151,5 +156,7 @@ public class TestResult {
         if (wrongTestCount != other.wrongTestCount) return false;
         return true;
     }
+
+    
 
 }
