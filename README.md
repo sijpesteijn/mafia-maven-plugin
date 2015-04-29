@@ -266,11 +266,6 @@ Configuration:
         <td>tag filter to use. Used in combination with a suitePageName</td>
     </tr>
     <tr>
-        <td>unpackWaitTime</td>
-        <td>3000 milliseconds</td>
-        <td>Time to wait after unpacking a fitnesse.</td>
-    </tr>
-    <tr>
         <td>fitNesseAuthenticateStart</td>
         <td>no auth</td>
         <td>username:password - Enforces access for one user or /auth/file/path/and/name - Enforces access for a file of users with encrypted passwords on startup</td>
@@ -324,7 +319,6 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 			&lt;stopTestsOnIgnore&gt;false&lt;/stopTestsOnIgnore&gt;
 			&lt;stopTestsOnException&gt;true&lt;/stopTestsOnException&gt;
 			&lt;stopTestsOnWrong&gt;true&lt;/stopTestsOnWrong&gt;
-			&lt;unpackWaitTime&gt;3000&lt;/unpackWaitTime&gt;
 			&lt;tests&gt;
 				&lt;test&gt;FrontPage.IntegrationTest&lt;/test&gt;
 				&lt;test&gt;...&lt;/test&gt;
