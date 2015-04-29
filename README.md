@@ -12,6 +12,7 @@ This plugin let's you control:
 
 Supported versions of FitNesse:
 
+- 20150424
 - 20150226
 - 20140630
 - 20140623
