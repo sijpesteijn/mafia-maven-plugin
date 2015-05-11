@@ -148,7 +148,7 @@ public class FitNesseCommander {
         commanderConfig.getLog().debug(
             "Polling URL " + fitnesseUrl + " in order to see when Fitnesse has finished startup.");
         sleep(2000);
-        int maxTries = 4;
+        int maxTries = commanderConfig.getConnectionAttempts();
         for (int i = 1; i <= maxTries; i++) {
             try {
                 tryConnect(fitnesseUrl);

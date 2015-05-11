@@ -15,6 +15,13 @@
 		</counts>
 		<runTimeInMillis>9541</runTimeInMillis>
 	</pageHistoryReference>
+	<executionLog>
+		<testSystem></testSystem>
+		<command></command>
+		<exitCode>0</exitCode>
+		<stdOut></stdOut>
+		<stdErr></stdErr>
+	</executionLog>
 	<finalCounts>
 		<right>1</right>
 		<wrong>0</wrong>

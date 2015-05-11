@@ -1,11 +1,11 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommanderConfig;
-import nl.sijpesteijn.testing.fitnesse.plugins.stub.LoggerStub;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommanderConfig;
+import nl.sijpesteijn.testing.fitnesse.plugins.stub.LoggerStub;
 
 /**
  * User: gijs
@@ -25,6 +25,6 @@ public class AbstractFitNesseTest {
 
     public static FitNesseCommanderConfig getFitnesseCommanderConfig() {
         return new FitNesseCommanderConfig(PORT, WIKI_ROOT, NAME_ROOT_PAGE, LOG_DIRECTORY,0,
-                FITNESSE_JAR_PATH, jvmArguments, 3000 ,mockLog, null, null, null, null);
+                FITNESSE_JAR_PATH, jvmArguments ,mockLog, null, null, null, null, 4);
     }
 }

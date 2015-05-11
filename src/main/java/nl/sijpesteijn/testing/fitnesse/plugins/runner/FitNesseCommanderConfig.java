@@ -1,8 +1,8 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
-import org.apache.maven.plugin.logging.Log;
-
 import java.util.List;
+
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * FitNesse commander configuration.
@@ -50,12 +50,6 @@ public class FitNesseCommanderConfig {
     private final String nameRootPage;
 
     /**
-     * Time to wait after unpacking a new fitnesse.
-     */
-    private final long unpackWaitTime;
-    
-    
-    /**
      * fitNesse authentication in start -a username:password
      *                         or filename
      */
@@ -76,6 +70,8 @@ public class FitNesseCommanderConfig {
      * fitNesse Verbose -o
      */
     private final Boolean fitNesseVerbose;
+    
+    private final int connectionAttempts;
 
 
 
@@ -103,11 +99,12 @@ public class FitNesseCommanderConfig {
     public FitNesseCommanderConfig(final int fitNessePort, final String wikiRoot, final String nameRootPage,
                                    final String fitNesseLogDirectory, final int retainDays,
                                    final String classpathString,
-                                   final List<String> jvmArguments, final long unpackWaitTime, final Log log, 
+                                   final List<String> jvmArguments, final Log log, 
                                    final String fitNesseAuthenticateStart,
                                    final String fitNesseAuthenticateStop,
                                    final Boolean fitNesseUpdatePrevents,
-                                   final Boolean fitNesseVerbose) {
+                                   final Boolean fitNesseVerbose,
+                                   final int connectionAttempts) {
         this.fitNessePort = fitNessePort;
         this.wikiRoot = wikiRoot;
         this.nameRootPage = nameRootPage;
@@ -115,12 +112,12 @@ public class FitNesseCommanderConfig {
         this.retainDays = retainDays;
         this.classpathString = classpathString;
         this.jvmArguments = jvmArguments;
-        this.unpackWaitTime = unpackWaitTime;
         this.log = log;
         this.fitNesseAuthenticateStart = fitNesseAuthenticateStart;
         this.fitNesseAuthenticateStop = fitNesseAuthenticateStop;
         this.fitNesseUpdatePrevents = fitNesseUpdatePrevents;
         this.fitNesseVerbose = fitNesseVerbose;
+        this.connectionAttempts = connectionAttempts;
         
     }
 
@@ -196,10 +193,6 @@ public class FitNesseCommanderConfig {
         return classpathString;
     }
 
-    public long getUnpackWaitTime() {
-        return unpackWaitTime;
-    }
-    
     /**
      * Get the start authenticate String / File
      * @return
@@ -223,4 +216,8 @@ public class FitNesseCommanderConfig {
 	public Boolean getFitNesseVerbose() {
 		return fitNesseVerbose;
 	}
+	
+	public int getConnectionAttempts() {
+        return connectionAttempts;
+    }
 }

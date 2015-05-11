@@ -1,29 +1,21 @@
 <?xml version="1.0"?>
 <testResults>
 	<FitNesseVersion>v20150226</FitNesseVersion>
-	<rootPath>Tests4-Many</rootPath>
-	<result>
-		<counts>
-			<right>1</right>
-			<wrong>7</wrong>
-			<ignores>4</ignores>
-			<exceptions>3</exceptions>
-		</counts>
-		<runTimeInMillis>733</runTimeInMillis>
-	</result>
+	<rootPath>TestWithException</rootPath>
 	<executionLog>
 		<testSystem></testSystem>
 		<command></command>
-		<exitCode>0</exitCode>
+		<exitCode>143</exitCode>
 		<stdOut></stdOut>
 		<stdErr></stdErr>
+		<exception>Read timed out</exception>
 	</executionLog>
 	<finalCounts>
 		<right>0</right>
-		<wrong>1</wrong>
+		<wrong>0</wrong>
 		<ignores>0</ignores>
 		<exceptions>0</exceptions>
 	</finalCounts>
-	<totalRunTimeInMillis>733</totalRunTimeInMillis>
+	<totalRunTimeInMillis>10270</totalRunTimeInMillis>
 </testResults>
 

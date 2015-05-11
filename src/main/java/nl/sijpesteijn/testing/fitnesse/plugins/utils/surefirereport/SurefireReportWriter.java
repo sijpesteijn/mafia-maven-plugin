@@ -34,9 +34,15 @@ public class SurefireReportWriter {
             + "</testsuite>%n";
 
     final static String SUREFIRE_REPORT_ERROR_PART_TEMPLATE =
-        "<error type=\"java.lang.AssertionError\" message=\"exceptions: %s wrong: %s\"><br/>"
-            + "See %s in workspace for more details.<br/>"
-            + "See %s for the execution log."
+        "<error type=\"java.lang.AssertionError\" message=\"exceptions: %s wrong: %s\">%n"
+            + "<br/>See %s in workspace for more details.<br/>"
+            + "See %s for the execution log.%n"
+            + "</error>";
+
+    final static String SUREFIRE_REPORT_ERROR_PART_TEMPLATE_WITH_ERROR =
+        "<error type=\"java.lang.AssertionError\" message=\"execution failed. exit code: %s, exception: %s\">%n"
+            + "<br/>See %s in workspace for more details.<br/>"
+            + "See %s for the execution log.%n"
             + "</error>";
 
     public void serialize(List<TestResult> testResults, File surefireReportBaseDir) {
@@ -79,17 +85,28 @@ public class SurefireReportWriter {
     }
 
     private String createErrorXmlPart(TestResult testResult) {
-        boolean noTestFailures = testResult.getExceptionCount() + testResult.getWrongTestCount() == 0;
-        if (noTestFailures) {
-            return "";
+        if (testResult.executedSuccessfully()) {
+            boolean noTestFailures = testResult.getExceptionCount() + testResult.getWrongTestCount() == 0;
+            if (noTestFailures) {
+                return "";
+            }
+            String surefireReportContent = String.format(SUREFIRE_REPORT_ERROR_PART_TEMPLATE,
+                testResult.getExceptionCount(),
+                testResult.getWrongTestCount(),
+                mafiaResultsDir,
+                testResultsDir
+                );
+            return surefireReportContent;
+        } else {
+            String surefireReportContent = String.format(SUREFIRE_REPORT_ERROR_PART_TEMPLATE_WITH_ERROR,
+                testResult.getExitCode(),
+                testResult.getExecutionLogException(),
+                mafiaResultsDir,
+                testResultsDir
+                );
+            return surefireReportContent;
+            
         }
-        String surefireReportContent = String.format(SUREFIRE_REPORT_ERROR_PART_TEMPLATE,
-            testResult.getExceptionCount(),
-            testResult.getWrongTestCount(),
-            mafiaResultsDir,
-            testResultsDir
-            );
-        return surefireReportContent;
     }
 
     private TestResultException fireException(File targetFile, Exception e) {

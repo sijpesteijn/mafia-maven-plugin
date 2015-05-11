@@ -12,6 +12,8 @@ This plugin let's you control:
 
 Supported versions of FitNesse:
 
+- 20150424
+- 20150226
 - 20140630
 - 20140623
 - 20140418
@@ -76,11 +78,6 @@ Configuration:
         <td>Classpath entries for the jvm.</td>
     </tr>
     <tr>
-        <td>unpackWaitTime</td>
-        <td>3000 milliseconds</td>
-        <td>Time to wait after unpacking a fitnesse.</td>
-    </tr>
-    <tr>
         <td>fitNesseAuthenticateStart</td>
         <td>no auth</td>
         <td>username:password - Enforces access for one user or /auth/file/path/and/name - Enforces access for a file of users with encrypted passwords</td>
@@ -94,6 +91,11 @@ Configuration:
         <td>logDirectory</td>
         <td>${basedir}/log/</td>
         <td>Where to put and what to call the run log.</td>
+    </tr>
+    <tr>
+        <td>connectionAttempts</td>
+        <td>4</td>
+        <td>Mafia waits for the startup of FitNesse by trying to connect to it. This configuration determines how often Mafia will attempt.</td>
     </tr>
  </table>
 
@@ -109,7 +111,6 @@ Configuration example with defaults and example values:
 			&lt;wikiRoot&gt;${basedir}&lt;/wikiRoot&gt;
 			&lt;nameRootPage&gt;FitNesseRoot&lt;/nameRootPage&gt;
 			&lt;retainDays&gt;14&lt;/retainDays&gt;
-			&lt;unpackWaitTime&gt;3000&lt;/unpackWaitTime&gt;
 			&lt;jvmArguments&gt;
 				&lt;jvmArgument&gt;CM_SYSTEM=fitnesse.wiki.cmSystems.GitCmSystem&lt;/jvmArgument&gt;
 			&lt;/jvmArguments&gt;
@@ -120,6 +121,7 @@ Configuration example with defaults and example values:
 				&lt;/dependency&gt;
 			&lt;/jvmDependencies&gt;
 			&lt;log>${basedir}/log/&lt;/log&gt;
+			&lt;connectionAttempts&gt4&lt;/connectionAttempts&gt;
 		&lt;/configuration&gt;
 	 &lt;/plugin&gt;
   </code>
@@ -264,11 +266,6 @@ Configuration:
         <td>tag filter to use. Used in combination with a suitePageName</td>
     </tr>
     <tr>
-        <td>unpackWaitTime</td>
-        <td>3000 milliseconds</td>
-        <td>Time to wait after unpacking a fitnesse.</td>
-    </tr>
-    <tr>
         <td>fitNesseAuthenticateStart</td>
         <td>no auth</td>
         <td>username:password - Enforces access for one user or /auth/file/path/and/name - Enforces access for a file of users with encrypted passwords on startup</td>
@@ -292,6 +289,11 @@ Configuration:
         <td>writeSurefireReports</td>
         <td>false</td>
         <td>If true, every test result will be written to the folder "surefire-reports" in the maven build directory. This enabled tools like Jenkins to recognize if a test failed.</td>
+    </tr>
+    <tr>
+        <td>connectionAttempts</td>
+        <td>4</td>
+        <td>Mafia waits for the startup of FitNesse by trying to connect to it. This configuration determines how often Mafia will attempt.</td>
     </tr>
  </table>
 
@@ -317,7 +319,6 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 			&lt;stopTestsOnIgnore&gt;false&lt;/stopTestsOnIgnore&gt;
 			&lt;stopTestsOnException&gt;true&lt;/stopTestsOnException&gt;
 			&lt;stopTestsOnWrong&gt;true&lt;/stopTestsOnWrong&gt;
-			&lt;unpackWaitTime&gt;3000&lt;/unpackWaitTime&gt;
 			&lt;tests&gt;
 				&lt;test&gt;FrontPage.IntegrationTest&lt;/test&gt;
 				&lt;test&gt;...&lt;/test&gt;
@@ -328,6 +329,8 @@ Configuration with defaults. tests, suites and a suiteFilter can be mixed. A sui
 			&lt;/suites&gt;
 			&lt;suitePageName&gt;FrontPage.SomeSuite&lt;/suitePageName&gt;
 			&lt;suiteFilter&gt;critical_tests&lt;/suiteFilter&gt;
+			&lt;writeSurefireReports&gtfalse&lt;/writeSurefireReports&gt;
+			&lt;connectionAttempts&gt4&lt;/connectionAttempts&gt;
 		&lt;/configuration&gt;
 	&lt;/plugin&gt;
   </code>
