@@ -57,7 +57,7 @@ public class JsoupReportFormatter implements ReportFormatter {
             String summaryList = "<ul id=\"test-system-slim\">";
             summaryList += getSummaryList(scripts, timeStamp);
             summaryList += "</ul>";
-            Element testSummaries = body.getElementById("test-summaries");
+            Element testSummaries = body.getElementById("test-action");
             testSummaries.html(summaryList);
         }
         summary.removeAttr("class");

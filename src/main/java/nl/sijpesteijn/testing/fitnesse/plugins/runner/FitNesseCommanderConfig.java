@@ -1,8 +1,8 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
-import java.util.List;
-
 import org.apache.maven.plugin.logging.Log;
+
+import java.util.List;
 
 /**
  * FitNesse commander configuration.
@@ -88,12 +88,12 @@ public class FitNesseCommanderConfig {
      * @param retainDays - retain days.
      * @param classpathString - class path string.
      * @param jvmArguments - jvm arguments.
-     * @param unpackWaitTime - time to wait after unpacking a new fitnesse.
      * @param log - logger.
      * @param fitNesseAuthenticateStart - fitNesse username password of filename.
      * @param fitNesseAuthenticateStop - fitNesse username password.
      * @param fitNesseUpdatePrevents - Update Prevents.
      * @param fitNesseVerbose - Verbose.
+     * @param connectionAttempts - number of retries
      * 
      */
     public FitNesseCommanderConfig(final int fitNessePort, final String wikiRoot, final String nameRootPage,
@@ -195,7 +195,7 @@ public class FitNesseCommanderConfig {
 
     /**
      * Get the start authenticate String / File
-     * @return
+     * @return {@link java.lang.String}
      */
     public String getFitNesseAuthenticateStart() {
 		return fitNesseAuthenticateStart;
@@ -203,20 +203,29 @@ public class FitNesseCommanderConfig {
     
     /**
      * Get the authenticate String
-     * @return
+     * @return {@link java.lang.String}
      */
     public String getFitNesseAuthenticateStop() {
 		return fitNesseAuthenticateStop;
 	}
 
+    /**
+     * @return {@link java.lang.Boolean}
+     */
 	public Boolean getFitNesseUpdatePrevents() {
 		return fitNesseUpdatePrevents;
 	}
 
+    /**
+     * @return {@link java.lang.Boolean}
+     */
 	public Boolean getFitNesseVerbose() {
 		return fitNesseVerbose;
 	}
-	
+
+    /**
+     * @return int
+     */
 	public int getConnectionAttempts() {
         return connectionAttempts;
     }

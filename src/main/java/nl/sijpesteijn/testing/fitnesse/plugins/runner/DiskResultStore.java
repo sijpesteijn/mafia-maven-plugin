@@ -1,16 +1,12 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
-import static java.text.MessageFormat.*;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-
 import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseResourceAccess;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
+
+import java.io.*;
+
+import static java.text.MessageFormat.format;
 
 /**
  * DiskResultStore.
@@ -58,7 +54,7 @@ public class DiskResultStore implements ResultStore {
     private String updatePaths(final String line) {
         if (line.contains("/files/fitnesse/")) {
             return line.replaceAll("/files/fitnesse/",
-                format("../{0}/", FitNesseResourceAccess.RESOURCES_FOLDER_NAME_WITHIN_MAFIARESULTS));
+                format("../../{0}/", FitNesseResourceAccess.RESOURCES_FOLDER_NAME_WITHIN_MAFIARESULTS));
         }
         return line;
     }

@@ -1,14 +1,10 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
-import java.io.File;
-import java.util.List;
-
 import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommanderConfig;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseJarLocator;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaProject;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.Project;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
@@ -20,6 +16,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.settings.Settings;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * AbstractFitNesseMojo.
@@ -135,6 +134,8 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
      * @param jvmArguments    - the list of jvm arguments.
      * @param retainDays      - the number of days to preserve change history.
      * @param port            - the port to run fitnesse on.
+     * @param fitNesseAuthenticateStart - authentication
+     * @param connectionAttempts - number of retries
      * @return {@link nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommanderConfig}
      * @throws MojoFailureException thrown in case of an error.
      */
@@ -283,13 +284,16 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
     }
 
     /**
-     * @return
+     * @return {@link java.lang.Boolean}
      */
     public Boolean getFitNesseUpdatePrevents() {
         return fitNesseUpdatePrevents;
     }
 
-	public Boolean getFitNesseVerbose() {
+    /**
+     * @return {@link java.lang.Boolean}
+     */
+    public Boolean getFitNesseVerbose() {
 		return fitNesseVerbose;
 	}
 

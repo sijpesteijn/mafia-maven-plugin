@@ -75,7 +75,7 @@ public interface Project {
     /**
      * Get the artifacts from the maven project.
      *
-     * @return @{link java.util.Set} of {@link org.apache.maven.artifact.Artifact}'s
+     * @return set of artifacts
      * @throws MafiaException thrown in case of an error
      */
     Set<Artifact> getArtifacts() throws MafiaException;
