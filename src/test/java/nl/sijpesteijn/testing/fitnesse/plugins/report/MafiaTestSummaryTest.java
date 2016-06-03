@@ -40,7 +40,7 @@ public class MafiaTestSummaryTest {
 
     @Test
     public void testRunDate() throws Exception {
-        String runDate = "now";
+        long runDate = 0l;
         summary.setRunDate(runDate);
         assertEquals(runDate, summary.getRunDate());
     }

@@ -5,6 +5,7 @@ import org.apache.tools.ant.util.DateUtils;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -107,13 +108,14 @@ public class MafiaIndexGenerator {
      * Add the introduction.
      */
     private void addIntroduction() {
+        final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         sink.section1();
         sink.sectionTitle1();
         sink.text(bundle.getString("report.mafia.title"));
         sink.sectionTitle1_();
 
         sink.lineBreak();
-        sink.text("Run date: " + summary.getRunDate());
+        sink.text("Run date: " + format.format(summary.getRunDate()));
         sink.lineBreak();
         sink.text("Total run duration: " + getTime(summary.getTestTime()));
         sink.lineBreak();

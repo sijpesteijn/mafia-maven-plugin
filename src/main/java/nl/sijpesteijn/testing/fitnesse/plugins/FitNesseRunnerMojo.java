@@ -1,29 +1,13 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
-import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommander;
-import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseTestRunner;
-import nl.sijpesteijn.testing.fitnesse.plugins.runner.ResultStore;
-import nl.sijpesteijn.testing.fitnesse.plugins.runner.TestCaller;
-import nl.sijpesteijn.testing.fitnesse.plugins.runner.URLTestCaller;
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.*;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseResourceAccess;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaRuntimeException;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.SurefireReportWriter;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.TestResult;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.TestResultReader;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -32,6 +16,16 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Goal to run the Fitnesse tests.
@@ -155,13 +149,12 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
                 final TestCaller testCaller = new URLTestCaller(fitNesseRunPort, "http", "localhost",
                     new File(outputDirectory), resultStore);
 
-                final Date startDate = new Date();
                 final FitNesseTestRunner runner = new FitNesseTestRunner(testCaller,
                     stopTestsOnIgnore, stopTestsOnException, stopTestsOnWrong, getLog());
                 runner.runTests(tests);
                 runner.runSuites(suites);
                 runner.runFilteredSuite(suitePageName, suiteFilter);
-                saveTestSummariesAndWriteProperties(runner.getTestSummaries(), startDate);
+                saveTestSummariesAndWriteProperties(runner.getTestSummaries());
                 printTestResults(runner.getTestSummaries());
                 getLog().info("Finished test run.");
                 copyFitNesseResourcesTo(outputDirectory
@@ -286,14 +279,10 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
      *
      * @param testSummaries
      *            - the test summaries to save.
-     * @param runDate
-     *            - date the test was run.
      * @throws MafiaException
      *             - unable to save test summaries.
      */
-    private void saveTestSummariesAndWriteProperties(final Map<String, MafiaTestSummary> testSummaries,
-        final Date runDate) throws MafiaException {
-        final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private void saveTestSummariesAndWriteProperties(final Map<String, MafiaTestSummary> testSummaries) throws MafiaException {
         if (testSummaries != null) {
             int exceptions = 0;
             int wrong = 0;
@@ -316,7 +305,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
             properties.put("ignores", "" + summary.getIgnores());
             properties.put("right", "" + summary.getRight());
             properties.put("testTime", "" + summary.getTestTime());
-            properties.put("runDate", format.format(runDate));
+            properties.put("runDate", new Date().getTime());
             saveProperties(properties);
         }
     }

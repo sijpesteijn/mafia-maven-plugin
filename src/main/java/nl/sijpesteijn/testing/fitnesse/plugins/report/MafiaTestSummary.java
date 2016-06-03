@@ -29,7 +29,7 @@ public class MafiaTestSummary extends TestSummary {
     /**
      * Test date.
      */
-    private String runDate;
+    private long runDate;
 
     public MafiaTestSummary(final int right, final int wrong, final int ignores, final int exceptions) {
         super(right, wrong, ignores, exceptions);
@@ -96,7 +96,7 @@ public class MafiaTestSummary extends TestSummary {
      *
      * @return - date.
      */
-    public final String getRunDate() {
+    public final long getRunDate() {
         return runDate;
     }
 
@@ -105,7 +105,7 @@ public class MafiaTestSummary extends TestSummary {
      *
      * @param runDate - date.
      */
-    public final void setRunDate(final String runDate) {
+    public final void setRunDate(final long runDate) {
         this.runDate = runDate;
     }
 }

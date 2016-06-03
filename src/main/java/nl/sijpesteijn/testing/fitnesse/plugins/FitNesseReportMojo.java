@@ -200,7 +200,7 @@ public class FitNesseReportMojo extends AbstractMavenReport {
                 int exceptions = Integer.parseInt(properties.getProperty("exceptions"));
                 summary  = new MafiaTestSummary(right, wrong, ignores, exceptions);
                 summary.setTestTime(Long.parseLong(properties.getProperty("testTime")));
-                summary.setRunDate(properties.getProperty("runDate"));
+                summary.setRunDate(Long.parseLong(properties.getProperty("runDate")));
             } finally {
                 is.close();
             }
