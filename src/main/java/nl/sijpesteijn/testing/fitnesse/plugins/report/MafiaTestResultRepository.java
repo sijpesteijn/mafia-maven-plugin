@@ -1,5 +1,6 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.report;
 
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.ResultStore;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import org.apache.commons.io.FileUtils;
 
@@ -39,13 +40,16 @@ public class MafiaTestResultRepository implements TestResultRepository {
      */
     private final List<MafiaTestResult> filteredSuitesResults;
 
+    private ResultStore resultStore;
+
     /**
      * Constructor.
      *
      * @param outputDirectory {@link java.io.File}
      * @throws MafiaException thrown in case of an error.
      */
-    public MafiaTestResultRepository(final File outputDirectory) throws MafiaException {
+    public MafiaTestResultRepository(final File outputDirectory, final ResultStore resultStore) throws MafiaException {
+        this.resultStore = resultStore;
         testResults = getTestsFiles(outputDirectory, "tests");
         suitesResults = getTestsFiles(outputDirectory, "suites");
         filteredSuitesResults = getTestsFiles(outputDirectory, "filteredSuite");
@@ -60,14 +64,17 @@ public class MafiaTestResultRepository implements TestResultRepository {
      * @throws MafiaException - unable to read test files.
      */
     private List<MafiaTestResult> getTestsFiles(final File outputDirectory, final String sub) throws MafiaException {
-        List<MafiaTestResult> testDetails = new ArrayList<MafiaTestResult>();
+        List<MafiaTestResult> testDetails = new ArrayList<>();
         File testDir = new File(outputDirectory, sub);
         if (testDir != null && testDir.isDirectory()) {
             File[] tests = testDir.listFiles();
             for (File test : tests) {
                 try {
-                    String html = FileUtils.readFileToString(test);
-                    MafiaTestResult testResult = new MafiaTestResult(test, getTestSummary(html), html);
+                    File wikiPage = new File(test, "wikipage.html");
+                    String html = FileUtils.readFileToString(wikiPage);
+                    File sum = new File(test, "mafiaresults.properties");
+                    MafiaTestSummary summary = resultStore.getSummary(sum);
+                    MafiaTestResult testResult = new MafiaTestResult(test, summary, html);
                     testDetails.add(testResult);
                 } catch (IOException e) {
                     throw new MafiaException("Could not make mafia test result.", e);
@@ -75,57 +82,6 @@ public class MafiaTestResultRepository implements TestResultRepository {
             }
         }
         return testDetails;
-    }
-
-    /**
-     * Get a mafia test summary from the html.
-     *
-     * @param html - the html.
-     * @return - mafia test summary.
-     */
-    private MafiaTestSummary getTestSummary(final String html) {
-        int start = html.indexOf(START_TESTSUMMARY);
-        if (start > 0) {
-            int end = html.indexOf("\"", start + START_TESTSUMMARY.length());
-            String testSummary = html.substring(start + START_TESTSUMMARY.length(), end);
-            return extractSummary(testSummary);
-        } else {
-            start = html.indexOf(START_SUITESUMMARY);
-            if (start > 0) {
-                int end = html.indexOf("\"", start + START_SUITESUMMARY.length());
-                String suiteSummary = html.substring(start + START_SUITESUMMARY.length(), end);
-                return extractSummary(suiteSummary);
-            }
-        }
-        return new MafiaTestSummary();
-    }
-
-    /**
-     * Extract mafia test summary.
-     *
-     * @param summary - summary string.
-     * @return - mafia test summary.
-     */
-    private MafiaTestSummary extractSummary(final String summary) {
-        String[] parts = summary.split(",");
-        String rightStr = parts[0].trim().split(" ")[0].trim();
-        String wrongStr = parts[1].split(" ")[1].trim();
-        String ignoreStr = parts[2].split(" ")[1].trim();
-        String exceptionStr = parts[3].split(" ")[1].trim();
-        String time = "0";
-        if (summary.contains("(")) {
-            time = summary.substring(summary.lastIndexOf('(') + 1, summary.lastIndexOf(')'));
-            time = time.replace(".", "");
-            time = time.replace(",", "");
-            time = time.split(" ")[0];
-        }
-        int right = Integer.parseInt(rightStr);
-        int wrong = Integer.parseInt(wrongStr);
-        int ignores = Integer.parseInt(ignoreStr);
-        int exceptions = Integer.parseInt(exceptionStr);
-        MafiaTestSummary testSummary = new MafiaTestSummary(right, wrong, ignores, exceptions);
-        testSummary.setTestTime(Long.parseLong(time));
-        return testSummary;
     }
 
     /**

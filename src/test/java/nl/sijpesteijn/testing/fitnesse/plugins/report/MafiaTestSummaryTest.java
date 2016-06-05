@@ -16,7 +16,7 @@ public class MafiaTestSummaryTest {
 
     @Before
     public void setup() throws Exception {
-        summary = new MafiaTestSummary();
+        summary = new MafiaTestSummary(0,0,0,0);
     }
 
     @Test

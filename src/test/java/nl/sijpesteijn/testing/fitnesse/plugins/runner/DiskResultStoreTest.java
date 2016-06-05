@@ -1,5 +1,6 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
+import fitnesse.wiki.PageType;
 import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class DiskResultStoreTest {
 
     @Test
     public void testStore() throws Throwable {
-        MafiaTestSummary mafiaTestSummary = store.saveResult(LINE + "\n" + STYLE, new File("./target/junitTestResults"), "sample-test");
+        MafiaTestSummary mafiaTestSummary = store.saveResult(LINE + "\n" + STYLE, new File("./target/junitTestResults"), 10l, PageType.TEST, "sample-test", null);
         assertNotNull(mafiaTestSummary);
         assertTrue(mafiaTestSummary.getRight() == 10);
     }

@@ -34,8 +34,8 @@ public class FitNesseTestRunnerTest extends AbstractFitNesseTest {
         final String testName1 = "FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteColumnFixtureSpec.TestMissingField";
         final String testName2 = "FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteColumnFixtureSpec" +
                 ".TestMissingMethod";
-        when(testCallerMock.test(testName1, PageType.TEST, null, "/tests/")).thenReturn(new MafiaTestSummary());
-        when(testCallerMock.test(testName2, PageType.TEST, null, "/tests/")).thenReturn(new MafiaTestSummary());
+        when(testCallerMock.test(testName1, PageType.TEST, null, "/tests/")).thenReturn(new MafiaTestSummary(0,0,0,0));
+        when(testCallerMock.test(testName2, PageType.TEST, null, "/tests/")).thenReturn(new MafiaTestSummary(0,0,0,0));
 
         runner.runTests(new ArrayList<String>() {{
             add(testName1);
@@ -55,7 +55,7 @@ public class FitNesseTestRunnerTest extends AbstractFitNesseTest {
     public void testRunSuites() throws Throwable {
         final String suiteName = "FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteColumnFixtureSpec";
         when(testCallerMock.test(suiteName, PageType.SUITE, null,
-                "/suites/")).thenReturn(new MafiaTestSummary());
+                "/suites/")).thenReturn(new MafiaTestSummary(0,0,0,0));
         runner.runSuites(new ArrayList<String>() {{
             add(suiteName);
         }});
@@ -83,7 +83,7 @@ public class FitNesseTestRunnerTest extends AbstractFitNesseTest {
         FileUtils.writeStringToFile(file, contents);
         String suiteName = "FitNesse.SuiteAcceptanceTests.SuiteFixtureTests.SuiteColumnFixtureSpec";
         when(testCallerMock.test(suiteName, PageType.SUITE, "precommit",
-                "/filteredSuite/")).thenReturn(new MafiaTestSummary());
+                "/filteredSuite/")).thenReturn(new MafiaTestSummary(0,0,0,0));
 
         runner.runFilteredSuite(suiteName, "precommit");
         assertTrue(runner.getTestSummaries().size() == 1);

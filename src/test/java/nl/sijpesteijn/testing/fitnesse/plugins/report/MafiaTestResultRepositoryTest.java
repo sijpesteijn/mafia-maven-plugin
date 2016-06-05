@@ -1,10 +1,14 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.report;
 
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.DiskResultStore;
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.ResultStore;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -12,11 +16,12 @@ import static org.junit.Assert.assertTrue;
  * Date: 5/20/13 2:41 PM
  */
 public class MafiaTestResultRepositoryTest {
+    private ResultStore resultStoreMock = new DiskResultStore();
     private MafiaTestResultRepository mafiaTestResultRepository;
 
     @Before
     public void setup() throws Throwable {
-        mafiaTestResultRepository = new MafiaTestResultRepository(new File("target/test-classes/sampleResults/"));
+        mafiaTestResultRepository = new MafiaTestResultRepository(new File("./src/test/resources/sampleResults/"), resultStoreMock);
     }
 
     @Test
@@ -35,8 +40,12 @@ public class MafiaTestResultRepositoryTest {
     }
 
     @Test
-    public void testDirectoryFailure() throws Throwable {
-        mafiaTestResultRepository = new MafiaTestResultRepository(new File("target/test-classes/IDONTEXIST/"));
-        mafiaTestResultRepository.getTestResults();
+    public void testDirectoryFailure() throws Exception {
+        try {
+            mafiaTestResultRepository = new MafiaTestResultRepository(new File("target/test-classes/IDONTEXIST/"),resultStoreMock);
+            mafiaTestResultRepository.getTestResults();
+        } catch(MafiaException me) {
+            assertEquals(me.getMessage(), "Could not make mafia test result.");
+        }
     }
 }

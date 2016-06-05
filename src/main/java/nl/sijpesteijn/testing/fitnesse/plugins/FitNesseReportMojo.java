@@ -1,7 +1,8 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.report.*;
+import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -11,6 +12,10 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,21 +32,10 @@ import java.util.ResourceBundle;
 public class FitNesseReportMojo extends AbstractMavenReport {
 
     /**
-     * Root path in the report resources.
-     */
-    private static final String PLUGIN_RESOURCES = "nl/sijpesteijn/testing/fitnesse/plugins/resources/";
-
-    /**
      * @link {org.apache.maven.project.MavenProject}
      */
     @Component
     private MavenProject project;
-
-    /**
-     * @link {nl.sijpesteijn.testing.fitnesse.plugins.report.ReportFormatter}
-     */
-    @Component(role = ReportFormatter.class)
-    private ReportFormatter reportFormatter;
 
     /**
      * SiteRenderer.
@@ -105,37 +99,49 @@ public class FitNesseReportMojo extends AbstractMavenReport {
      */
     @Override
     protected final void executeReport(final Locale locale) throws MavenReportException {
-        final String mafiaTestResultsDir = wikiRoot + nameRootPage + "/files/mafiaResults/";
         getLog().debug(toString());
-        try {
-            FileUtils.copyDirectoryStructure(new File(mafiaTestResultsDir), new File(outputDirectory));
-            copyResources();
-            final MafiaTestResultRepository resultRepository =
-                    new MafiaTestResultRepository(new File(outputDirectory));
-            final MafiaIndexGenerator generator =
-                    new MafiaIndexGenerator(resultRepository, getBundle(locale), getSink(),
-                            getTestSummary(mafiaTestResultsDir + "mafiaresults.properties"),
-                            reportFormatter);
-            generator.generate();
-        } catch (IOException e) {
-            throw new MavenReportException("Could not generate report.", e);
-        } catch (MafiaException e) {
-            throw new MavenReportException("Could not generate report." + e.getMessage(), e);
+        final File reportDirectory = new File(wikiRoot + nameRootPage + "/files/mafiaResults/report/");
+        if (reportDirectory.exists()) {
+            try {
+                File outputDir = new File(outputDirectory);
+                File cssOutput = new File(outputDir, "css");
+                FileUtils.copyDirectory(new File(reportDirectory, "css"), cssOutput);
+                FileUtils.copyDirectory(new File(reportDirectory, "javascript"), new File(outputDir, "javascript"));
+                FileUtils.copyDirectory(new File(reportDirectory, "images"), new File(outputDir, "images"));
+                Sink sink = getSink();
+                ResourceBundle bundle = getBundle(locale);
+                Document document = Jsoup.parse(new File(reportDirectory, "fitnesse_report.html"), "UTF-8");
+                Element head = document.head();
+                Elements links = head.select("link");
+                Elements scripts = head.select("script");
+                Element body = document.body();
+
+                sink.head();
+                sink.title();
+                sink.text(bundle.getString("report.mafia.title"));
+                sink.title_();
+                sink.head_();
+
+                sink.body();
+                for(int i =0;i<links.size();i++) {
+                    sink.rawText(links.get(i).outerHtml());
+                }
+                for(int i =0;i<scripts.size();i++) {
+                    sink.rawText(scripts.get(i).outerHtml());
+                }
+
+                sink.rawText(body.html());
+                sink.text(bundle.getString("report.mafia.moreInfo") + " ");
+                sink.link(bundle.getString("report.mafia.moreInfo.link"));
+                sink.text(bundle.getString("report.mafia.moreInfo.linkName"));
+                sink.link_();
+                sink.rawText(".");
+                sink.body_();
+                sink.flush();
+            } catch (IOException e) {
+                throw new MavenReportException("Could not generate report.", e);
+            }
         }
-
-    }
-
-    /**
-     * Copy the mafia report resources to the report location.
-     *
-     * @throws IOException - unable to copy resources.
-     */
-    private void copyResources() throws IOException {
-        final ReportResource resource = new ReportResource(outputDirectory, PLUGIN_RESOURCES);
-        resource.copy("css/");
-        resource.copy("images/");
-        resource.copy("javascript/");
-        resource.copy("wysiwyg/");
     }
 
     /**
@@ -153,7 +159,7 @@ public class FitNesseReportMojo extends AbstractMavenReport {
      */
     @Override
     public final String getOutputName() {
-        return "mafia-fitnesse-report";
+        return "fitnesse-report";
     }
 
     /**
@@ -187,22 +193,25 @@ public class FitNesseReportMojo extends AbstractMavenReport {
      * @return - mafia test summary.
      * @throws IOException - unable to read fitnesse test result file.
      */
-    private MafiaTestSummary getTestSummary(final String mafiaTestResultDir) throws IOException {
+    private MafiaTestSummary getTestSummary(final String mafiaTestResultDir) throws MafiaException {
         final Properties properties = new Properties();
-        MafiaTestSummary summary = new MafiaTestSummary();
+        MafiaTestSummary summary = null;
         if (new File(mafiaTestResultDir).exists()) {
-            final InputStream is = new FileInputStream(mafiaTestResultDir);
-            try {
-                properties.load(is);
-                int wrong = Integer.parseInt(properties.getProperty("wrong"));
-                int right = Integer.parseInt(properties.getProperty("right"));
-                int ignores = Integer.parseInt(properties.getProperty("ignores"));
-                int exceptions = Integer.parseInt(properties.getProperty("exceptions"));
-                summary  = new MafiaTestSummary(right, wrong, ignores, exceptions);
-                summary.setTestTime(Long.parseLong(properties.getProperty("testTime")));
-                summary.setRunDate(Long.parseLong(properties.getProperty("runDate")));
-            } finally {
-                is.close();
+            try (final InputStream is = new FileInputStream(mafiaTestResultDir)) {
+                try {
+                    properties.load(is);
+                    int wrong = Integer.parseInt(properties.getProperty("wrong"));
+                    int right = Integer.parseInt(properties.getProperty("right"));
+                    int ignores = Integer.parseInt(properties.getProperty("ignores"));
+                    int exceptions = Integer.parseInt(properties.getProperty("exceptions"));
+                    summary  = new MafiaTestSummary(right, wrong, ignores, exceptions);
+                    summary.setTestTime(Long.parseLong(properties.getProperty("testTime")));
+                    summary.setRunDate(Long.parseLong(properties.getProperty("runDate")));
+                } finally {
+                    is.close();
+                }
+            } catch (IOException e) {
+                throw new MafiaException("Failed to open mafia test result directory.", e);
             }
         }
         return summary;

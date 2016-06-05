@@ -1,10 +1,13 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
+import fitnesse.wiki.PageType;
 import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseResourceAccess;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 
 import java.io.*;
+import java.util.Date;
+import java.util.Properties;
 
 import static java.text.MessageFormat.format;
 
@@ -18,10 +21,10 @@ public class DiskResultStore implements ResultStore {
      * {@inheritDoc}
      */
     @Override
-    public final MafiaTestSummary saveResult(final String content, final File resultsDirectory,
-        final String fileName) throws MafiaException {
+    public final MafiaTestSummary saveResult(final String content, final File resultsDirectory, final Long testTime,
+                                             PageType pageType, String wikiPage, final String suiteFilter) throws MafiaException {
         resultsDirectory.mkdirs();
-        File resultFile = new File(resultsDirectory, fileName + ".html");
+        File resultFile = new File(resultsDirectory, "wikipage.html");
         MafiaTestSummary summary = null;
         String[] lines = content.split("\n");
         try {
@@ -38,8 +41,77 @@ public class DiskResultStore implements ResultStore {
             }
             writer.close();
             fos.close();
+            summary.setWikiPage(wikiPage);
+            summary.setSuiteFilter(suiteFilter);
+            summary.setTestTime(testTime);
+            summary.setPageType(pageType);
+            saveSummary(summary, resultsDirectory);
         } catch (IOException e) {
             throw new MafiaException("Could not save test result.", e);
+        }
+        return summary;
+    }
+
+    @Override
+    public void saveSummary(MafiaTestSummary testSummary, File resultsDirectory) throws MafiaException {
+        FileOutputStream outputStream;
+        final Properties properties = new Properties();
+        properties.put("exceptions", String.valueOf(testSummary.getExceptions()));
+        properties.put("wrong", String.valueOf(testSummary.getWrong()));
+        properties.put("ignores", String.valueOf(testSummary.getIgnores()));
+        properties.put("right",  String.valueOf(testSummary.getRight()));
+        properties.put("testTime", String.valueOf(testSummary.getTestTime()));
+        properties.put("runDate", String.valueOf(new Date().getTime()));
+        properties.put("pageType", String.valueOf(testSummary.getPageType()));
+        properties.put("wikiPage", String.valueOf(testSummary.getWikiPage()));
+        if (testSummary.getSuiteFilter() != null)
+            properties.put("suiteFilter", String.valueOf(testSummary.getSuiteFilter()));
+
+        try {
+            outputStream = new FileOutputStream(resultsDirectory + File.separator + "mafiaresults.properties");
+        } catch (FileNotFoundException e) {
+            throw new MafiaException("Could not open mafiaresults.properties", e);
+        }
+
+        try {
+            properties.store(outputStream, "Mafia test result properties");
+            outputStream.flush();
+        } catch (IOException e) {
+            throw new MafiaException("Could not save mafia test results.", e);
+        } finally {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                throw new MafiaException("Could not close property file stream.", e);
+            }
+        }
+    }
+
+    @Override
+    public MafiaTestSummary getSummary(File resultsDirectory) throws MafiaException {
+        final Properties properties = new Properties();
+        MafiaTestSummary summary = null;
+        if (resultsDirectory.exists()) {
+            try (final InputStream is = new FileInputStream(resultsDirectory)) {
+                try {
+                    properties.load(is);
+                    int wrong = Integer.parseInt(properties.getProperty("wrong"));
+                    int right = Integer.parseInt(properties.getProperty("right"));
+                    int ignores = Integer.parseInt(properties.getProperty("ignores"));
+                    int exceptions = Integer.parseInt(properties.getProperty("exceptions"));
+                    summary  = new MafiaTestSummary(right, wrong, ignores, exceptions);
+                    summary.setTestTime(Long.parseLong(properties.getProperty("testTime")));
+                    summary.setRunDate(Long.parseLong(properties.getProperty("runDate")));
+                    if(properties.containsKey("suiteFilter"))
+                        summary.setSuiteFilter(String.valueOf(properties.getProperty("suiteFilter")));
+                    summary.setWikiPage(String.valueOf(properties.getProperty("wikiPage")));
+                    summary.setPageType(PageType.fromString(String.valueOf(properties.getProperty("pageType"))));
+                } finally {
+                    is.close();
+                }
+            } catch (IOException e) {
+                throw new MafiaException("Failed to open mafia test result directory.", e);
+            }
         }
         return summary;
     }

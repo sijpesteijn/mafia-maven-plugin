@@ -1,14 +1,16 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
-import nl.sijpesteijn.testing.fitnesse.plugins.runner.*;
+import fitnesse.wiki.PageType;
+import nl.sijpesteijn.testing.fitnesse.plugins.report.*;
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommander;
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.ResultStore;
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.TestCaller;
+import nl.sijpesteijn.testing.fitnesse.plugins.runner.URLTestCaller;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseResourceAccess;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaRuntimeException;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.SurefireReportWriter;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.TestResult;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.surefirereport.TestResultReader;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -18,20 +20,16 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Goal to run the Fitnesse tests.
  */
 @Mojo(name = "test", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
 public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
+    private static final String PLUGIN_RESOURCES = "nl/sijpesteijn/testing/fitnesse/plugins/resources/";
 
     /**
      * Skip the running of test. Default false.
@@ -51,11 +49,6 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     @Parameter(property = "fitNesseRunPort", defaultValue = "9091")
     private int fitNesseRunPort;
 
-    /**
-     * The directory where the Fitnesse reports have been generated.
-     */
-    @Parameter(property = "testResultsDirectory", defaultValue = "mafiaTestResults")
-    private String testResultsDirectory;
 
     /**
      * List of tests to be run.
@@ -110,15 +103,13 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     MavenProject mavenProject;
 
     /**
-     * The test result output directory.
-     */
-    private String outputDirectory;
-
-    /**
      * The result store that takes care of persisting the test results.
      */
     @Component(role = ResultStore.class)
     private ResultStore resultStore;
+
+    @Component(role = ReportBuilder.class)
+    private ReportBuilder reportBuilder;
 
     /**
      * Local commander to run tests on.
@@ -142,26 +133,108 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
             }
             getLog().info("Starting test run....");
             try {
-                outputDirectory = getWikiRoot() + File.separator + getNameRootPage() + "/files/mafiaResults/";
-                clearOutputDirectory(outputDirectory);
-                new File(outputDirectory).mkdirs();
+                Map<String, MafiaTestSummary> testSummaries = new HashMap();
+                String fitnesseFilesFolder = getWikiRoot() + File.separator + getNameRootPage() + File.separator + "files" + File.separator;
+                String outputPath = fitnesseFilesFolder + File.separator + "mafiaResults" + File.separator;
+                clearOutputDirectory(outputPath);
+                File mafiaResultFolder = new File(outputPath);
+                mafiaResultFolder.mkdirs();
 
-                final TestCaller testCaller = new URLTestCaller(fitNesseRunPort, "http", "localhost",
-                    new File(outputDirectory), resultStore);
+                TestCaller testCaller = new URLTestCaller(fitNesseRunPort, "http", "localhost", new File(outputPath), resultStore);
 
-                final FitNesseTestRunner runner = new FitNesseTestRunner(testCaller,
-                    stopTestsOnIgnore, stopTestsOnException, stopTestsOnWrong, getLog());
-                runner.runTests(tests);
-                runner.runSuites(suites);
-                runner.runFilteredSuite(suitePageName, suiteFilter);
-                saveTestSummariesAndWriteProperties(runner.getTestSummaries());
-                printTestResults(runner.getTestSummaries());
+                boolean keepgoing = true;
+                if(keepgoing && tests != null) {
+                    Iterator<String> iterator = tests.iterator();
+                    while (keepgoing && iterator.hasNext()) {
+                        String test = iterator.next();
+                        MafiaTestSummary summary = testCaller.test(test, PageType.TEST, null, "/tests/");
+                        testSummaries.put(test, summary);
+                        keepgoing = checkResult(summary);
+                    }
+                }
+                if (keepgoing && suites != null) {
+                    Iterator<String> iterator = suites.iterator();
+                    while(keepgoing && iterator.hasNext()) {
+                        String suite = iterator.next();
+                        MafiaTestSummary summary = testCaller.test(suite, PageType.SUITE, null, "/suites/");
+                        testSummaries.put(suite, summary);
+                    }
+                }
+                if (keepgoing && !StringUtils.isEmpty(suitePageName) && !StringUtils.isEmpty(suiteFilter)) {
+                    MafiaTestSummary summary = testCaller.test(suitePageName, PageType.SUITE, suiteFilter, "/filteredSuite/");
+                    testSummaries.put(suitePageName + " (filter: " + suiteFilter + ")", summary);
+                }
+                printTestResults(testSummaries);
+
+                MafiaTestSummary testSummary = getTotalTestSummary(testSummaries);
+                MafiaTestSummary assertionSummary = getTotalTestSummary(testSummaries);
+                if (testSummary != null) {
+                    resultStore.saveSummary(testSummary, new File(outputPath));
+                }
+                List<MafiaTestResult> testResults = new ArrayList<>();
+                final MafiaTestResultRepository resultRepository =
+                        new MafiaTestResultRepository(mafiaResultFolder, resultStore);
+                testResults.addAll(resultRepository.getTestResults());
+                testResults.addAll(resultRepository.getSuitesResults());
+                testResults.addAll(resultRepository.getFilteredSuitesResults());
+
+                List<String> styleSheets = new ArrayList();
+                styleSheets.add("css/fitnesse_wiki.css");
+                styleSheets.add("css/fitnesse_pages.css");
+                styleSheets.add("css/fitnesse_straight.css");
+                styleSheets.add("css/fitnesse.css");
+                List<String> javascriptFiles = new ArrayList();
+                javascriptFiles.add("javascript/jquery-1.7.2.min.js");
+                javascriptFiles.add("javascript/fitnesse.js");
+                javascriptFiles.add("javascript/fitnesse_straight.js");
+
+                File customStyle = new File(fitnesseFilesFolder + File.separator + "fitnesse");
+                File output = new File(outputPath + File.separator + "report");
+                if(customStyle.exists()) {
+                    try {
+                        File css = new File(customStyle, "css");
+                        if (css.exists()) {
+                            for (File cssfile : css.listFiles()) {
+                                styleSheets.add("css/" + cssfile.getName());
+                            }
+                        }
+
+                        File javascript = new File(customStyle, "javascript");
+                        if(javascript.exists()) {
+                            for (File javascriptfile : javascript.listFiles()) {
+                                javascriptFiles.add("javascript/" + javascriptfile.getName());
+                            }
+                        }
+                        FileUtils.copyDirectory(customStyle, output);
+                    } catch (IOException e) {
+                        throw new MafiaException("Could not copy the custom report resources.");
+                    }
+                }
+
+                try {
+                    final ReportResource resource = new ReportResource(outputPath + File.separator + "report", PLUGIN_RESOURCES);
+                    resource.copy("css/");
+                    resource.copy("images/");
+                    resource.copy("javascript/");
+                } catch (IOException e) {
+                    throw new MafiaException("Could not copy the report resources.");
+                }
+
+                String reportHtml = reportBuilder.withSummary(testSummary, assertionSummary)
+                        .withStyleSheets(styleSheets)
+                        .withJavaScriptFiles(javascriptFiles)
+                        .withTests(testResults)
+                        .getHtmlAsString();
+
+                try {
+                    FileUtils.writeStringToFile(new File(outputPath + "/report/fitnesse_report.html"), reportHtml);
+                } catch (IOException e) {
+                    throw new MafiaException("Could not create test report");
+                }
+
                 getLog().info("Finished test run.");
-                copyFitNesseResourcesTo(outputDirectory
-                    + FitNesseResourceAccess.RESOURCES_FOLDER_NAME_WITHIN_MAFIARESULTS);
-                writeSurefireReportsIfNecessary();
             } catch (MafiaException e) {
-                throw new MojoFailureException("Failed to run tests.", e);
+                throw new MojoFailureException("Failed to run tests. " + e.getMessage(), e);
             } finally {
                 if (startServer) {
                     stopCommander();
@@ -172,6 +245,22 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
         }
     }
 
+    private boolean checkResult(MafiaTestSummary summary) {
+        if (summary.getWrong() > 0 && stopTestsOnWrong) {
+            getLog().info(summary.getWikiPage() + " failed with wrong exception.");
+            return false;
+        }
+        if (summary.getIgnores() > 0 && stopTestsOnIgnore) {
+            getLog().info(summary.getWikiPage() + " failed with ignore exception.");
+            return false;
+        }
+        if (summary.getExceptions() > 0 && stopTestsOnException) {
+            getLog().info(summary.getWikiPage() + " failed with an exception.");
+            return false;
+        }
+        return true;
+    }
+
     private void copyFitNesseResourcesTo(String targetResourceDir) throws MojoFailureException {
         getLog().debug("Copying the fitnesse resources (css, js etc.) to " + targetResourceDir + " ...");
         FitNesseResourceAccess fitNesseJarAccess = new FitNesseResourceAccess(getMafiaProject());
@@ -179,24 +268,6 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
             fitNesseJarAccess.copyResourcesTo(targetResourceDir);
         } catch (MafiaRuntimeException e) {
             getLog().warn("Couldn't copy resources (css, js) to " + targetResourceDir, e);
-        }
-    }
-
-    private void writeSurefireReportsIfNecessary() {
-        if (writeSurefireReports) {
-            getLog().info("Writing content of testResults to surefire-reports...");
-
-            String testResultsFolder = getWikiRoot() + File.separator + getNameRootPage() + "/files/testResults/";
-            TestResultReader testResultReader = new TestResultReader(getLog());
-            List<TestResult> allTestResultFiles = testResultReader.readAllTestResultFiles(new File(
-                testResultsFolder));
-
-            String buildDirectory = mavenProject.getBuild().getDirectory();
-            File surefireReportBaseDir = new File(buildDirectory, "/surefire-reports/");
-            surefireReportBaseDir.mkdirs();
-            SurefireReportWriter surefireReportWriter = new SurefireReportWriter(getLog(), outputDirectory,
-                testResultsFolder);
-            surefireReportWriter.serialize(allTestResultFiles, surefireReportBaseDir);
         }
     }
 
@@ -228,8 +299,8 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
      */
     private void startCommander() throws MojoFailureException, MojoExecutionException {
         commander =
-            new FitNesseCommander(getCommanderConfig(getJvmDependencies(), getJvmArguments(), 0,
-                fitNesseRunPort, getFitNesseAuthenticateStart(), getConnectionAttempts()));
+                new FitNesseCommander(getCommanderConfig(getJvmDependencies(), getJvmArguments(), 0,
+                        fitNesseRunPort, getFitNesseAuthenticateStart(), getConnectionAttempts()));
         try {
             commander.start();
         } catch (MafiaException me) {
@@ -275,14 +346,14 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     }
 
     /**
-     * Save the test summaries and write properties file with total test results.
+     * Calculate the total test summary.
      *
      * @param testSummaries
      *            - the test summaries to save.
      * @throws MafiaException
      *             - unable to save test summaries.
      */
-    private void saveTestSummariesAndWriteProperties(final Map<String, MafiaTestSummary> testSummaries) throws MafiaException {
+    private MafiaTestSummary getTotalTestSummary(final Map<String, MafiaTestSummary> testSummaries) throws MafiaException {
         if (testSummaries != null) {
             int exceptions = 0;
             int wrong = 0;
@@ -299,46 +370,9 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
             }
             final MafiaTestSummary summary = new MafiaTestSummary(right, wrong, ignores, exceptions);
             summary.setTestTime(testTime);
-            final Properties properties = new Properties();
-            properties.put("exceptions", "" + summary.getExceptions());
-            properties.put("wrong", "" + summary.getWrong());
-            properties.put("ignores", "" + summary.getIgnores());
-            properties.put("right", "" + summary.getRight());
-            properties.put("testTime", "" + summary.getTestTime());
-            properties.put("runDate", new Date().getTime());
-            saveProperties(properties);
+            return summary;
         }
-    }
-
-    /**
-     * Save the properties file with total test results to disk.
-     *
-     * @param properties
-     *            - properties object.
-     * @throws MafiaException
-     *             - unable to save properties.
-     */
-    private void saveProperties(final Properties properties) throws MafiaException {
-        FileOutputStream outputStream;
-        try {
-            outputStream = new FileOutputStream(outputDirectory + File.separator + "mafiaresults.properties");
-        } catch (FileNotFoundException e) {
-            throw new MafiaException("Could not open mafiaresults.properties", e);
-        }
-
-        try {
-            properties.store(outputStream, "Mafia test result properties");
-            outputStream.flush();
-        } catch (IOException e) {
-            throw new MafiaException("Could not save mafia test results.", e);
-        } finally {
-            try {
-                outputStream.close();
-            } catch (IOException e) {
-                throw new MafiaException("Could not close property file stream.", e);
-            }
-        }
-
+        return null;
     }
 
     /**
@@ -361,14 +395,13 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     @Override
     public final String toString() {
         return super.toString()
-            + ", FitNesseRunPort: " + fitNesseRunPort
-            + ", Test results directory: " + testResultsDirectory
-            + ", Tests: " + tests
-            + ", Suites: " + suites
-            + ", Suite page name: " + suitePageName
-            + ", Suite filter: " + suiteFilter
-            + ", Stop tests on ignore: " + stopTestsOnIgnore
-            + ", Stop tests on exception: " + stopTestsOnException
-            + ", Stop tests on wrong: " + stopTestsOnWrong;
+                + ", FitNesseRunPort: " + fitNesseRunPort
+                + ", Tests: " + tests
+                + ", Suites: " + suites
+                + ", Suite page name: " + suitePageName
+                + ", Suite filter: " + suiteFilter
+                + ", Stop tests on ignore: " + stopTestsOnIgnore
+                + ", Stop tests on exception: " + stopTestsOnException
+                + ", Stop tests on wrong: " + stopTestsOnWrong;
     }
 }

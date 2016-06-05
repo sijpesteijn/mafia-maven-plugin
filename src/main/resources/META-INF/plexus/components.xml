@@ -5,8 +5,8 @@
             <implementation>nl.sijpesteijn.testing.fitnesse.plugins.runner.DiskResultStore</implementation>
         </component>
         <component>
-            <role>nl.sijpesteijn.testing.fitnesse.plugins.report.ReportFormatter</role>
-            <implementation>nl.sijpesteijn.testing.fitnesse.plugins.report.JsoupReportFormatter</implementation>
+            <role>nl.sijpesteijn.testing.fitnesse.plugins.report.ReportBuilder</role>
+            <implementation>nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaReportBuilder</implementation>
         </component>
     </components>
 </component-set>

@@ -1,17 +1,15 @@
 package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
+import fitnesse.wiki.PageType;
+import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
+import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
-
-import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
-
-import org.apache.commons.io.IOUtils;
-
-import fitnesse.wiki.PageType;
 
 /**
  * URL Test caller.
@@ -84,10 +82,9 @@ public class URLTestCaller implements TestCaller {
             long start = System.currentTimeMillis();
             String content = IOUtils.toString(url, Charset.defaultCharset());
             long testTime = System.currentTimeMillis() - start;
-            File resultsDirectory = new File(testResultsDirectory, subDirectory);
+            File resultsDirectory = new File(new File(testResultsDirectory, subDirectory), wikiPage);
 
-            summary = resultStore.saveResult(content, resultsDirectory, wikiPage);
-            summary.setTestTime(testTime);
+            summary = resultStore.saveResult(content, resultsDirectory, testTime, pageType, wikiPage, suiteFilter);
         } catch (MalformedURLException e) {
             throw new MafiaException("Could not make url call.", e);
         } catch (IOException e) {
