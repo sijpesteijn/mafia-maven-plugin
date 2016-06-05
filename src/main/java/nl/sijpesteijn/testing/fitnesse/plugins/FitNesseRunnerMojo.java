@@ -158,11 +158,13 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
                         String suite = iterator.next();
                         MafiaTestSummary summary = testCaller.test(suite, PageType.SUITE, null, "/suites/");
                         testSummaries.put(suite, summary);
+                        keepgoing = checkResult(summary);
                     }
                 }
                 if (keepgoing && !StringUtils.isEmpty(suitePageName) && !StringUtils.isEmpty(suiteFilter)) {
                     MafiaTestSummary summary = testCaller.test(suitePageName, PageType.SUITE, suiteFilter, "/filteredSuite/");
                     testSummaries.put(suitePageName + " (filter: " + suiteFilter + ")", summary);
+                    keepgoing = checkResult(summary);
                 }
                 printTestResults(testSummaries);
 
@@ -233,6 +235,9 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
                 }
 
                 getLog().info("Finished test run.");
+                if (!keepgoing) {
+                    throw new MojoFailureException("Test run interrupted by stop conditions.");
+                }
             } catch (MafiaException e) {
                 throw new MojoFailureException("Failed to run tests. " + e.getMessage(), e);
             } finally {
