@@ -106,9 +106,9 @@ public class URLTestCaller implements TestCaller {
      */
     private String getTestUrl(final String pageName, final PageType pageType, final String suiteFilter) {
         if (suiteFilter != null) {
-            return "/" + pageName + "?responder=suite&suiteFilter=" + suiteFilter;
+            return "/" + pageName + "?responder=suite&format=xml&suiteFilter=" + suiteFilter;
         } else {
-            return "/" + pageName + "?" + pageType.name().toString().toLowerCase();
+            return "/" + pageName + "?" + pageType.name().toString().toLowerCase()+"&format=xml";
         }
     }
 

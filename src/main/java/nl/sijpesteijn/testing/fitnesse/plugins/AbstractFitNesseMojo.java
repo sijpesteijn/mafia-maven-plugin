@@ -110,6 +110,11 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
     @Parameter(property = "fitNesseVerbose", defaultValue = "false")
     private Boolean fitNesseVerbose;
 
+    /**
+     * Fitnesse configuration file
+     */
+    @Parameter(property = "configFile", required=false)
+    private String configFile;
 
 
     protected final FitNesseCommanderConfig getCommanderConfig(String fitNesseAuthenticate) throws MojoFailureException {
@@ -151,7 +156,7 @@ public abstract class AbstractFitNesseMojo extends AbstractMojo {
 
             return new FitNesseCommanderConfig(port, wikiRoot, nameRootPage, logDirectory, retainDays,
                     classpathString, jvmArguments, getLog(),
-                    fitNesseAuthenticateStart, fitNesseAuthenticateStop, fitNesseUpdatePrevents, fitNesseVerbose, connectionAttempts);
+                    fitNesseAuthenticateStart, fitNesseAuthenticateStop, fitNesseUpdatePrevents, fitNesseVerbose, connectionAttempts,configFile);
         } catch (MafiaException e) {
             throw new MojoFailureException("Could not get command configuration.", e);
         }
