@@ -21,7 +21,7 @@ import com.ximpleware.XPathParseException;
  */
 public class DiskResultStore implements ResultStore {
 
-    private static final String RESULTS_FILE = "results.xml";
+    private static final String RESULTS_FILE = "fitnesse-results.xml";
 
     /**
      *

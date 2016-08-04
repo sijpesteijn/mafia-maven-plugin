@@ -3,6 +3,7 @@ package nl.sijpesteijn.testing.fitnesse.plugins.report;
 import fitnesse.testsystems.TestSummary;
 import fitnesse.wiki.PageType;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -99,8 +100,7 @@ public class MafiaTestSummary extends TestSummary {
      * @return {@link java.lang.String}
      */
     public final String getReportFileName() {
-        return getTimeStamp() + "_" + getRight() + "_" + getWrong() + "_" + getIgnores() + "_" + getExceptions()
-                + ".xml";
+        return getPageType().toString().toLowerCase().concat("s") + File.separator + getWikiPage()+ File.separator + "fitnesse-results.xml";
     }
 
     /**
