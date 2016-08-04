@@ -3,9 +3,13 @@ package nl.sijpesteijn.testing.fitnesse.plugins.report;
 import org.junit.Before;
 import org.junit.Test;
 
+import fitnesse.wiki.PageType;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.io.File;
 
 /**
  * User: gijs
@@ -17,6 +21,8 @@ public class MafiaTestSummaryTest {
     @Before
     public void setup() throws Exception {
         summary = new MafiaTestSummary(0,0,0,0);
+        summary.setPageType(PageType.SUITE);
+        summary.setWikiPage("wikiName");
     }
 
     @Test
@@ -29,7 +35,8 @@ public class MafiaTestSummaryTest {
     @Test
     public void testGetReportFileName() throws Exception {
         String reportFileName = summary.getReportFileName();
-        assertTrue(reportFileName.endsWith("_0_0_0_0.xml"));
+        assertTrue(reportFileName.contains(PageType.SUITE.toString().toLowerCase()));
+        assertEquals("suites"+File.separator+"wikiName"+File.separator+"fitnesse-results.xml", reportFileName);
     }
 
     @Test
@@ -49,6 +56,6 @@ public class MafiaTestSummaryTest {
     public void testToString() throws Exception {
         String toString = summary.toString();
         assertTrue(toString.contains(", file: "));
-        assertTrue(toString.endsWith("_0_0_0_0.xml"));
+        assertTrue(toString.endsWith("suites"+File.separator+"wikiName"+File.separator+"fitnesse-results.xml"));
     }
 }
