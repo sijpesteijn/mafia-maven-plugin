@@ -2,7 +2,6 @@ package nl.sijpesteijn.testing.fitnesse.plugins.runner;
 
 import fitnesse.wiki.PageType;
 import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseResourceAccess;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 
 import java.io.*;
