@@ -9,12 +9,20 @@ import java.io.*;
 import java.util.Date;
 import java.util.Properties;
 
-import static java.text.MessageFormat.format;
+import org.apache.commons.io.FileUtils;
+
+import com.ximpleware.AutoPilot;
+import com.ximpleware.VTDGen;
+import com.ximpleware.VTDNav;
+import com.ximpleware.XPathParseException;
+
 
 /**
  * DiskResultStore.
  */
 public class DiskResultStore implements ResultStore {
+
+    private static final String RESULTS_FILE = "results.xml";
 
     /**
      *
@@ -24,23 +32,12 @@ public class DiskResultStore implements ResultStore {
     public final MafiaTestSummary saveResult(final String content, final File resultsDirectory, final Long testTime,
                                              PageType pageType, String wikiPage, final String suiteFilter) throws MafiaException {
         resultsDirectory.mkdirs();
-        File resultFile = new File(resultsDirectory, "wikipage.html");
         MafiaTestSummary summary = null;
-        String[] lines = content.split("\n");
+        File resultFile = new File(resultsDirectory, RESULTS_FILE);
+        
         try {
-            FileOutputStream fos = new FileOutputStream(resultFile);
-            Writer writer = new OutputStreamWriter(fos, "UTF-8");
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                if (line.contains("getElementById(\"test-summary\")")
-                    && line.contains("<strong>Assertions:</strong>")) {
-                    summary = updateSummary(line);
-                }
-                line = updatePaths(line);
-                writer.write(line + "\n");
-            }
-            writer.close();
-            fos.close();
+            FileUtils.write(resultFile, content);
+            summary = updateSummary(resultFile);
             summary.setWikiPage(wikiPage);
             summary.setSuiteFilter(suiteFilter);
             summary.setTestTime(testTime);
@@ -48,6 +45,8 @@ public class DiskResultStore implements ResultStore {
             saveSummary(summary, resultsDirectory);
         } catch (IOException e) {
             throw new MafiaException("Could not save test result.", e);
+        } catch (XPathParseException e) {
+            throw new MafiaException("Could not parse test result.", e);
         }
         return summary;
     }
@@ -116,46 +115,28 @@ public class DiskResultStore implements ResultStore {
         return summary;
     }
 
-    /**
-     * Update the paths.
-     *
-     * @param line
-     *            - html string.
-     * @return - updated html.
-     */
-    private String updatePaths(final String line) {
-        if (line.contains("/files/fitnesse/")) {
-            return line.replaceAll("/files/fitnesse/",
-                format("../../{0}/", FitNesseResourceAccess.RESOURCES_FOLDER_NAME_WITHIN_MAFIARESULTS));
-        }
-        return line;
-    }
 
     /**
      * Update the mafia test summary with result.
      *
-     * @param inputLine
-     *            - html result string.
+     * @param resultFile
+     *            - fitnesse result file.
      * @return - mafia test summary.
+     * @throws XPathParseException 
      */
-    private MafiaTestSummary updateSummary(final String inputLine) {
-        final String assertions = "<strong>Assertions:</strong>";
-        int start = inputLine.indexOf(assertions);
-        int stop = inputLine.indexOf("right", start + assertions.length());
-        final String rightStr = inputLine.substring(start + assertions.length(), stop);
-        start = stop + "right".length() + 1;
-        stop = inputLine.indexOf("wrong", start);
-        final String wrongStr = inputLine.substring(start, stop);
-        start = stop + "wrong".length() + 1;
-        stop = inputLine.indexOf("ignored", start);
-        final String ignoreStr = inputLine.substring(start, stop);
-        start = stop + "ignored".length() + 1;
-        stop = inputLine.indexOf("exceptions", start);
-        final String exceptionsStr = inputLine.substring(start, stop);
-        int right = Integer.parseInt(rightStr.trim());
-        int wrong = Integer.parseInt(wrongStr.trim());
-        int ignores = Integer.parseInt(ignoreStr.trim());
-        int exceptions = Integer.parseInt(exceptionsStr.trim());
+    private MafiaTestSummary updateSummary(final File resultFile) throws XPathParseException {
+        VTDGen parser = new VTDGen();
+        parser.parseFile(resultFile.getAbsolutePath(), true);
+        VTDNav vn = parser.getNav();
+        AutoPilot ap = new AutoPilot(vn);
+        ap.selectXPath("//finalCounts/right");
+        int right  = Integer.valueOf(ap.evalXPathToString());
+        ap.selectXPath("//finalCounts/wrong");
+        int wrong  = Integer.valueOf(ap.evalXPathToString());
+        ap.selectXPath("//finalCounts/ignores");
+        int ignores  = Integer.valueOf(ap.evalXPathToString());
+        ap.selectXPath("//finalCounts/exceptions");
+        int exceptions  = Integer.valueOf(ap.evalXPathToString());
         final MafiaTestSummary summary = new MafiaTestSummary(right, wrong, ignores, exceptions);
         return summary;
     }

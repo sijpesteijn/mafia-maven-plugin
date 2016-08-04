@@ -133,7 +133,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
             }
             getLog().info("Starting test run....");
             try {
-                Map<String, MafiaTestSummary> testSummaries = new HashMap();
+                Map<String, MafiaTestSummary> testSummaries = new HashMap<String, MafiaTestSummary>();
                 String fitnesseFilesFolder = getWikiRoot() + File.separator + getNameRootPage() + File.separator + "files" + File.separator;
                 String outputPath = fitnesseFilesFolder + File.separator + "mafiaResults" + File.separator;
                 clearOutputDirectory(outputPath);
@@ -180,12 +180,12 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
                 testResults.addAll(resultRepository.getSuitesResults());
                 testResults.addAll(resultRepository.getFilteredSuitesResults());
 
-                List<String> styleSheets = new ArrayList();
+                List<String> styleSheets = new ArrayList<String>();
                 styleSheets.add("css/fitnesse_wiki.css");
                 styleSheets.add("css/fitnesse_pages.css");
                 styleSheets.add("css/fitnesse_straight.css");
                 styleSheets.add("css/fitnesse.css");
-                List<String> javascriptFiles = new ArrayList();
+                List<String> javascriptFiles = new ArrayList<String>();
                 javascriptFiles.add("javascript/jquery-1.7.2.min.js");
                 javascriptFiles.add("javascript/fitnesse.js");
                 javascriptFiles.add("javascript/fitnesse_straight.js");
@@ -266,15 +266,6 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
         return true;
     }
 
-    private void copyFitNesseResourcesTo(String targetResourceDir) throws MojoFailureException {
-        getLog().debug("Copying the fitnesse resources (css, js etc.) to " + targetResourceDir + " ...");
-        FitNesseResourceAccess fitNesseJarAccess = new FitNesseResourceAccess(getMafiaProject());
-        try {
-            fitNesseJarAccess.copyResourcesTo(targetResourceDir);
-        } catch (MafiaRuntimeException e) {
-            getLog().warn("Couldn't copy resources (css, js) to " + targetResourceDir, e);
-        }
-    }
 
     private int getAvailablePort() {
         ServerSocket ss = null;
