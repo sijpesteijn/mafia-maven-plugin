@@ -90,6 +90,7 @@ public class MafiaReportBuilderTest {
     public void testWithTests() throws Exception {
         MafiaReportBuilder builder = new MafiaReportBuilder();
         String html = builder.withTests(tests).getHtmlAsString();
-        assertEquals(FileUtils.readFileToString(new File("./src/test/resources/fitnesse_report.html")), html);
+        String expectedHtml = FileUtils.readFileToString(new File("./src/test/resources/fitnesse_report.html")).replaceAll(System.getProperty("line.separator"), "\n");
+        assertEquals(html,expectedHtml);
     }
  }

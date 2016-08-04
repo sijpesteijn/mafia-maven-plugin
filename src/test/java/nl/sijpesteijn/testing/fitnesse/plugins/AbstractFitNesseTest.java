@@ -25,6 +25,6 @@ public class AbstractFitNesseTest {
 
     public static FitNesseCommanderConfig getFitnesseCommanderConfig() {
         return new FitNesseCommanderConfig(PORT, WIKI_ROOT, NAME_ROOT_PAGE, LOG_DIRECTORY,0,
-                FITNESSE_JAR_PATH, jvmArguments ,mockLog, null, null, null, null, 4);
+                FITNESSE_JAR_PATH, jvmArguments ,mockLog, null, null, null, null, 10,null);
     }
 }
