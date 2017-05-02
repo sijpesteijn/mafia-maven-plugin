@@ -60,7 +60,7 @@ public class URLTestCallerTest extends AbstractFitNesseTest {
             assertNotNull(mafiaTestSummary);
         } catch (MafiaException me) {
             assertEquals(
-                "Could not open connection to URL http://wronghost:9091/FitNesse.SuiteAcceptanceTests.SuiteWidgetTests.TestExpression?test",
+                "Could not open connection to URL http://wronghost:9091/FitNesse.SuiteAcceptanceTests.SuiteWidgetTests.TestExpression?test&format=xml",
                 me.getMessage());
         }
     }

@@ -69,13 +69,18 @@ public class FitNesseCommander {
         if (commanderConfig.getFitNesseVerbose() != null && commanderConfig.getFitNesseVerbose()) {
             verboseArgument = " -v";
         }
-
+        String configFileArgument = "";
+        if(StringUtils.isNotEmpty(commanderConfig.getConfigFile())){
+            configFileArgument = " -f " + commanderConfig.getConfigFile();
+        }
+        
         final String command = "java" + getJVMArguments(commanderConfig.getJvmArguments())
             + " -cp " + commanderConfig.getClasspathString()
             + " fitnesseMain.FitNesseMain -p " + commanderConfig.getFitNessePort()
             + " -d " + commanderConfig.getWikiRoot()
             + " -r " + commanderConfig.getNameRootPage()
             + " -e " + commanderConfig.getRetainDays()
+            + configFileArgument
             + logArgument
             + authArgumentStart
             + updatePreventsArgument

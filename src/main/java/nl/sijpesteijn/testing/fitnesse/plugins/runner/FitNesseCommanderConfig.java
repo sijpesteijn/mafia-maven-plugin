@@ -73,6 +73,10 @@ public class FitNesseCommanderConfig {
     
     private final int connectionAttempts;
 
+    /**
+     * fitNesse configuration file
+     */
+    private String configFile;
 
 
 
@@ -104,7 +108,8 @@ public class FitNesseCommanderConfig {
                                    final String fitNesseAuthenticateStop,
                                    final Boolean fitNesseUpdatePrevents,
                                    final Boolean fitNesseVerbose,
-                                   final int connectionAttempts) {
+                                   final int connectionAttempts,
+                                   final String configFile) {
         this.fitNessePort = fitNessePort;
         this.wikiRoot = wikiRoot;
         this.nameRootPage = nameRootPage;
@@ -118,6 +123,7 @@ public class FitNesseCommanderConfig {
         this.fitNesseUpdatePrevents = fitNesseUpdatePrevents;
         this.fitNesseVerbose = fitNesseVerbose;
         this.connectionAttempts = connectionAttempts;
+        this.configFile = configFile;
         
     }
 
@@ -229,4 +235,13 @@ public class FitNesseCommanderConfig {
 	public int getConnectionAttempts() {
         return connectionAttempts;
     }
+
+    /**
+     * 
+     * @return {@link java.lang.String}
+     */
+    public String getConfigFile() {
+        return configFile;
+    }
+
 }

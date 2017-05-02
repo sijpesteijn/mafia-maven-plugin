@@ -6,9 +6,7 @@ import nl.sijpesteijn.testing.fitnesse.plugins.runner.FitNesseCommander;
 import nl.sijpesteijn.testing.fitnesse.plugins.runner.ResultStore;
 import nl.sijpesteijn.testing.fitnesse.plugins.runner.TestCaller;
 import nl.sijpesteijn.testing.fitnesse.plugins.runner.URLTestCaller;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.FitNesseResourceAccess;
 import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaRuntimeException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -29,7 +27,6 @@ import java.util.*;
  */
 @Mojo(name = "test", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
 public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
-    private static final String PLUGIN_RESOURCES = "nl/sijpesteijn/testing/fitnesse/plugins/resources/";
 
     /**
      * Skip the running of test. Default false.
@@ -89,8 +86,14 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     /**
      * If true, the mojo will stop when it encountered a wrong error message.
      */
-    @Parameter(property = "stopTestsOnWrong", defaultValue = "true")
+    @Parameter(property = "stopTestsOnWrong", defaultValue = "false")
     private boolean stopTestsOnWrong;
+    
+    /**
+     * If true, the mojo will stop when it encountered a wrong error message.
+     */
+    @Parameter(property = "failBuildOnErrors", defaultValue = "!${maven.test.failure.ignore}")
+    private boolean failBuildOnErrors;
 
     /**
      * If true, every test result will be written to the folder "surefire-reports" in the maven build directory. This
@@ -133,7 +136,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
             }
             getLog().info("Starting test run....");
             try {
-                Map<String, MafiaTestSummary> testSummaries = new HashMap();
+                Map<String, MafiaTestSummary> testSummaries = new HashMap<String, MafiaTestSummary>();
                 String fitnesseFilesFolder = getWikiRoot() + File.separator + getNameRootPage() + File.separator + "files" + File.separator;
                 String outputPath = fitnesseFilesFolder + File.separator + "mafiaResults" + File.separator;
                 clearOutputDirectory(outputPath);
@@ -169,73 +172,18 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
                 printTestResults(testSummaries);
 
                 MafiaTestSummary testSummary = getTotalTestSummary(testSummaries);
-                MafiaTestSummary assertionSummary = getTotalTestSummary(testSummaries);
                 if (testSummary != null) {
                     resultStore.saveSummary(testSummary, new File(outputPath));
                 }
-                List<MafiaTestResult> testResults = new ArrayList<>();
-                final MafiaTestResultRepository resultRepository =
-                        new MafiaTestResultRepository(mafiaResultFolder, resultStore);
-                testResults.addAll(resultRepository.getTestResults());
-                testResults.addAll(resultRepository.getSuitesResults());
-                testResults.addAll(resultRepository.getFilteredSuitesResults());
-
-                List<String> styleSheets = new ArrayList();
-                styleSheets.add("css/fitnesse_wiki.css");
-                styleSheets.add("css/fitnesse_pages.css");
-                styleSheets.add("css/fitnesse_straight.css");
-                styleSheets.add("css/fitnesse.css");
-                List<String> javascriptFiles = new ArrayList();
-                javascriptFiles.add("javascript/jquery-1.7.2.min.js");
-                javascriptFiles.add("javascript/fitnesse.js");
-                javascriptFiles.add("javascript/fitnesse_straight.js");
-
-                File customStyle = new File(fitnesseFilesFolder + File.separator + "fitnesse");
-                File output = new File(outputPath + File.separator + "report");
-                if(customStyle.exists()) {
-                    try {
-                        File css = new File(customStyle, "css");
-                        if (css.exists()) {
-                            for (File cssfile : css.listFiles()) {
-                                styleSheets.add("css/" + cssfile.getName());
-                            }
-                        }
-
-                        File javascript = new File(customStyle, "javascript");
-                        if(javascript.exists()) {
-                            for (File javascriptfile : javascript.listFiles()) {
-                                javascriptFiles.add("javascript/" + javascriptfile.getName());
-                            }
-                        }
-                        FileUtils.copyDirectory(customStyle, output);
-                    } catch (IOException e) {
-                        throw new MafiaException("Could not copy the custom report resources.");
-                    }
+                String message ="Total : " + testSummary.getRight() + " right , "+ testSummary.getWrong() + " wrong , "+testSummary.getIgnores()+ " ignored and " + testSummary.getExceptions()+ " exceptions";
+                
+                if(testSummary.getWrong()+ testSummary.getExceptions()  > 0){
+                    getLog().error("Ran with errors/exceptions/wrongs. "+message);
+                } else{
+                    getLog().info("Tests completed without errors/exceptions/wrongs "+message);
                 }
-
-                try {
-                    final ReportResource resource = new ReportResource(outputPath + File.separator + "report", PLUGIN_RESOURCES);
-                    resource.copy("css/");
-                    resource.copy("images/");
-                    resource.copy("javascript/");
-                } catch (IOException e) {
-                    throw new MafiaException("Could not copy the report resources.");
-                }
-
-                String reportHtml = reportBuilder.withSummary(testSummary, assertionSummary)
-                        .withStyleSheets(styleSheets)
-                        .withJavaScriptFiles(javascriptFiles)
-                        .withTests(testResults)
-                        .getHtmlAsString();
-
-                try {
-                    FileUtils.writeStringToFile(new File(outputPath + "/report/fitnesse_report.html"), reportHtml);
-                } catch (IOException e) {
-                    throw new MafiaException("Could not create test report");
-                }
-
-                getLog().info("Finished test run.");
-                if (!keepgoing) {
+                
+                if (!keepgoing && failBuildOnErrors) {
                     throw new MojoFailureException("Test run interrupted by stop conditions.");
                 }
             } catch (MafiaException e) {
@@ -266,15 +214,6 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
         return true;
     }
 
-    private void copyFitNesseResourcesTo(String targetResourceDir) throws MojoFailureException {
-        getLog().debug("Copying the fitnesse resources (css, js etc.) to " + targetResourceDir + " ...");
-        FitNesseResourceAccess fitNesseJarAccess = new FitNesseResourceAccess(getMafiaProject());
-        try {
-            fitNesseJarAccess.copyResourcesTo(targetResourceDir);
-        } catch (MafiaRuntimeException e) {
-            getLog().warn("Couldn't copy resources (css, js) to " + targetResourceDir, e);
-        }
-    }
 
     private int getAvailablePort() {
         ServerSocket ss = null;
@@ -389,7 +328,7 @@ public class FitNesseRunnerMojo extends AbstractStartFitNesseMojo {
     private void printTestResults(final Map<String, MafiaTestSummary> testSummaries) {
         if (testSummaries != null) {
             for (Map.Entry<String, MafiaTestSummary> entry : testSummaries.entrySet()) {
-                getLog().info("Test: " + entry.getKey() + "(" + entry.getValue().toString() + ")");
+                getLog().info(entry.getValue().getPageType()+" : " + entry.getKey() + "(" + entry.getValue().toString() + ")\n");
             }
         }
     }

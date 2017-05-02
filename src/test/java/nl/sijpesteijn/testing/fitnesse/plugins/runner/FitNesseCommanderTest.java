@@ -41,7 +41,7 @@ public class FitNesseCommanderTest extends AbstractFitNesseTest {
 
             FitNesseCommanderConfig config = new FitNesseCommanderConfig(PORT, WIKI_ROOT, NAME_ROOT_PAGE,
                     LOG_DIRECTORY, 0, FITNESSE_JAR_PATH,
-                    null, mockLog, null, null, null, null, 4);
+                    null, mockLog, null, null, null, null, 4,null);
             commander = new FitNesseCommander(config);
             commander.start();
             assertFalse(commander.hasError());
@@ -58,7 +58,7 @@ public class FitNesseCommanderTest extends AbstractFitNesseTest {
     public void failureWikiRoot() throws Exception {
         FitNesseCommanderConfig config = new FitNesseCommanderConfig(PORT, "$&#&^&$", NAME_ROOT_PAGE,
                 null, 0, FITNESSE_JAR_PATH,
-                null, mockLog, null, null, null, null, 4);
+                null, mockLog, null, null, null, null, 4,null);
         commander = new FitNesseCommander(config);
         commander.start();
     }
@@ -66,6 +66,7 @@ public class FitNesseCommanderTest extends AbstractFitNesseTest {
     @Test
     public void checkErrorLog() throws Exception {
         try {
+            FitNesseCommander commander = new FitNesseCommander(getFitnesseCommanderConfig());
             commander.start();
             commander.start();
             assertTrue(commander.hasError());

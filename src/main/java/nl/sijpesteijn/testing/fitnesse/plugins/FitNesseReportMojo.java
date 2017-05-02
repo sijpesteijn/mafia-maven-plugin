@@ -1,7 +1,5 @@
 package nl.sijpesteijn.testing.fitnesse.plugins;
 
-import nl.sijpesteijn.testing.fitnesse.plugins.report.MafiaTestSummary;
-import nl.sijpesteijn.testing.fitnesse.plugins.utils.MafiaException;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugins.annotations.Component;
@@ -18,11 +16,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
@@ -184,36 +179,5 @@ public class FitNesseReportMojo extends AbstractMavenReport {
     @Override
     public final String toString() {
         return "WikiRoot: " + wikiRoot + ", Name root page: " + nameRootPage + ", Output directory: " + outputDirectory;
-    }
-
-    /**
-     * Create a mafia test summary from a fitnesse test result file.
-     *
-     * @param mafiaTestResultDir - fitnesse test result file.
-     * @return - mafia test summary.
-     * @throws IOException - unable to read fitnesse test result file.
-     */
-    private MafiaTestSummary getTestSummary(final String mafiaTestResultDir) throws MafiaException {
-        final Properties properties = new Properties();
-        MafiaTestSummary summary = null;
-        if (new File(mafiaTestResultDir).exists()) {
-            try (final InputStream is = new FileInputStream(mafiaTestResultDir)) {
-                try {
-                    properties.load(is);
-                    int wrong = Integer.parseInt(properties.getProperty("wrong"));
-                    int right = Integer.parseInt(properties.getProperty("right"));
-                    int ignores = Integer.parseInt(properties.getProperty("ignores"));
-                    int exceptions = Integer.parseInt(properties.getProperty("exceptions"));
-                    summary  = new MafiaTestSummary(right, wrong, ignores, exceptions);
-                    summary.setTestTime(Long.parseLong(properties.getProperty("testTime")));
-                    summary.setRunDate(Long.parseLong(properties.getProperty("runDate")));
-                } finally {
-                    is.close();
-                }
-            } catch (IOException e) {
-                throw new MafiaException("Failed to open mafia test result directory.", e);
-            }
-        }
-        return summary;
     }
 }

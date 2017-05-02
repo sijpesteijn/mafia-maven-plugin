@@ -15,8 +15,7 @@ import static org.junit.Assert.assertTrue;
  * Date: 5/19/13 9:25 AM
  */
 public class DiskResultStoreTest {
-    private static final String LINE = "<script>document.getElementById(\"test-summary\").innerHTML = \"<strong>Test Pages:</strong> 4 right, 0 wrong, 0 ignored, 0 exceptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Assertions:</strong> 10 right, 0 wrong, 0 ignored, 0 exceptions (1.754 seconds)\";document.getElementById(\"test-summary\").className = \"pass\";</script>";
-    private static final String STYLE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"/files/fitnesse/css/fitnesse_wiki.css\">";
+    private static final String CONTENT = "<testResults><finalCounts><right>10</right><wrong>0</wrong><ignores>0</ignores><exceptions>34</exceptions></finalCounts></testResults>";
     private DiskResultStore store;
 
     @Before
@@ -26,7 +25,7 @@ public class DiskResultStoreTest {
 
     @Test
     public void testStore() throws Throwable {
-        MafiaTestSummary mafiaTestSummary = store.saveResult(LINE + "\n" + STYLE, new File("./target/junitTestResults"), 10l, PageType.TEST, "sample-test", null);
+        MafiaTestSummary mafiaTestSummary = store.saveResult(CONTENT, new File("./target/junitTestResults"), 10l, PageType.TEST, "sample-test", null);
         assertNotNull(mafiaTestSummary);
         assertTrue(mafiaTestSummary.getRight() == 10);
     }

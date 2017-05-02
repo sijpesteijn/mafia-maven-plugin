@@ -88,6 +88,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -126,6 +127,11 @@
             <artifactId>fitnesse</artifactId>
             <version>${fitnesse.version}</version>
             <classifier>standalone</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.ximpleware</groupId>
+            <artifactId>vtd-xml</artifactId>
+            <version>2.13</version>
         </dependency>
 
         <!-- maven -->
