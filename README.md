@@ -1,3 +1,6 @@
+THIS PLUGIN IS NO LONGER ACTIVELY MAINTAINED. Feel free to send merge request.
+If anybody would like to maintain this plugin, please contact me and YOU could become the owner!
+
 This is a maven plugin for FitNesse.
 =================================== 
 
